@@ -1,0 +1,5 @@
+home-limit-reached: "&cYou have reached home limit"
+home:
+  set: "&7Created home with name &b%home%&7!"
+  updated: "&7Updated home with name &b%home%&7!"
+  deleted: "&7Deleted home with name &b%home%&7!"

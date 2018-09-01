@@ -1,0 +1,5 @@
+name: MaSuiteHomes
+main: fi.matiaspaavilainen.masuitehomes.MaSuiteHomes
+version: 1.0
+author: Masagameplay
+depends: [MaSuiteCore]
