@@ -1,0 +1,4 @@
+homes:
+  set: "&cCorrect syntax: /sethome <name>"
+  delete: "&cCorrect syntax: /delhome <name>"
+  teleport: "&cCorrect syntax: /home <name>"
