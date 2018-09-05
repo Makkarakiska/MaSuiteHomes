@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class Set extends Command {
     public Set() {
-        super("sethome", "masuitehomes.sethome", "homeset", "createhome");
+        super("sethome", "masuitehomes.home.set", "homeset", "createhome");
     }
 
     @Override
@@ -27,18 +27,18 @@ public class Set extends Command {
         if (args.length == 1) {
             System.out.println("adw");
             java.util.Set<Home> homes = new Home().homes(p.getUniqueId());
-            if (p.hasPermission("masuitehomes.home.limit." + "10")) {
+            //if (p.hasPermission("masuitehomes.home.limit." + "10")) {
                 System.out.println("faeff");
                 MaSuitePlayer msp = new MaSuitePlayer().find(p.getUniqueId());
                 msp.requestLocation();
                 Location loc = MaSuitePlayerLocation.locations.get(p.getUniqueId());
                 Home home = new Home(args[0], p.getServer().getInfo().getName(), p.getUniqueId(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-
+                home.set(home);
                 // home = homes.stream().filter(h -> h.getName().equalsIgnoreCase(args[0]));
 
-            } else {
+            /*} else {
                 formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-limit-reached"));
-            }
+            }*/
 
         } else {
             formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.set"));
