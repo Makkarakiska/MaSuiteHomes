@@ -33,7 +33,7 @@ public class Set extends Command {
             int max = 0;
             for (int i = 100; i > 0; i--) {
                 if (p.hasPermission("masuitehomes.home.limit." + i)) {
-                    max = i;
+                    max = i - 1;
                     break;
                 }
             }
