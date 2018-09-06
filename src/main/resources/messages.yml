@@ -1,10 +1,11 @@
 home-limit-reached: "&cYou have reached home limit"
 home-not-found: "&cHome with that name not found"
+home-hover-text: "&8Teleport to &9%home%"
 home:
   set: "&7Created home with name &b%home%&7!"
   updated: "&7Updated home with name &b%home%&7!"
   deleted: "&7Deleted home with name &b%home%&7!"
   teleported: "&7Teleported to &b%home%&7!"
 homes:
-  title: "&7Your homes: "
+  title: "&7Your homes: &b"
   split: "&7, &b" #Splits warps (first color colors comma and the second one colors home's name)

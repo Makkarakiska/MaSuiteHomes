@@ -29,7 +29,7 @@ public class Teleport extends Command {
         Configuration config = new Configuration();
         if (args.length == 1) {
             Home home = new Home();
-            home = home.find(args[0], p.getUniqueId());
+            home = home.findLike(args[0], p.getUniqueId());
 
             if(home.getServer() == null){
                 formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-not-found"));
@@ -41,7 +41,7 @@ public class Teleport extends Command {
                 if (!p.getServer().getInfo().getName().equals(home.getServer())) {
                     p.connect(ProxyServer.getInstance().getServerInfo(home.getServer()));
                 }
-                out.writeUTF("WarpPlayer");
+                out.writeUTF("HomePlayer");
                 out.writeUTF(String.valueOf(p.getUniqueId()));
                 out.writeUTF(home.getWorld());
                 out.writeDouble(home.getX());
@@ -50,8 +50,8 @@ public class Teleport extends Command {
                 out.writeFloat(home.getYaw());
                 out.writeFloat(home.getPitch());
                 final Home h = home;
-                ProxyServer.getInstance().getScheduler().schedule(new MaSuiteHomes(), () -> ProxyServer.getInstance().getServerInfo(h.getServer()).sendData("BungeeCord", b.toByteArray()), 100, TimeUnit.MILLISECONDS);
-                formator.sendMessage(p, config.load("homes", "messages.yml").getString("teleported").replace("%home%", home.getName()));
+                ProxyServer.getInstance().getScheduler().schedule(new MaSuiteHomes(), () -> ProxyServer.getInstance().getServerInfo(h.getServer()).sendData("BungeeCord", b.toByteArray()), 50, TimeUnit.MILLISECONDS);
+                formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.teleported").replace("%home%", home.getName()));
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }

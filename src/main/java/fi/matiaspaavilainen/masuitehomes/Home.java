@@ -50,7 +50,7 @@ public class Home {
         try {
             connection = db.hikari.getConnection();
             statement = connection.prepareStatement("INSERT INTO masuite_homes (name, server, owner, world, x, y, z, yaw, pitch) VALUES (?,?,?,?,?,?,?,?,?);");
-            statement.setString(1, home.getName());
+            statement.setString(1, home.getName().toLowerCase());
             statement.setString(2, home.getServer());
             statement.setString(3, String.valueOf(home.getOwner()));
             statement.setString(4, home.getWorld());
@@ -92,7 +92,7 @@ public class Home {
             statement.setDouble(5, home.getZ());
             statement.setFloat(6, home.getYaw());
             statement.setFloat(7, home.getPitch());
-            statement.setString(8, home.getName());
+            statement.setString(8, home.getName().toLowerCase());
             statement.setString(9, String.valueOf(home.getOwner()));
             statement.execute();
         } catch (SQLException e) {
@@ -116,34 +116,21 @@ public class Home {
         return home;
     }
 
-    public Home find(String name, UUID owner) {
+    public Home findExact(String name, UUID owner) {
         Home home = new Home();
         ResultSet rs = null;
 
         try {
             connection = MaSuiteCore.db.hikari.getConnection();
-            statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE name = ? AND owner = ?");
-            statement.setString(1, name);
+            statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE name = ? AND owner = ? LIMIT 1;");
+            statement.setString(1, name.toLowerCase());
             statement.setString(2, String.valueOf(owner));
             rs = statement.executeQuery();
 
             if (rs == null) {
                 return new Home();
             }
-            while (rs.next()) {
-                home.setId(rs.getInt("id"));
-                home.setName(rs.getString("name"));
-                home.setServer(rs.getString("server"));
-                home.setOwner(UUID.fromString(rs.getString("owner")));
-                home.setWorld(rs.getString("world"));
-                home.setId(rs.getInt("id"));
-                home.setId(rs.getInt("id"));
-                home.setX(rs.getDouble("x"));
-                home.setY(rs.getDouble("y"));
-                home.setZ(rs.getDouble("z"));
-                home.setYaw(rs.getFloat("yaw"));
-                home.setPitch(rs.getFloat("pitch"));
-            }
+            findHome(home, rs);
 
 
         } catch (Exception e) {
@@ -174,18 +161,79 @@ public class Home {
         return home;
     }
 
+    private void findHome(Home home, ResultSet rs) throws SQLException {
+        while(rs.next()){
+            home.setId(rs.getInt("id"));
+            home.setName(rs.getString("name"));
+            home.setServer(rs.getString("server"));
+            home.setOwner(UUID.fromString(rs.getString("owner")));
+            home.setWorld(rs.getString("world"));
+            home.setId(rs.getInt("id"));
+            home.setId(rs.getInt("id"));
+            home.setX(rs.getDouble("x"));
+            home.setY(rs.getDouble("y"));
+            home.setZ(rs.getDouble("z"));
+            home.setYaw(rs.getFloat("yaw"));
+            home.setPitch(rs.getFloat("pitch"));
+        }
+    }
+
+    public Home findLike(String name, UUID owner) {
+        Home home = new Home();
+        ResultSet rs = null;
+
+        try {
+            connection = MaSuiteCore.db.hikari.getConnection();
+            statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE name LIKE ? ESCAPE '!' AND owner = ? LIMIT 1;");
+            statement.setString(1, name.toLowerCase() + "%");
+            statement.setString(2, String.valueOf(owner));
+            rs = statement.executeQuery();
+
+            if (rs == null) {
+                return new Home();
+            }
+            findHome(home, rs);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return home;
+    }
     public Set<Home> homes(UUID owner) {
         HashSet<Home> homes = new HashSet<>();
         ResultSet rs = null;
         try {
             connection = MaSuiteCore.db.hikari.getConnection();
-            statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "warp WHERE owner = ?;");
+            statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE owner = ?;");
             statement.setString(1, String.valueOf(owner));
             rs = statement.executeQuery();
             while (rs.next()) {
                 Home home = new Home();
                 home.setId(rs.getInt("id"));
-                home.setName(rs.getString("name"));
+                home.setName(rs.getString("name").toLowerCase());
                 home.setServer(rs.getString("server"));
                 home.setOwner(UUID.fromString(rs.getString("owner")));
                 home.setWorld(rs.getString("world"));
@@ -234,7 +282,7 @@ public class Home {
         try {
             connection = MaSuiteCore.db.hikari.getConnection();
             statement = connection.prepareStatement("DELETE FROM " + tablePrefix + "homes WHERE name = ? AND owner = ?");
-            statement.setString(1, home.getName());
+            statement.setString(1, home.getName().toLowerCase());
             statement.setString(2, String.valueOf(home.getOwner()));
             statement.execute();
 

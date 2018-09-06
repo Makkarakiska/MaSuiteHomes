@@ -4,8 +4,13 @@ import fi.matiaspaavilainen.masuitecore.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.config.Configuration;
 import fi.matiaspaavilainen.masuitehomes.Home;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.chat.ComponentSerializer;
 
 import java.util.stream.Collectors;
 
@@ -14,22 +19,24 @@ public class List extends Command {
         super("homes", "masuitehomes.home.list", "homelist", "listhomes");
     }
 
+    Configuration config = new Configuration();
+    Formator formator = new Formator();
+
     @Override
     public void execute(CommandSender cs, String[] args) {
-        if(!(cs instanceof ProxiedPlayer)){
+        if (!(cs instanceof ProxiedPlayer)) {
             return;
         }
         ProxiedPlayer p = (ProxiedPlayer) cs;
-        Formator formator = new Formator();
-        Configuration config = new Configuration();
 
-        if(args.length == 1) {
-            Home home = new Home();
+        if (args.length == 0) {
+            Home h = new Home();
             String homes = config.load("homes", "messages.yml").getString("homes.title");
-            homes = homes + home.homes(p.getUniqueId()).stream().map(Home::getName).collect(Collectors.joining(config.load("homes", "messages.yml").getString("homes.split")));
+            homes = homes + h.homes(p.getUniqueId()).stream().map(Home::getName).collect(Collectors.joining(config.load("homes", "messages.yml").getString("homes.split")));
             formator.sendMessage(p, homes);
-        }else{
+        } else {
             formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.list"));
         }
+
     }
 }
