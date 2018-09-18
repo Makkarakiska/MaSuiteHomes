@@ -8,4 +8,5 @@ home:
   teleported: "&7Teleported to &b%home%&7!"
 homes:
   title: "&7Your homes: &b"
-  split: "&7, &b" #Splits warps (first color colors comma and the second one colors home's name)
+  name: "&b%home%"
+  split: "&7, " #Splits warps

@@ -1,6 +1,5 @@
 package fi.matiaspaavilainen.masuitehomes;
 
-import fi.matiaspaavilainen.masuitecore.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.config.Configuration;
 import fi.matiaspaavilainen.masuitecore.database.Database;
 
@@ -14,7 +13,7 @@ import java.util.UUID;
 
 public class Home {
 
-    private Database db = MaSuiteCore.db;
+    private Database db = MaSuiteHomes.db;
     private Connection connection = null;
     private PreparedStatement statement = null;
     private Configuration config = new Configuration();
@@ -121,7 +120,7 @@ public class Home {
         ResultSet rs = null;
 
         try {
-            connection = MaSuiteCore.db.hikari.getConnection();
+            connection = db.hikari.getConnection();
             statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE name = ? AND owner = ? LIMIT 1;");
             statement.setString(1, name.toLowerCase());
             statement.setString(2, String.valueOf(owner));
@@ -168,8 +167,6 @@ public class Home {
             home.setServer(rs.getString("server"));
             home.setOwner(UUID.fromString(rs.getString("owner")));
             home.setWorld(rs.getString("world"));
-            home.setId(rs.getInt("id"));
-            home.setId(rs.getInt("id"));
             home.setX(rs.getDouble("x"));
             home.setY(rs.getDouble("y"));
             home.setZ(rs.getDouble("z"));
@@ -183,7 +180,7 @@ public class Home {
         ResultSet rs = null;
 
         try {
-            connection = MaSuiteCore.db.hikari.getConnection();
+            connection = db.hikari.getConnection();
             statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE name LIKE ? ESCAPE '!' AND owner = ? LIMIT 1;");
             statement.setString(1, name.toLowerCase() + "%");
             statement.setString(2, String.valueOf(owner));
@@ -226,7 +223,7 @@ public class Home {
         HashSet<Home> homes = new HashSet<>();
         ResultSet rs = null;
         try {
-            connection = MaSuiteCore.db.hikari.getConnection();
+            connection = db.hikari.getConnection();
             statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE owner = ?;");
             statement.setString(1, String.valueOf(owner));
             rs = statement.executeQuery();
@@ -237,8 +234,6 @@ public class Home {
                 home.setServer(rs.getString("server"));
                 home.setOwner(UUID.fromString(rs.getString("owner")));
                 home.setWorld(rs.getString("world"));
-                home.setId(rs.getInt("id"));
-                home.setId(rs.getInt("id"));
                 home.setX(rs.getDouble("x"));
                 home.setY(rs.getDouble("y"));
                 home.setZ(rs.getDouble("z"));
@@ -280,7 +275,7 @@ public class Home {
         ResultSet rs = null;
 
         try {
-            connection = MaSuiteCore.db.hikari.getConnection();
+            connection = db.hikari.getConnection();
             statement = connection.prepareStatement("DELETE FROM " + tablePrefix + "homes WHERE name = ? AND owner = ?");
             statement.setString(1, home.getName().toLowerCase());
             statement.setString(2, String.valueOf(home.getOwner()));
@@ -290,13 +285,6 @@ public class Home {
             e.printStackTrace();
             return false;
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
             if (statement != null) {
                 try {
                     statement.close();
