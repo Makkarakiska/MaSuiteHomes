@@ -29,29 +29,28 @@ public class Set extends Command {
         Configuration config = new Configuration();
         ProxiedPlayer p = (ProxiedPlayer) cs;
         if (args.length == 1) {
+            MaSuitePlayer msp = new MaSuitePlayer().find(p.getUniqueId());
+            msp.requestLocation();
+            Home h = new Home();
+            h = h.findExact(args[0], p.getUniqueId());
             java.util.Set<Home> homes = new Home().homes(p.getUniqueId());
-            int max = 0;
-            for (int i = 100; i > 0; i--) {
-                if (p.hasPermission("masuitehomes.home.limit." + i)) {
-                    max = i - 1;
-                    break;
+            if (h.getServer() != null) {
+                ProxyServer.getInstance().getScheduler().schedule(new MaSuiteHomes(), () -> {
+                    Location loc = MaSuitePlayerLocation.locations.get(p.getUniqueId());
+                    Home home = new Home(args[0], p.getServer().getInfo().getName(), p.getUniqueId(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    home.update(home);
+                    formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.updated").replace("%home%", home.getName()));
+                }, 100, TimeUnit.MILLISECONDS);
+                MaSuitePlayerLocation.locations.remove(p.getUniqueId());
+            } else {
+                int max = 0;
+                for (int i = 100; i > 0; i--) {
+                    if (p.hasPermission("masuitehomes.home.limit." + i)) {
+                        max = i - 1;
+                        break;
+                    }
                 }
-            }
-            if (homes.size() <= max) {
-                MaSuitePlayer msp = new MaSuitePlayer().find(p.getUniqueId());
-                msp.requestLocation();
-
-                Home h = new Home();
-                h = h.findExact(args[0], p.getUniqueId());
-                if (h.getServer() != null) {
-                    ProxyServer.getInstance().getScheduler().schedule(new MaSuiteHomes(), () -> {
-                        Location loc = MaSuitePlayerLocation.locations.get(p.getUniqueId());
-                        Home home = new Home(args[0], p.getServer().getInfo().getName(), p.getUniqueId(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-                        home.update(home);
-                        formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.updated").replace("%home%", home.getName()));
-                    }, 100, TimeUnit.MILLISECONDS);
-                    MaSuitePlayerLocation.locations.remove(p.getUniqueId());
-                } else {
+                if (homes.size() <= max) {
                     ProxyServer.getInstance().getScheduler().schedule(new MaSuiteHomes(), () -> {
                         Location loc = MaSuitePlayerLocation.locations.get(p.getUniqueId());
                         Home home = new Home(args[0], p.getServer().getInfo().getName(), p.getUniqueId(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
@@ -59,12 +58,12 @@ public class Set extends Command {
                         formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.set").replace("%home%", home.getName()));
                     }, 100, TimeUnit.MILLISECONDS);
                     MaSuitePlayerLocation.locations.remove(p.getUniqueId());
+
+                } else {
+                    formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-limit-reached"));
                 }
 
-            } else {
-                formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-limit-reached"));
             }
-
         } else {
             formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.set"));
         }
