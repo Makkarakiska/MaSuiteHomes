@@ -8,8 +8,6 @@ import fi.matiaspaavilainen.masuitehomes.commands.List;
 import fi.matiaspaavilainen.masuitehomes.commands.Set;
 import fi.matiaspaavilainen.masuitehomes.commands.Teleport;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MaSuiteHomes extends Plugin {
 
@@ -29,7 +27,6 @@ public class MaSuiteHomes extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new Delete());
         getProxy().getPluginManager().registerCommand(this, new List());
 
-        Logger logger = LoggerFactory.getLogger("com.zaxxer.hikari");
         db.connect();
         db.createTable("homes",
                 "(id INT(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, owner VARCHAR(36) NOT NULL, server VARCHAR(100) NOT NULL, world VARCHAR(100) NOT NULL, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
