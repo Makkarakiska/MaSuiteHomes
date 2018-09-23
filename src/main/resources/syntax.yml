@@ -1,4 +1,5 @@
-homes:
+home:
   set: "&cCorrect syntax: /sethome <name>"
   delete: "&cCorrect syntax: /delhome <name>"
+  list: "&cCorrect syntax: /homes"
   teleport: "&cCorrect syntax: /home <name>"
