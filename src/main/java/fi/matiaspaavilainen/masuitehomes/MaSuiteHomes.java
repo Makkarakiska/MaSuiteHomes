@@ -5,6 +5,10 @@ import com.google.common.io.ByteStreams;
 import fi.matiaspaavilainen.masuitecore.Updator;
 import fi.matiaspaavilainen.masuitecore.config.Configuration;
 import fi.matiaspaavilainen.masuitecore.database.Database;
+import fi.matiaspaavilainen.masuitecore.managers.Location;
+import fi.matiaspaavilainen.masuitehomes.commands.Delete;
+import fi.matiaspaavilainen.masuitehomes.commands.List;
+import fi.matiaspaavilainen.masuitehomes.commands.Set;
 import fi.matiaspaavilainen.masuitehomes.commands.Teleport;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -27,13 +31,8 @@ public class MaSuiteHomes extends Plugin implements Listener {
         //Configs
         Configuration config = new Configuration();
         config.create(this, "homes", "messages.yml");
-        config.create(this, "homes", "syntax.yml");
         getProxy().getPluginManager().registerListener(this, this);
         //Commands
-        /*getProxy().getPluginManager().registerCommand(this, new Teleport());
-        getProxy().getPluginManager().registerCommand(this, new Set());
-        getProxy().getPluginManager().registerCommand(this, new Delete());
-        getProxy().getPluginManager().registerCommand(this, new List());*/
 
         db.connect();
         db.createTable("homes",
@@ -61,6 +60,31 @@ public class MaSuiteHomes extends Plugin implements Listener {
             }
             teleport.teleport(p, in.readUTF());
             sendCooldown(p);
+        }
+        if(subchannel.equals("SetHomeCommand")){
+            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
+            if(p == null){
+                return;
+            }
+            Set set = new Set();
+            String[] location = in.readUTF().split(":");
+            set.set(p, in.readUTF(), new Location(location[0], Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]), Float.parseFloat(location[4]), Float.parseFloat(location[5])));
+        }
+        if(subchannel.equals("DelHomeCommand")){
+            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
+            if(p == null){
+                return;
+            }
+            Delete delete = new Delete();
+            delete.delete(p, in.readUTF());
+        }
+        if(subchannel.equals("ListHomeCommand")){
+            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
+            if(p == null){
+                return;
+            }
+            List list = new List();
+            list.list(p);
         }
     }
 

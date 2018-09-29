@@ -2,6 +2,7 @@ package fi.matiaspaavilainen.masuitehomes;
 
 import fi.matiaspaavilainen.masuitecore.config.Configuration;
 import fi.matiaspaavilainen.masuitecore.database.Database;
+import fi.matiaspaavilainen.masuitecore.managers.Location;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,26 +24,16 @@ public class Home {
     private String server;
     private UUID owner;
     //Location
-    private String world;
-    private Double x;
-    private Double y;
-    private Double z;
-    private Float yaw;
-    private Float pitch;
+    private Location location;
 
     public Home() {
     }
 
-    public Home(String name, String server, UUID owner, String world, Double x, Double y, Double z, Float yaw, Float pitch) {
+    public Home(String name, String server, UUID owner, Location loc) {
         this.name = name;
         this.server = server;
         this.owner = owner;
-        this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
+        this.location = loc;
     }
 
     public Home set(Home home) {
@@ -52,12 +43,12 @@ public class Home {
             statement.setString(1, home.getName().toLowerCase());
             statement.setString(2, home.getServer());
             statement.setString(3, String.valueOf(home.getOwner()));
-            statement.setString(4, home.getWorld());
-            statement.setDouble(5, home.getX());
-            statement.setDouble(6, home.getY());
-            statement.setDouble(7, home.getZ());
-            statement.setFloat(8, home.getYaw());
-            statement.setFloat(9, home.getPitch());
+            statement.setString(4, home.getLocation().getWorld());
+            statement.setDouble(5, home.getLocation().getX());
+            statement.setDouble(6, home.getLocation().getY());
+            statement.setDouble(7, home.getLocation().getZ());
+            statement.setFloat(8, home.getLocation().getYaw());
+            statement.setFloat(9, home.getLocation().getPitch());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,12 +76,12 @@ public class Home {
             connection = db.hikari.getConnection();
             statement = connection.prepareStatement("UPDATE masuite_homes SET server = ?, world = ?, x = ?, y = ?, z = ?, yaw = ?, pitch = ? WHERE name = ? AND owner = ?;");
             statement.setString(1, home.getServer());
-            statement.setString(2, home.getWorld());
-            statement.setDouble(3, home.getX());
-            statement.setDouble(4, home.getY());
-            statement.setDouble(5, home.getZ());
-            statement.setFloat(6, home.getYaw());
-            statement.setFloat(7, home.getPitch());
+            statement.setString(2, home.getLocation().getWorld());
+            statement.setDouble(3, home.getLocation().getX());
+            statement.setDouble(4, home.getLocation().getY());
+            statement.setDouble(5, home.getLocation().getZ());
+            statement.setFloat(6, home.getLocation().getYaw());
+            statement.setFloat(7, home.getLocation().getPitch());
             statement.setString(8, home.getName().toLowerCase());
             statement.setString(9, String.valueOf(home.getOwner()));
             statement.execute();
@@ -166,12 +157,7 @@ public class Home {
             home.setName(rs.getString("name"));
             home.setServer(rs.getString("server"));
             home.setOwner(UUID.fromString(rs.getString("owner")));
-            home.setWorld(rs.getString("world"));
-            home.setX(rs.getDouble("x"));
-            home.setY(rs.getDouble("y"));
-            home.setZ(rs.getDouble("z"));
-            home.setYaw(rs.getFloat("yaw"));
-            home.setPitch(rs.getFloat("pitch"));
+            home.setLocation(new Location(rs.getString("world"), rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")));
         }
     }
 
@@ -225,7 +211,7 @@ public class Home {
         try {
             connection = db.hikari.getConnection();
             statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE owner = ?;");
-            statement.setString(1, String.valueOf(owner));
+            statement.setString(1, owner.toString());
             rs = statement.executeQuery();
             while (rs.next()) {
                 Home home = new Home();
@@ -233,14 +219,10 @@ public class Home {
                 home.setName(rs.getString("name").toLowerCase());
                 home.setServer(rs.getString("server"));
                 home.setOwner(UUID.fromString(rs.getString("owner")));
-                home.setWorld(rs.getString("world"));
-                home.setX(rs.getDouble("x"));
-                home.setY(rs.getDouble("y"));
-                home.setZ(rs.getDouble("z"));
-                home.setYaw(rs.getFloat("yaw"));
-                home.setPitch(rs.getFloat("pitch"));
+                home.setLocation(new Location(rs.getString("world"), rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")));
                 homes.add(home);
             }
+
 
 
         } catch (Exception e) {
@@ -336,53 +318,11 @@ public class Home {
         this.owner = owner;
     }
 
-    public String getWorld() {
-        return world;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setWorld(String world) {
-        this.world = world;
+    public void setLocation(Location location) {
+        this.location = location;
     }
-
-    public Double getX() {
-        return x;
-    }
-
-    public void setX(Double x) {
-        this.x = x;
-    }
-
-    public Double getY() {
-        return y;
-    }
-
-    public void setY(Double y) {
-        this.y = y;
-    }
-
-    public Double getZ() {
-        return z;
-    }
-
-    public void setZ(Double z) {
-        this.z = z;
-    }
-
-    public Float getYaw() {
-        return yaw;
-    }
-
-    public void setYaw(Float yaw) {
-        this.yaw = yaw;
-    }
-
-    public Float getPitch() {
-        return pitch;
-    }
-
-    public void setPitch(Float pitch) {
-        this.pitch = pitch;
-    }
-
-
 }

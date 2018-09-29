@@ -30,15 +30,19 @@ public class Teleport {
                 p.connect(ProxyServer.getInstance().getServerInfo(home.getServer()));
             }
             out.writeUTF("HomePlayer");
-            out.writeUTF(String.valueOf(p.getUniqueId()));
-            out.writeUTF(home.getWorld());
-            out.writeDouble(home.getX());
-            out.writeDouble(home.getY());
-            out.writeDouble(home.getZ());
-            out.writeFloat(home.getYaw());
-            out.writeFloat(home.getPitch());
-            final Home h = home;
-            ProxyServer.getInstance().getScheduler().schedule(new MaSuiteHomes(), () -> ProxyServer.getInstance().getServerInfo(h.getServer()).sendData("BungeeCord", b.toByteArray()), 50, TimeUnit.MILLISECONDS);
+            out.writeUTF(p.getUniqueId().toString());
+            out.writeUTF(home.getLocation().getWorld());
+            out.writeDouble(home.getLocation().getX());
+            out.writeDouble(home.getLocation().getY());
+            out.writeDouble(home.getLocation().getZ());
+            out.writeFloat(home.getLocation().getYaw());
+            out.writeFloat(home.getLocation().getPitch());
+            if (!p.getServer().getInfo().getName().equals(home.getServer())) {
+                final Home h = home;
+                ProxyServer.getInstance().getScheduler().schedule(new MaSuiteHomes(), () -> ProxyServer.getInstance().getServerInfo(h.getServer()).sendData("BungeeCord", b.toByteArray()), 350, TimeUnit.MILLISECONDS);
+            }else {
+                ProxyServer.getInstance().getServerInfo(home.getServer()).sendData("BungeeCord", b.toByteArray());
+            }
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.teleported").replace("%home%", home.getName()));
         } catch (IOException e) {
             System.out.println(e.getMessage());
