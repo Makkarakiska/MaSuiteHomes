@@ -1,15 +1,23 @@
 package fi.matiaspaavilainen.masuitehomes;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import fi.matiaspaavilainen.masuitecore.Updator;
 import fi.matiaspaavilainen.masuitecore.config.Configuration;
 import fi.matiaspaavilainen.masuitecore.database.Database;
-import fi.matiaspaavilainen.masuitehomes.commands.Delete;
-import fi.matiaspaavilainen.masuitehomes.commands.List;
-import fi.matiaspaavilainen.masuitehomes.commands.Set;
 import fi.matiaspaavilainen.masuitehomes.commands.Teleport;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PluginMessageEvent;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.event.EventHandler;
 
-public class MaSuiteHomes extends Plugin {
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+
+public class MaSuiteHomes extends Plugin implements Listener {
 
     static Database db = new Database();
     @Override
@@ -20,12 +28,12 @@ public class MaSuiteHomes extends Plugin {
         Configuration config = new Configuration();
         config.create(this, "homes", "messages.yml");
         config.create(this, "homes", "syntax.yml");
-
+        getProxy().getPluginManager().registerListener(this, this);
         //Commands
-        getProxy().getPluginManager().registerCommand(this, new Teleport());
+        /*getProxy().getPluginManager().registerCommand(this, new Teleport());
         getProxy().getPluginManager().registerCommand(this, new Set());
         getProxy().getPluginManager().registerCommand(this, new Delete());
-        getProxy().getPluginManager().registerCommand(this, new List());
+        getProxy().getPluginManager().registerCommand(this, new List());*/
 
         db.connect();
         db.createTable("homes",
@@ -37,5 +45,36 @@ public class MaSuiteHomes extends Plugin {
     @Override
     public void onDisable(){
         db.hikari.close();
+    }
+    @EventHandler
+    public void onPluginMessage(PluginMessageEvent e) throws IOException {
+        if(!e.getTag().equals("BungeeCord")){
+            return;
+        }
+        DataInputStream in = new DataInputStream(new ByteArrayInputStream(e.getData()));
+        String subchannel = in.readUTF();
+        if(subchannel.equals("HomeCommand")){
+            Teleport teleport = new Teleport();
+            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
+            if(p == null){
+                return;
+            }
+            teleport.teleport(p, in.readUTF());
+            sendCooldown(p);
+        }
+    }
+
+    private void sendCooldown(ProxiedPlayer p) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("HomeCooldown");
+        out.writeUTF(String.valueOf(p.getUniqueId()));
+        try {
+            Thread.sleep(200);
+            out.writeLong(System.currentTimeMillis());
+            p.getServer().sendData("BungeeCord", out.toByteArray());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 }
