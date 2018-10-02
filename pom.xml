@@ -8,6 +8,7 @@
     <artifactId>MaSuiteHomes</artifactId>
     <version>1.2</version>
     <build>
+        <finalName>MaSuiteHomes</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
