@@ -1,7 +1,7 @@
 package fi.matiaspaavilainen.masuitehomes;
 
 import fi.matiaspaavilainen.masuitecore.config.Configuration;
-import fi.matiaspaavilainen.masuitecore.database.Database;
+import fi.matiaspaavilainen.masuitehomes.database.Database;
 import fi.matiaspaavilainen.masuitecore.managers.Location;
 
 import java.sql.Connection;
