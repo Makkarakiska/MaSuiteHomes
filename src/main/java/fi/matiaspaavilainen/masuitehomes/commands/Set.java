@@ -3,7 +3,6 @@ package fi.matiaspaavilainen.masuitehomes.commands;
 import fi.matiaspaavilainen.masuitecore.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.config.Configuration;
 import fi.matiaspaavilainen.masuitecore.managers.Location;
-import fi.matiaspaavilainen.masuitecore.managers.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.Home;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -12,8 +11,6 @@ public class Set {
     public void set(ProxiedPlayer p, String hs, Location loc) {
         Formator formator = new Formator();
         Configuration config = new Configuration();
-        MaSuitePlayer msp = new MaSuitePlayer().find(p.getUniqueId());
-        msp.requestLocation();
         Home h = new Home();
         h = h.findExact(hs, p.getUniqueId());
         java.util.Set<Home> homes = new Home().homes(p.getUniqueId());
