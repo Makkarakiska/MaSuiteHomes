@@ -23,7 +23,6 @@ public class Home {
     private String name;
     private String server;
     private UUID owner;
-    //Location
     private Location location;
 
     public Home() {
@@ -118,7 +117,7 @@ public class Home {
             rs = statement.executeQuery();
 
             if (rs == null) {
-                return new Home();
+                return null;
             }
             findHome(home, rs);
 
@@ -152,7 +151,7 @@ public class Home {
     }
 
     private void findHome(Home home, ResultSet rs) throws SQLException {
-        while(rs.next()){
+        while (rs.next()) {
             home.setId(rs.getInt("id"));
             home.setName(rs.getString("name"));
             home.setServer(rs.getString("server"));
@@ -205,6 +204,7 @@ public class Home {
         }
         return home;
     }
+
     public Set<Home> homes(UUID owner) {
         HashSet<Home> homes = new HashSet<>();
         ResultSet rs = null;
@@ -222,9 +222,6 @@ public class Home {
                 home.setLocation(new Location(rs.getString("world"), rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")));
                 homes.add(home);
             }
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -254,8 +251,6 @@ public class Home {
     }
 
     public Boolean delete(Home home) {
-        ResultSet rs = null;
-
         try {
             connection = db.hikari.getConnection();
             statement = connection.prepareStatement("DELETE FROM " + tablePrefix + "homes WHERE name = ? AND owner = ?");

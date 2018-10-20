@@ -14,7 +14,7 @@ public class Set {
         Home h = new Home();
         h = h.findExact(hs, p.getUniqueId());
         java.util.Set<Home> homes = new Home().homes(p.getUniqueId());
-        if (h.getServer() != null) {
+        if (h != null) {
             Home home = new Home(hs, p.getServer().getInfo().getName(), p.getUniqueId(), loc);
             home.update(home);
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.updated").replace("%home%", home.getName()));

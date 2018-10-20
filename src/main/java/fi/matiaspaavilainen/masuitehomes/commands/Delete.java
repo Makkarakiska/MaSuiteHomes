@@ -12,7 +12,7 @@ public class Delete {
         Configuration config = new Configuration();
         Home home = new Home();
         home = home.findExact(hs, p.getUniqueId());
-        if (home.getServer() == null) {
+        if (home == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-not-found"));
             return;
         }
