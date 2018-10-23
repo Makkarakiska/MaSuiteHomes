@@ -19,7 +19,7 @@ public class Teleport {
         Home home = new Home();
         home = home.findLike(hs, p.getUniqueId());
 
-        if (home.getServer() == null) {
+        if (home == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-not-found"));
             return;
         }

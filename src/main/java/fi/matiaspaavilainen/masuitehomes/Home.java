@@ -38,7 +38,7 @@ public class Home {
     public Home set(Home home) {
         try {
             connection = db.hikari.getConnection();
-            statement = connection.prepareStatement("INSERT INTO "+ tablePrefix +" homes (name, server, owner, world, x, y, z, yaw, pitch) VALUES (?,?,?,?,?,?,?,?,?);");
+            statement = connection.prepareStatement("INSERT INTO " + tablePrefix + "homes (name, server, owner, world, x, y, z, yaw, pitch) VALUES (?,?,?,?,?,?,?,?,?);");
             statement.setString(1, home.getName().toLowerCase());
             statement.setString(2, home.getServer());
             statement.setString(3, String.valueOf(home.getOwner()));
@@ -73,7 +73,7 @@ public class Home {
     public Home update(Home home) {
         try {
             connection = db.hikari.getConnection();
-            statement = connection.prepareStatement("UPDATE masuite_homes SET server = ?, world = ?, x = ?, y = ?, z = ?, yaw = ?, pitch = ? WHERE name = ? AND owner = ?;");
+            statement = connection.prepareStatement("UPDATE " + tablePrefix + "homes SET server = ?, world = ?, x = ?, y = ?, z = ?, yaw = ?, pitch = ? WHERE name = ? AND owner = ?;");
             statement.setString(1, home.getServer());
             statement.setString(2, home.getLocation().getWorld());
             statement.setDouble(3, home.getLocation().getX());
@@ -116,11 +116,19 @@ public class Home {
             statement.setString(2, String.valueOf(owner));
             rs = statement.executeQuery();
 
-            if (rs == null) {
+
+            boolean empty = true;
+            while (rs.next()) {
+                home.setId(rs.getInt("id"));
+                home.setName(rs.getString("name"));
+                home.setServer(rs.getString("server"));
+                home.setOwner(UUID.fromString(rs.getString("owner")));
+                home.setLocation(new Location(rs.getString("world"), rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")));
+                empty = false;
+            }
+            if (empty) {
                 return null;
             }
-            findHome(home, rs);
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,19 +158,10 @@ public class Home {
         return home;
     }
 
-    private void findHome(Home home, ResultSet rs) throws SQLException {
-        while (rs.next()) {
-            home.setId(rs.getInt("id"));
-            home.setName(rs.getString("name"));
-            home.setServer(rs.getString("server"));
-            home.setOwner(UUID.fromString(rs.getString("owner")));
-            home.setLocation(new Location(rs.getString("world"), rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")));
-        }
-    }
-
     public Home findLike(String name, UUID owner) {
         Home home = new Home();
         ResultSet rs = null;
+
 
         try {
             connection = db.hikari.getConnection();
@@ -171,11 +170,19 @@ public class Home {
             statement.setString(2, String.valueOf(owner));
             rs = statement.executeQuery();
 
-            if (rs == null) {
-                return new Home();
+            boolean empty = true;
+            while (rs.next()) {
+                home.setId(rs.getInt("id"));
+                home.setName(rs.getString("name"));
+                home.setServer(rs.getString("server"));
+                home.setOwner(UUID.fromString(rs.getString("owner")));
+                home.setLocation(new Location(rs.getString("world"), rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("yaw"), rs.getFloat("pitch")));
+                empty = false;
             }
-            findHome(home, rs);
 
+            if (empty) {
+                return null;
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -250,12 +257,12 @@ public class Home {
         return homes;
     }
 
-    public Boolean delete(Home home) {
+    public Boolean delete() {
         try {
             connection = db.hikari.getConnection();
             statement = connection.prepareStatement("DELETE FROM " + tablePrefix + "homes WHERE name = ? AND owner = ?");
-            statement.setString(1, home.getName().toLowerCase());
-            statement.setString(2, String.valueOf(home.getOwner()));
+            statement.setString(1, getName().toLowerCase());
+            statement.setString(2, String.valueOf(getOwner()));
             statement.execute();
 
         } catch (Exception e) {

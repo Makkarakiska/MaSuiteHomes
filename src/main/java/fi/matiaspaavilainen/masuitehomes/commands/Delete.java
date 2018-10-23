@@ -16,7 +16,11 @@ public class Delete {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-not-found"));
             return;
         }
-        home.delete(home);
-        formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.deleted").replace("%home%", home.getName()));
+        if(home.delete()){
+            formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.deleted").replace("%home%", home.getName()));
+        } else{
+            System.out.println("[MaSuite] [Homes] There was an error during saving home.");
+        }
+
     }
 }
