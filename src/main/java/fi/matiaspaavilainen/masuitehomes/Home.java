@@ -38,7 +38,7 @@ public class Home {
     public Home set(Home home) {
         try {
             connection = db.hikari.getConnection();
-            statement = connection.prepareStatement("INSERT INTO masuite_homes (name, server, owner, world, x, y, z, yaw, pitch) VALUES (?,?,?,?,?,?,?,?,?);");
+            statement = connection.prepareStatement("INSERT INTO "+ tablePrefix +" homes (name, server, owner, world, x, y, z, yaw, pitch) VALUES (?,?,?,?,?,?,?,?,?);");
             statement.setString(1, home.getName().toLowerCase());
             statement.setString(2, home.getServer());
             statement.setString(3, String.valueOf(home.getOwner()));
