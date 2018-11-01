@@ -8,7 +8,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class Set {
 
-    public void set(ProxiedPlayer p, String hs, Location loc) {
+    public void set(ProxiedPlayer p, String hs, int max, Location loc) {
         Formator formator = new Formator();
         Configuration config = new Configuration();
         Home h = new Home();
@@ -19,13 +19,6 @@ public class Set {
             home.update(home);
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.updated").replace("%home%", home.getName()));
         } else {
-            int max = 0;
-            for (int i = 100; i > 0; i--) {
-                if (p.hasPermission("masuitehomes.home.limit." + i) || p.hasPermission("masuitehomes.home.limit.unlimited")) {
-                    max = i - 1;
-                    break;
-                }
-            }
             if (homes.size() <= max) {
                 Home home = new Home(hs, p.getServer().getInfo().getName(), p.getUniqueId(), loc);
                 home.set(home);

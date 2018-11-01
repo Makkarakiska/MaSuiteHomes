@@ -67,7 +67,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
             }
             Set set = new Set();
             String[] location = in.readUTF().split(":");
-            set.set(p, in.readUTF(), new Location(location[0], Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]), Float.parseFloat(location[4]), Float.parseFloat(location[5])));
+            set.set(p, in.readUTF(), in.readInt(), new Location(location[0], Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]), Float.parseFloat(location[4]), Float.parseFloat(location[5])));
         }
         if(subchannel.equals("DelHomeCommand")){
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
