@@ -19,7 +19,7 @@ public class Set {
             home.update(home);
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.updated").replace("%home%", home.getName()));
         } else {
-            if (homes.size() <= max) {
+            if (homes.size() < max || max == -1) {
                 Home home = new Home(hs, p.getServer().getInfo().getName(), p.getUniqueId(), loc);
                 home.set(home);
                 formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.set").replace("%home%", home.getName()));
