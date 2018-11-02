@@ -13,6 +13,13 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class Teleport {
+
+    private MaSuiteHomes plugin;
+
+    public Teleport(MaSuiteHomes p) {
+        plugin = p;
+    }
+
     public void teleport(ProxiedPlayer p, String hs) {
         Formator formator = new Formator();
         Configuration config = new Configuration();
@@ -39,11 +46,12 @@ public class Teleport {
             out.writeFloat(home.getLocation().getPitch());
             if (!p.getServer().getInfo().getName().equals(home.getServer())) {
                 final Home h = home;
-                ProxyServer.getInstance().getScheduler().schedule(new MaSuiteHomes(), () -> ProxyServer.getInstance().getServerInfo(h.getServer()).sendData("BungeeCord", b.toByteArray()), 350, TimeUnit.MILLISECONDS);
-            }else {
+                ProxyServer.getInstance().getScheduler().schedule(plugin, () -> ProxyServer.getInstance().getServerInfo(h.getServer()).sendData("BungeeCord", b.toByteArray()), 500, TimeUnit.MILLISECONDS);
+            } else {
                 ProxyServer.getInstance().getServerInfo(home.getServer()).sendData("BungeeCord", b.toByteArray());
             }
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.teleported").replace("%home%", home.getName()));
+            plugin.sendCooldown(p, home);
         } catch (IOException e) {
             e.printStackTrace();
         }

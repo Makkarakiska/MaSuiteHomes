@@ -1,28 +1,26 @@
 package fi.matiaspaavilainen.masuitehomes;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import fi.matiaspaavilainen.masuitecore.Updator;
 import fi.matiaspaavilainen.masuitecore.config.Configuration;
-import fi.matiaspaavilainen.masuitehomes.database.Database;
 import fi.matiaspaavilainen.masuitecore.managers.Location;
 import fi.matiaspaavilainen.masuitehomes.commands.Delete;
 import fi.matiaspaavilainen.masuitehomes.commands.List;
 import fi.matiaspaavilainen.masuitehomes.commands.Set;
 import fi.matiaspaavilainen.masuitehomes.commands.Teleport;
+import fi.matiaspaavilainen.masuitehomes.database.Database;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.concurrent.TimeUnit;
 
 public class MaSuiteHomes extends Plugin implements Listener {
 
     static Database db = new Database();
+
     @Override
     public void onEnable() {
         super.onEnable();
@@ -41,45 +39,45 @@ public class MaSuiteHomes extends Plugin implements Listener {
     }
 
     @Override
-    public void onDisable(){
+    public void onDisable() {
         db.hikari.close();
     }
+
     @EventHandler
     public void onPluginMessage(PluginMessageEvent e) throws IOException {
-        if(!e.getTag().equals("BungeeCord")){
+        if (!e.getTag().equals("BungeeCord")) {
             return;
         }
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(e.getData()));
         String subchannel = in.readUTF();
-        if(subchannel.equals("HomeCommand")){
-            Teleport teleport = new Teleport();
+        if (subchannel.equals("HomeCommand")) {
+            Teleport teleport = new Teleport(this);
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            if(p == null){
+            if (p == null) {
                 return;
             }
             teleport.teleport(p, in.readUTF());
-            sendCooldown(p);
         }
-        if(subchannel.equals("SetHomeCommand")){
+        if (subchannel.equals("SetHomeCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            if(p == null){
+            if (p == null) {
                 return;
             }
             Set set = new Set();
             String[] location = in.readUTF().split(":");
             set.set(p, in.readUTF(), in.readInt(), new Location(location[0], Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]), Float.parseFloat(location[4]), Float.parseFloat(location[5])));
         }
-        if(subchannel.equals("DelHomeCommand")){
+        if (subchannel.equals("DelHomeCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            if(p == null){
+            if (p == null) {
                 return;
             }
             Delete delete = new Delete();
             delete.delete(p, in.readUTF());
         }
-        if(subchannel.equals("ListHomeCommand")){
+        if (subchannel.equals("ListHomeCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            if(p == null){
+            if (p == null) {
                 return;
             }
             List list = new List();
@@ -87,15 +85,18 @@ public class MaSuiteHomes extends Plugin implements Listener {
         }
     }
 
-    private void sendCooldown(ProxiedPlayer p) {
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("HomeCooldown");
-        out.writeUTF(String.valueOf(p.getUniqueId()));
-        try {
-            Thread.sleep(200);
+    public void sendCooldown(ProxiedPlayer p, Home home) {
+        try (ByteArrayOutputStream b = new ByteArrayOutputStream();
+             DataOutputStream out = new DataOutputStream(b)) {
+            out.writeUTF("HomeCooldown");
+            out.writeUTF(String.valueOf(p.getUniqueId()));
             out.writeLong(System.currentTimeMillis());
-            p.getServer().sendData("BungeeCord", out.toByteArray());
-        } catch (InterruptedException e) {
+            if (!getProxy().getServerInfo(home.getServer()).getName().equals(p.getServer().getInfo().getName())) {
+                getProxy().getScheduler().schedule(this, () -> p.getServer().sendData("BungeeCord", b.toByteArray()), 500, TimeUnit.MILLISECONDS);
+            } else {
+                p.getServer().sendData("BungeeCord", b.toByteArray());
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
