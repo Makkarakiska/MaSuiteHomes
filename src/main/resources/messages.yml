@@ -9,4 +9,4 @@ home:
 homes:
   title: "&7Your homes: &b"
   name: "&b%home%"
-  split: "&7, " #Splits warps
+  split: "&7, " #Splits homes
