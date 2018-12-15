@@ -113,7 +113,7 @@ public class Home {
             connection = db.hikari.getConnection();
             statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE name = ? AND owner = ? LIMIT 1;");
             statement.setString(1, name.toLowerCase());
-            statement.setString(2, String.valueOf(owner));
+            statement.setString(2, owner.toString());
             rs = statement.executeQuery();
 
 
@@ -167,7 +167,7 @@ public class Home {
             connection = db.hikari.getConnection();
             statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE name LIKE ? ESCAPE '!' AND owner = ? LIMIT 1;");
             statement.setString(1, name.toLowerCase() + "%");
-            statement.setString(2, String.valueOf(owner));
+            statement.setString(2, owner.toString());
             rs = statement.executeQuery();
 
             boolean empty = true;
@@ -262,7 +262,7 @@ public class Home {
             connection = db.hikari.getConnection();
             statement = connection.prepareStatement("DELETE FROM " + tablePrefix + "homes WHERE name = ? AND owner = ?");
             statement.setString(1, getName().toLowerCase());
-            statement.setString(2, String.valueOf(getOwner()));
+            statement.setString(2, getOwner().toString());
             statement.execute();
 
         } catch (Exception e) {

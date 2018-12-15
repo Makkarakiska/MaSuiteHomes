@@ -2,6 +2,7 @@ package fi.matiaspaavilainen.masuitehomes.commands;
 
 import fi.matiaspaavilainen.masuitecore.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.config.Configuration;
+import fi.matiaspaavilainen.masuitecore.managers.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.Home;
 import fi.matiaspaavilainen.masuitehomes.MaSuiteHomes;
 import net.md_5.bungee.api.ProxyServer;
@@ -15,17 +16,34 @@ import java.util.concurrent.TimeUnit;
 public class Teleport {
 
     private MaSuiteHomes plugin;
-
+    private Formator formator = new Formator();
+    private Configuration config = new Configuration();
     public Teleport(MaSuiteHomes p) {
         plugin = p;
     }
 
     public void teleport(ProxiedPlayer p, String hs) {
-        Formator formator = new Formator();
-        Configuration config = new Configuration();
         Home home = new Home();
         home = home.findLike(hs, p.getUniqueId());
 
+        send(p, home);
+        plugin.sendCooldown(p, home);
+    }
+
+    public void teleport(ProxiedPlayer p, String name, String hs){
+        MaSuitePlayer msp = new MaSuitePlayer();
+        msp = msp.find(name);
+        if(msp.getUUID() == null){
+            formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
+            return;
+        }
+        Home home = new Home();
+        home = home.findLike(hs, msp.getUUID());
+
+        send(p, home);
+    }
+
+    private void send(ProxiedPlayer p, Home home) {
         if (home == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-not-found"));
             return;
@@ -51,11 +69,8 @@ public class Teleport {
                 ProxyServer.getInstance().getServerInfo(home.getServer()).sendData("BungeeCord", b.toByteArray());
             }
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.teleported").replace("%home%", home.getName()));
-            plugin.sendCooldown(p, home);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }
