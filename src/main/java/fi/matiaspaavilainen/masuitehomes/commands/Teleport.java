@@ -27,7 +27,9 @@ public class Teleport {
         home = home.findLike(hs, p.getUniqueId());
 
         send(p, home);
-        plugin.sendCooldown(p, home);
+        if(home != null){
+            plugin.sendCooldown(p, home);
+        }
     }
 
     public void teleport(ProxiedPlayer p, String name, String hs){

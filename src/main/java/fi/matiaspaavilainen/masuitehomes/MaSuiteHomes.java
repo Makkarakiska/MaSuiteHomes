@@ -130,7 +130,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         try (ByteArrayOutputStream b = new ByteArrayOutputStream();
              DataOutputStream out = new DataOutputStream(b)) {
             out.writeUTF("HomeCooldown");
-            out.writeUTF(String.valueOf(p.getUniqueId()));
+            out.writeUTF(p.getUniqueId().toString());
             out.writeLong(System.currentTimeMillis());
             if (!getProxy().getServerInfo(home.getServer()).getName().equals(p.getServer().getInfo().getName())) {
                 getProxy().getScheduler().schedule(this, () -> p.getServer().sendData("BungeeCord", b.toByteArray()), 500, TimeUnit.MILLISECONDS);
