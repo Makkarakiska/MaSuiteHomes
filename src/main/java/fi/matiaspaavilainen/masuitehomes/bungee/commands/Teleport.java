@@ -1,10 +1,10 @@
-package fi.matiaspaavilainen.masuitehomes.commands;
+package fi.matiaspaavilainen.masuitehomes.bungee.commands;
 
-import fi.matiaspaavilainen.masuitecore.chat.Formator;
-import fi.matiaspaavilainen.masuitecore.config.Configuration;
-import fi.matiaspaavilainen.masuitecore.managers.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitehomes.Home;
-import fi.matiaspaavilainen.masuitehomes.MaSuiteHomes;
+import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
+import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
+import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
+import fi.matiaspaavilainen.masuitehomes.bungee.Home;
+import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -17,14 +17,13 @@ public class Teleport {
 
     private MaSuiteHomes plugin;
     private Formator formator = new Formator();
-    private Configuration config = new Configuration();
+    private BungeeConfiguration config = new BungeeConfiguration();
     public Teleport(MaSuiteHomes p) {
         plugin = p;
     }
 
     public void teleport(ProxiedPlayer p, String hs) {
-        Home home = new Home();
-        home = home.findLike(hs, p.getUniqueId());
+        Home home = new Home().findLike(hs, p.getUniqueId());
 
         send(p, home);
         if(home != null){
@@ -33,15 +32,12 @@ public class Teleport {
     }
 
     public void teleport(ProxiedPlayer p, String name, String hs){
-        MaSuitePlayer msp = new MaSuitePlayer();
-        msp = msp.find(name);
-        if(msp.getUUID() == null){
+        MaSuitePlayer msp = new MaSuitePlayer().find(name);
+        if(msp.getUniqueId() == null){
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
         }
-        Home home = new Home();
-        home = home.findLike(hs, msp.getUUID());
-
+        Home home = new Home().findLike(hs, msp.getUniqueId());
         send(p, home);
     }
 

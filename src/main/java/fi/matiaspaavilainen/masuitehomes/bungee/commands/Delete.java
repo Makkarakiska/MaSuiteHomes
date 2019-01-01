@@ -1,15 +1,15 @@
-package fi.matiaspaavilainen.masuitehomes.commands;
+package fi.matiaspaavilainen.masuitehomes.bungee.commands;
 
-import fi.matiaspaavilainen.masuitecore.chat.Formator;
-import fi.matiaspaavilainen.masuitecore.config.Configuration;
-import fi.matiaspaavilainen.masuitecore.managers.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitehomes.Home;
+import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
+import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
+import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
+import fi.matiaspaavilainen.masuitehomes.bungee.Home;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class Delete {
 
     private Formator formator = new Formator();
-    private Configuration config = new Configuration();
+    private BungeeConfiguration config = new BungeeConfiguration();
 
     public void delete(ProxiedPlayer p, String hs) {
         Home home = new Home();
@@ -29,13 +29,13 @@ public class Delete {
     public void delete(ProxiedPlayer p, String name, String hs) {
         MaSuitePlayer msp = new MaSuitePlayer();
         msp = msp.find(name);
-        if (msp.getUUID() == null) {
+        if (msp.getUniqueId() == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
         }
 
         Home home = new Home();
-        home = home.findExact(hs, msp.getUUID());
+        home = home.findExact(hs, msp.getUniqueId());
         if (home == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-not-found"));
             return;

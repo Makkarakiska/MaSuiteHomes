@@ -1,9 +1,9 @@
-package fi.matiaspaavilainen.masuitehomes.commands;
+package fi.matiaspaavilainen.masuitehomes.bungee.commands;
 
-import fi.matiaspaavilainen.masuitecore.chat.Formator;
-import fi.matiaspaavilainen.masuitecore.config.Configuration;
-import fi.matiaspaavilainen.masuitecore.managers.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitehomes.Home;
+import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
+import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
+import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
+import fi.matiaspaavilainen.masuitehomes.bungee.Home;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -13,7 +13,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class List {
 
-    private Configuration config = new Configuration();
+    private BungeeConfiguration config = new BungeeConfiguration();
     private Formator formator = new Formator();
 
     public void list(ProxiedPlayer p) {
@@ -22,8 +22,8 @@ public class List {
 
         int i = 0;
         String split = formator.colorize(config.load("homes", "messages.yml").getString("homes.split"));
-        for (Home home : h.homes(p.getUniqueId())) {
-            if (i++ == h.homes(p.getUniqueId()).size() - 1) {
+        for (Home home : h.getHomes(p.getUniqueId())) {
+            if (i++ == h.getHomes(p.getUniqueId()).size() - 1) {
                 list(homes, home, p.getName(), p.getName());
             } else {
                 list(homes, home, p.getName(), p.getName());
@@ -35,9 +35,8 @@ public class List {
     }
 
     public void list(ProxiedPlayer p, String name) {
-        MaSuitePlayer msp = new MaSuitePlayer();
-        msp = msp.find(name);
-        if (msp.getUUID() == null) {
+        MaSuitePlayer msp = new MaSuitePlayer().find(name);
+        if (msp.getUniqueId() == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
         }
@@ -46,8 +45,8 @@ public class List {
 
         int i = 0;
         String split = formator.colorize(config.load("homes", "messages.yml").getString("homes.split"));
-        for (Home home : h.homes(msp.getUUID())) {
-            if (i++ == h.homes(msp.getUUID()).size() - 1) {
+        for (Home home : h.getHomes(msp.getUniqueId())) {
+            if (i++ == h.getHomes(msp.getUniqueId()).size() - 1) {
                 list(homes, home, p.getName(), msp.getUsername());
             } else {
                 list(homes, home, p.getName(), msp.getUsername());
