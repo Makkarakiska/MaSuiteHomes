@@ -1,0 +1,3 @@
+in-cooldown: "&cYou can go to home after %time% seconds"
+on-active-command: "You have already a command in progress, try it again in few seconds"
+no-permission: "&cNo permission"

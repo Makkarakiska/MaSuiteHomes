@@ -1,0 +1,5 @@
+name: MaSuiteHomes
+main: fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes
+version: ${project.version}
+author: Masagameplay
+depends: [MaSuiteCore]
