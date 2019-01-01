@@ -1,19 +1,19 @@
-package fi.matiaspaavilainen.masuitehomes;
+package fi.matiaspaavilainen.masuitehomes.bungee;
 
-import fi.matiaspaavilainen.masuitecore.Updator;
-import fi.matiaspaavilainen.masuitecore.Utils;
-import fi.matiaspaavilainen.masuitecore.chat.Formator;
-import fi.matiaspaavilainen.masuitecore.config.Configuration;
-import fi.matiaspaavilainen.masuitecore.managers.Location;
-import fi.matiaspaavilainen.masuitehomes.commands.Delete;
-import fi.matiaspaavilainen.masuitehomes.commands.List;
-import fi.matiaspaavilainen.masuitehomes.commands.Set;
-import fi.matiaspaavilainen.masuitehomes.commands.Teleport;
-import fi.matiaspaavilainen.masuitehomes.database.Database;
+import fi.matiaspaavilainen.masuitecore.bungee.Utils;
+import fi.matiaspaavilainen.masuitecore.core.Updator;
+import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
+import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
+import fi.matiaspaavilainen.masuitecore.core.objects.Location;
+import fi.matiaspaavilainen.masuitehomes.bungee.commands.Delete;
+import fi.matiaspaavilainen.masuitehomes.bungee.commands.List;
+import fi.matiaspaavilainen.masuitehomes.bungee.commands.Set;
+import fi.matiaspaavilainen.masuitehomes.bungee.commands.Teleport;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 
 import java.io.*;
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MaSuiteHomes extends Plugin implements Listener {
 
-    static Database db = new Database();
+    static ConnectionManager cm = null;
     private Utils utils = new Utils();
 
     @Override
@@ -29,27 +29,22 @@ public class MaSuiteHomes extends Plugin implements Listener {
         super.onEnable();
 
         //Configs
-        Configuration config = new Configuration();
+        BungeeConfiguration config = new BungeeConfiguration();
         config.create(this, "homes", "messages.yml");
         getProxy().getPluginManager().registerListener(this, this);
         //Commands
-
-        db.connect();
-        db.createTable("homes",
+        Configuration dbInfo = config.load(null, "config.yml");
+        cm = new ConnectionManager(dbInfo.getString("database.table-prefix"), dbInfo.getString("database.address"), dbInfo.getInt("database.port"), dbInfo.getString("database.name"), dbInfo.getString("database.username"), dbInfo.getString("database.password"));
+        cm.connect();
+        cm.getDatabase().createTable("homes",
                 "(id INT(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, owner VARCHAR(36) NOT NULL, server VARCHAR(100) NOT NULL, world VARCHAR(100) NOT NULL, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-        new Updator().checkVersion(this.getDescription(), "60632");
-
-        net.md_5.bungee.config.Configuration settings = config.load("homes", "messages.yml");
-        if (settings.get("player-not-found") == null) {
-            settings.set("player-not-found", "&cCould not found player with that name!");
-            config.save(settings, "/homes/messages.yml");
-        }
+        new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
     }
 
     @Override
     public void onDisable() {
-        db.hikari.close();
+        cm.close();
     }
 
     @EventHandler

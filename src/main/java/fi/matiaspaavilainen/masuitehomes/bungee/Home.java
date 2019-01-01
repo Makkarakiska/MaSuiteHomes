@@ -1,8 +1,8 @@
-package fi.matiaspaavilainen.masuitehomes;
+package fi.matiaspaavilainen.masuitehomes.bungee;
 
-import fi.matiaspaavilainen.masuitecore.config.Configuration;
-import fi.matiaspaavilainen.masuitehomes.database.Database;
-import fi.matiaspaavilainen.masuitecore.managers.Location;
+import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
+import fi.matiaspaavilainen.masuitecore.core.database.Database;
+import fi.matiaspaavilainen.masuitecore.core.objects.Location;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,20 +14,29 @@ import java.util.UUID;
 
 public class Home {
 
-    private Database db = MaSuiteHomes.db;
+    private Database db = ConnectionManager.db;
     private Connection connection = null;
     private PreparedStatement statement = null;
-    private Configuration config = new Configuration();
-    private String tablePrefix = config.load(null, "config.yml").getString("database.table-prefix");
+    private String tablePrefix = db.getTablePrefix();
     private int id;
     private String name;
     private String server;
     private UUID owner;
     private Location location;
 
+    /**
+     * An empty constructor for MaSuiteHomes
+     */
     public Home() {
     }
 
+    /**
+     * Constructor for MaSuiteHomes
+     * @param name name of the home
+     * @param server server of the home
+     * @param owner owner of the home
+     * @param loc location of the home
+     */
     public Home(String name, String server, UUID owner, Location loc) {
         this.name = name;
         this.server = server;
@@ -35,19 +44,23 @@ public class Home {
         this.location = loc;
     }
 
-    public Home set(Home home) {
+    /**
+     * Create home
+     * @return created home
+     */
+    public Home create() {
         try {
             connection = db.hikari.getConnection();
             statement = connection.prepareStatement("INSERT INTO " + tablePrefix + "homes (name, server, owner, world, x, y, z, yaw, pitch) VALUES (?,?,?,?,?,?,?,?,?);");
-            statement.setString(1, home.getName().toLowerCase());
-            statement.setString(2, home.getServer());
-            statement.setString(3, String.valueOf(home.getOwner()));
-            statement.setString(4, home.getLocation().getWorld());
-            statement.setDouble(5, home.getLocation().getX());
-            statement.setDouble(6, home.getLocation().getY());
-            statement.setDouble(7, home.getLocation().getZ());
-            statement.setFloat(8, home.getLocation().getYaw());
-            statement.setFloat(9, home.getLocation().getPitch());
+            statement.setString(1, this.name.toLowerCase());
+            statement.setString(2, this.server);
+            statement.setString(3, this.owner.toString());
+            statement.setString(4, this.location.getWorld());
+            statement.setDouble(5, this.location.getX());
+            statement.setDouble(6, this.location.getY());
+            statement.setDouble(7, this.location.getZ());
+            statement.setFloat(8, this.location.getYaw());
+            statement.setFloat(9, this.location.getPitch());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -67,22 +80,26 @@ public class Home {
                 }
             }
         }
-        return home;
+        return this;
     }
 
-    public Home update(Home home) {
+    /**
+     * Update home point
+     * @return updated home point
+     */
+    public Home update() {
         try {
             connection = db.hikari.getConnection();
             statement = connection.prepareStatement("UPDATE " + tablePrefix + "homes SET server = ?, world = ?, x = ?, y = ?, z = ?, yaw = ?, pitch = ? WHERE name = ? AND owner = ?;");
-            statement.setString(1, home.getServer());
-            statement.setString(2, home.getLocation().getWorld());
-            statement.setDouble(3, home.getLocation().getX());
-            statement.setDouble(4, home.getLocation().getY());
-            statement.setDouble(5, home.getLocation().getZ());
-            statement.setFloat(6, home.getLocation().getYaw());
-            statement.setFloat(7, home.getLocation().getPitch());
-            statement.setString(8, home.getName().toLowerCase());
-            statement.setString(9, String.valueOf(home.getOwner()));
+            statement.setString(1, this.server);
+            statement.setString(2, this.location.getWorld());
+            statement.setDouble(3, this.location.getX());
+            statement.setDouble(4, this.location.getY());
+            statement.setDouble(5, this.location.getZ());
+            statement.setFloat(6, this.location.getYaw());
+            statement.setFloat(7, this.location.getPitch());
+            statement.setString(8, this.name.toLowerCase());
+            statement.setString(9, this.owner.toString());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -102,9 +119,15 @@ public class Home {
                 }
             }
         }
-        return home;
+        return this;
     }
 
+    /**
+     * Find home by exactly name and the owner's uuid
+     * @param name name of the home point
+     * @param owner uuid of the owner
+     * @return result of the query
+     */
     public Home findExact(String name, UUID owner) {
         Home home = new Home();
         ResultSet rs = null;
@@ -158,11 +181,15 @@ public class Home {
         return home;
     }
 
+    /**
+     * Find home by like name and the owner's uuid
+     * @param name name of the home point
+     * @param owner uuid of the owner
+     * @return result of the query
+     */
     public Home findLike(String name, UUID owner) {
         Home home = new Home();
         ResultSet rs = null;
-
-
         try {
             connection = db.hikari.getConnection();
             statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE name LIKE ? ESCAPE '!' AND owner = ? LIMIT 1;");
@@ -212,7 +239,12 @@ public class Home {
         return home;
     }
 
-    public Set<Home> homes(UUID owner) {
+    /**
+     * Get all homes by UUID
+     * @param owner uuid of the owner
+     * @return set of homes
+     */
+    public Set<Home> getHomes(UUID owner) {
         HashSet<Home> homes = new HashSet<>();
         ResultSet rs = null;
         try {
@@ -257,6 +289,10 @@ public class Home {
         return homes;
     }
 
+    /**
+     * DeleteCommand home
+     * @return if deletion was successful or not
+     */
     public Boolean delete() {
         try {
             connection = db.hikari.getConnection();
