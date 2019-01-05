@@ -85,7 +85,7 @@ public class SetCommand implements CommandExecutor {
                             out.writeUTF(p.getName());
                             out.writeUTF(loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":" + loc.getYaw() + ":" + loc.getPitch());
                             out.writeUTF(args[0]);
-                            out.write(-1);
+                            out.writeInt(-1);
                             p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
                         } else {
                             formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
