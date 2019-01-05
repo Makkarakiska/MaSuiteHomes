@@ -83,8 +83,9 @@ public class SetCommand implements CommandExecutor {
                         if (p.hasPermission("masuitehomes.home.set.other")) {
                             out.writeUTF("SetHomeOtherCommand");
                             out.writeUTF(p.getName());
-                            out.writeUTF(loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":" + loc.getYaw() + ":" + loc.getPitch());
                             out.writeUTF(args[0]);
+                            out.writeUTF(loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":" + loc.getYaw() + ":" + loc.getPitch());
+                            out.writeUTF(args[1]);
                             out.writeInt(-1);
                             p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
                         } else {
