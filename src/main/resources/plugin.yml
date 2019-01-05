@@ -1,4 +1,4 @@
-name: MaSuiteHomesBridge
+name: MaSuiteHomes
 main: fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes
 version: ${project.version}
 author: Masagameplay
