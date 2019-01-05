@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 public class MaSuiteHomes extends Plugin implements Listener {
 
-    static ConnectionManager cm = null;
     private Utils utils = new Utils();
 
     @Override
@@ -34,17 +33,10 @@ public class MaSuiteHomes extends Plugin implements Listener {
         getProxy().getPluginManager().registerListener(this, this);
         //Commands
         Configuration dbInfo = config.load(null, "config.yml");
-        cm = new ConnectionManager(dbInfo.getString("database.table-prefix"), dbInfo.getString("database.address"), dbInfo.getInt("database.port"), dbInfo.getString("database.name"), dbInfo.getString("database.username"), dbInfo.getString("database.password"));
-        cm.connect();
-        cm.getDatabase().createTable("homes",
+        ConnectionManager.db.createTable("homes",
                 "(id INT(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, owner VARCHAR(36) NOT NULL, server VARCHAR(100) NOT NULL, world VARCHAR(100) NOT NULL, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
         new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
-    }
-
-    @Override
-    public void onDisable() {
-        cm.close();
     }
 
     @EventHandler
