@@ -1,4 +1,4 @@
-package fi.matiaspaavilainen.masuitehomes.bungee;
+package fi.matiaspaavilainen.masuitehomes.core;
 
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
 import fi.matiaspaavilainen.masuitecore.core.database.Database;

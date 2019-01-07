@@ -1,7 +1,8 @@
-package fi.matiaspaavilainen.masuitehomes.bukkit.commands;
+package fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy;
 
 import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
+import fi.matiaspaavilainen.masuitecore.core.objects.PluginChannel;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -9,17 +10,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-public class ListCommand implements CommandExecutor {
+public class BungeeDeleteCommand implements CommandExecutor {
 
     private MaSuiteHomes plugin;
     private Formator formator = new Formator();
     private BukkitConfiguration config = new BukkitConfiguration();
 
-    public ListCommand(MaSuiteHomes p) {
+    public BungeeDeleteCommand(MaSuiteHomes p) {
         plugin = p;
     }
 
@@ -39,30 +36,25 @@ public class ListCommand implements CommandExecutor {
             plugin.in_command.add(cs);
 
             Player p = (Player) cs;
-            try (ByteArrayOutputStream b = new ByteArrayOutputStream();
-                 DataOutputStream out = new DataOutputStream(b)) {
-                if (args.length == 0) {
-                    out.writeUTF("ListHomeCommand");
-                    out.writeUTF(p.getName());
-                    p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
-                } else if (args.length == 1) {
-                    if (p.hasPermission("masuitehomes.home.list.other")) {
-                        out.writeUTF("ListHomeOtherCommand");
-                        out.writeUTF(p.getName());
-                        out.writeUTF(args[0]);
-                        p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+            switch (args.length) {
+                case (0):
+                    new PluginChannel(plugin, p, new Object[]{"DelHomeCommand", p.getName(), "home"}).send();
+                    break;
+                case (1):
+                    new PluginChannel(plugin, p, new Object[]{"DelHomeCommand", p.getName(), args[0]}).send();
+                    break;
+                case (2):
+                    if (p.hasPermission("masuitehomes.home.delete.other")) {
+                        new PluginChannel(plugin, p, new Object[]{"DelHomeOtherCommand", p.getName(), args[0], args[1]}).send();
                     } else {
                         formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
                     }
-
-                } else {
-                    formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.list"));
-                }
-
-                plugin.in_command.remove(cs);
-            } catch (IOException e) {
-                e.printStackTrace();
+                    break;
+                default:
+                    formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.delete"));
+                    break;
             }
+            plugin.in_command.remove(cs);
         });
 
         return true;

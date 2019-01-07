@@ -1,8 +1,14 @@
-package fi.matiaspaavilainen.masuitehomes.bukkit.commands;
+package fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone;
 
+import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
+import fi.matiaspaavilainen.masuitecore.core.adapters.BukkitAdapter;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
+import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
+import fi.matiaspaavilainen.masuitecore.core.objects.PluginChannel;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
+import fi.matiaspaavilainen.masuitehomes.core.Home;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -10,16 +16,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.util.UUID;
 
-public class TeleportCommand implements CommandExecutor {
+public class StandaloneTeleportCommand implements CommandExecutor {
+
     private MaSuiteHomes plugin;
     private Formator formator = new Formator();
     private BukkitConfiguration config = new BukkitConfiguration();
 
-    public TeleportCommand(MaSuiteHomes p) {
+    public StandaloneTeleportCommand(MaSuiteHomes p) {
         plugin = p;
     }
 
@@ -40,35 +45,23 @@ public class TeleportCommand implements CommandExecutor {
 
             Player p = (Player) cs;
 
-            try (ByteArrayOutputStream b = new ByteArrayOutputStream();
-                 DataOutputStream out = new DataOutputStream(b)) {
                 switch (args.length) {
                     case (0):
                         if (checkCooldown(p)) {
-                            sendLastLoc(p);
-                            out.writeUTF("HomeCommand");
-                            out.writeUTF(p.getName());
-                            out.writeUTF("home");
-                            p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                            teleport("home", p, p.getUniqueId());
                         }
                         break;
                     case (1):
                         if (checkCooldown(p)) {
-                            sendLastLoc(p);
-                            out.writeUTF("HomeCommand");
-                            out.writeUTF(p.getName());
-                            out.writeUTF(args[0]);
-                            p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                            teleport(args[0], p, p.getUniqueId());
                         }
                         break;
                     case (2):
                         if (p.hasPermission("masuitehomes.home.teleport.other")) {
-                            sendLastLoc(p);
-                            out.writeUTF("HomeOtherCommand");
-                            out.writeUTF(p.getName());
-                            out.writeUTF(args[0]);
-                            out.writeUTF(args[1]);
-                            p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                            MaSuitePlayer msp = new MaSuitePlayer().find(args[0]);
+                            if (msp.getUniqueId() != null) {
+                                teleport(args[1], p, msp.getUniqueId());
+                            }
                         } else {
                             formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
                         }
@@ -78,13 +71,19 @@ public class TeleportCommand implements CommandExecutor {
                         break;
                 }
 
-                plugin.in_command.remove(cs);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            plugin.in_command.remove(cs);
         });
 
         return true;
+    }
+
+    private void teleport(String name, Player p, UUID uniqueId) {
+        Home home = new Home().findLike(name, uniqueId);
+        if (home != null) {
+            p.teleport(BukkitAdapter.adapt(home.getLocation()));
+        } else {
+            p.spigot().sendMessage(new TextComponent("Could not find home with that name"));
+        }
     }
 
     private Boolean checkCooldown(Player p) {
@@ -102,22 +101,5 @@ public class TeleportCommand implements CommandExecutor {
             }
         }
         return true;
-    }
-
-    private void sendLastLoc(Player p) {
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(b);
-        try {
-            out.writeUTF("MaSuiteTeleports");
-            out.writeUTF("GetLocation");
-            out.writeUTF(p.getName());
-            Location loc = p.getLocation();
-            out.writeUTF(loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":"
-                    + loc.getYaw() + ":" + loc.getPitch());
-            out.writeUTF("DETECTSERVER");
-            p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
     }
 }

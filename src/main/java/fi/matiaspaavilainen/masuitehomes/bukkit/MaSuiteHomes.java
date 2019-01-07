@@ -1,13 +1,21 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit;
 
+import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
-import fi.matiaspaavilainen.masuitehomes.bukkit.commands.DeleteCommand;
-import fi.matiaspaavilainen.masuitehomes.bukkit.commands.ListCommand;
-import fi.matiaspaavilainen.masuitehomes.bukkit.commands.SetCommand;
-import fi.matiaspaavilainen.masuitehomes.bukkit.commands.TeleportCommand;
+import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeDeleteCommand;
+import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeListCommand;
+import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeSetCommand;
+import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeTeleportCommand;
+import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneDeleteCommand;
+import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneListCommand;
+import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneSetCommand;
+import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneTeleportCommand;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.FileConfigurationOptions;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -23,17 +31,42 @@ public class MaSuiteHomes extends JavaPlugin {
 
         // Create configs
         config.create(this, "homes", "config.yml");
-        config.create(this, "homes", "messages.yml");
         config.create(this, "homes", "syntax.yml");
 
+        if (MaSuiteCore.bungee) {
+            setupBungee();
+        } else {
+            setupNoBungee();
+        }
+
+    }
+
+    private void setupBungee() {
+        config.create(this, "homes", "messages.yml");
         // Register channels
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new HomeMessageListener());
 
         // Register commands
-        getCommand("sethome").setExecutor(new SetCommand(this));
-        getCommand("delhome").setExecutor(new DeleteCommand(this));
-        getCommand("home").setExecutor(new TeleportCommand(this));
-        getCommand("homes").setExecutor(new ListCommand(this));
+        getCommand("sethome").setExecutor(new BungeeSetCommand(this));
+        getCommand("delhome").setExecutor(new BungeeDeleteCommand(this));
+        getCommand("home").setExecutor(new BungeeTeleportCommand(this));
+        getCommand("homes").setExecutor(new BungeeListCommand(this));
+    }
+
+    private void setupNoBungee() {
+        config.copyFromBungee(this, "homes", "messages.yml");
+        try {
+            FileConfiguration fb = config.load("homes", "messages.yml");
+            fb.addDefault("in-cooldown", "&cYou can go to home after %time% seconds");
+            fb.save("plugins/MaSuite/homes/messages.yml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // Register commands
+        getCommand("sethome").setExecutor(new StandaloneSetCommand(this));
+        getCommand("delhome").setExecutor(new StandaloneDeleteCommand(this));
+        getCommand("home").setExecutor(new StandaloneTeleportCommand(this));
+        getCommand("homes").setExecutor(new StandaloneListCommand(this));
     }
 }
