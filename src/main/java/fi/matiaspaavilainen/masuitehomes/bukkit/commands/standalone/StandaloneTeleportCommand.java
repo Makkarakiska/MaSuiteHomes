@@ -1,16 +1,12 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone;
 
-import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.adapters.BukkitAdapter;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitecore.core.objects.PluginChannel;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -61,6 +57,8 @@ public class StandaloneTeleportCommand implements CommandExecutor {
                             MaSuitePlayer msp = new MaSuitePlayer().find(args[0]);
                             if (msp.getUniqueId() != null) {
                                 teleport(args[1], p, msp.getUniqueId());
+                            } else {
+                                formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
                             }
                         } else {
                             formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
@@ -81,8 +79,9 @@ public class StandaloneTeleportCommand implements CommandExecutor {
         Home home = new Home().findLike(name, uniqueId);
         if (home != null) {
             p.teleport(BukkitAdapter.adapt(home.getLocation()));
+            formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.teleported").replace("%home%", home.getName()));
         } else {
-            p.spigot().sendMessage(new TextComponent("Could not find home with that name"));
+            formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-not-found"));
         }
     }
 

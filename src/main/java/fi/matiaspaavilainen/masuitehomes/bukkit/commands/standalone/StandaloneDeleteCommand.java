@@ -5,7 +5,6 @@ import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -51,7 +50,9 @@ public class StandaloneDeleteCommand implements CommandExecutor {
                     if (p.hasPermission("masuitehomes.home.delete.other")) {
                         MaSuitePlayer msp = new MaSuitePlayer().find(args[0]);
                         if (msp.getUniqueId() != null) {
-                            delete(args[0], p, p.getUniqueId());
+                            delete(args[0], p, msp.getUniqueId());
+                        } else {
+                            formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
                         }
                     } else {
                         formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
@@ -70,9 +71,13 @@ public class StandaloneDeleteCommand implements CommandExecutor {
     private void delete(String name, Player p, UUID uuid) {
         Home home = new Home().findExact(name, uuid);
         if (home != null) {
-            home.delete();
+            if (home.delete()) {
+                formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.deleted").replace("%home%", home.getName()));
+            } else {
+                System.out.println("[MaSuite] [Homes] There was an error during removing home.");
+            }
         } else {
-            p.spigot().sendMessage(new TextComponent("Could not find home with that name"));
+            formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-not-found"));
         }
     }
 }

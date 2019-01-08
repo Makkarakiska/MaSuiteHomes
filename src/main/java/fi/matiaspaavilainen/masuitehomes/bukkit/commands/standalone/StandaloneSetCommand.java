@@ -4,7 +4,6 @@ import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.adapters.BukkitAdapter;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitecore.core.objects.PluginChannel;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.bungee.Home;
 import org.bukkit.Bukkit;
@@ -69,6 +68,8 @@ public class StandaloneSetCommand implements CommandExecutor {
                         MaSuitePlayer msp = new MaSuitePlayer().find(args[0]);
                         if(msp.getUniqueId() != null){
                             set(msp.getUniqueId(), p, args[1], max, p.getLocation());
+                        } else {
+                            formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
                         }
                     } else {
                         formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
