@@ -32,7 +32,7 @@ public class StandaloneDeleteCommand implements CommandExecutor {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 
             if (plugin.in_command.contains(cs)) {
-                formator.sendMessage((Player) cs, config.load(null, "messages.yml").getString("on-active-command"));
+                formator.sendMessage(cs, config.load(null, "messages.yml").getString("on-active-command"));
                 return;
             }
 
