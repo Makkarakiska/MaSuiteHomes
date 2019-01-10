@@ -2,6 +2,7 @@ package fi.matiaspaavilainen.masuitehomes.bukkit;
 
 import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
+import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeDeleteCommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeListCommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeSetCommand;
@@ -12,7 +13,6 @@ import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneSe
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneTeleportCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.FileConfigurationOptions;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -63,6 +63,9 @@ public class MaSuiteHomes extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        ConnectionManager.db.createTable("homes","(id INT(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, owner VARCHAR(36) NOT NULL, server VARCHAR(100) NOT NULL, world VARCHAR(100) NOT NULL, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
         // Register commands
         getCommand("sethome").setExecutor(new StandaloneSetCommand(this));
         getCommand("delhome").setExecutor(new StandaloneDeleteCommand(this));
