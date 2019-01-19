@@ -12,8 +12,7 @@ public class Delete {
     private BungeeConfiguration config = new BungeeConfiguration();
 
     public void delete(ProxiedPlayer p, String hs) {
-        Home home = new Home();
-        home = home.findExact(hs, p.getUniqueId());
+        Home home = new Home().findExact(hs, p.getUniqueId());
         if (home == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-not-found"));
             return;
@@ -27,8 +26,7 @@ public class Delete {
     }
 
     public void delete(ProxiedPlayer p, String name, String hs) {
-        MaSuitePlayer msp = new MaSuitePlayer();
-        msp = msp.find(name);
+        MaSuitePlayer msp = new MaSuitePlayer().find(name);
         if (msp.getUniqueId() == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
