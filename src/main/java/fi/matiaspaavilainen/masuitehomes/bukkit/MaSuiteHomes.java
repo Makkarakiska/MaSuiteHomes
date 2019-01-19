@@ -1,6 +1,7 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit;
 
 import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
+import fi.matiaspaavilainen.masuitecore.core.Updator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeDeleteCommand;
@@ -39,6 +40,7 @@ public class MaSuiteHomes extends JavaPlugin {
             setupNoBungee();
         }
 
+        new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
     }
 
     private void setupBungee() {
