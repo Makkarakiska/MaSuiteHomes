@@ -44,7 +44,7 @@ public class BungeeListCommand implements CommandExecutor {
 
             } else if (args.length == 1) {
                 if (p.hasPermission("masuitehomes.home.list.other")) {
-                    new BukkitPluginChannel(plugin, p, new Object[]{"ListHomeCommand", p.getName(), args[0]}).send();
+                    new BukkitPluginChannel(plugin, p, new Object[]{"ListHomeOtherCommand", p.getName(), args[0]}).send();
                 } else {
                     formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
                 }
