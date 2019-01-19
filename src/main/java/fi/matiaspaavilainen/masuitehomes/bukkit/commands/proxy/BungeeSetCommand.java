@@ -1,8 +1,8 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy;
 
 import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
+import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
-import fi.matiaspaavilainen.masuitecore.core.objects.PluginChannel;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -60,14 +60,14 @@ public class BungeeSetCommand implements CommandExecutor {
             String l = loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":" + loc.getYaw() + ":" + loc.getPitch();
             switch (args.length) {
                 case (0):
-                    new PluginChannel(plugin, p, new Object[]{"SetHomeCommand", p.getName(), l, "home", max}).send();
+                    new BukkitPluginChannel(plugin, p, new Object[]{"SetHomeCommand", p.getName(), l, "home", max}).send();
                     break;
                 case (1):
-                    new PluginChannel(plugin, p, new Object[]{"SetHomeCommand", p.getName(), l, args[0], max}).send();
+                    new BukkitPluginChannel(plugin, p, new Object[]{"SetHomeCommand", p.getName(), l, args[0], max}).send();
                     break;
                 case (2):
                     if (p.hasPermission("masuitehomes.home.set.other")) {
-                        new PluginChannel(plugin, p, new Object[]{"SetHomeOtherCommand", p.getName(), args[0], l, args[1], -1}).send();
+                        new BukkitPluginChannel(plugin, p, new Object[]{"SetHomeOtherCommand", p.getName(), args[0], l, args[1], -1}).send();
                     } else {
                         formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
                     }

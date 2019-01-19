@@ -1,8 +1,8 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy;
 
 import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
+import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
-import fi.matiaspaavilainen.masuitecore.core.objects.PluginChannel;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -38,14 +38,14 @@ public class BungeeDeleteCommand implements CommandExecutor {
             Player p = (Player) cs;
             switch (args.length) {
                 case (0):
-                    new PluginChannel(plugin, p, new Object[]{"DelHomeCommand", p.getName(), "home"}).send();
+                    new BukkitPluginChannel(plugin, p, new Object[]{"DelHomeCommand", p.getName(), "home"}).send();
                     break;
                 case (1):
-                    new PluginChannel(plugin, p, new Object[]{"DelHomeCommand", p.getName(), args[0]}).send();
+                    new BukkitPluginChannel(plugin, p, new Object[]{"DelHomeCommand", p.getName(), args[0]}).send();
                     break;
                 case (2):
                     if (p.hasPermission("masuitehomes.home.delete.other")) {
-                        new PluginChannel(plugin, p, new Object[]{"DelHomeOtherCommand", p.getName(), args[0], args[1]}).send();
+                        new BukkitPluginChannel(plugin, p, new Object[]{"DelHomeOtherCommand", p.getName(), args[0], args[1]}).send();
                     } else {
                         formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
                     }

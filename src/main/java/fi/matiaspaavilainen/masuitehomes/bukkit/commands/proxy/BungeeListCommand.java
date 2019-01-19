@@ -2,8 +2,8 @@ package fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy;
 
 import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
+import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
-import fi.matiaspaavilainen.masuitecore.core.objects.PluginChannel;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -39,12 +39,12 @@ public class BungeeListCommand implements CommandExecutor {
             Player p = (Player) cs;
             if (args.length == 0) {
                 if(MaSuiteCore.bungee){
-                    new PluginChannel(plugin, p, new Object[]{"ListHomeCommand", p.getName()}).send();
+                    new BukkitPluginChannel(plugin, p, new Object[]{"ListHomeCommand", p.getName()}).send();
                 }
 
             } else if (args.length == 1) {
                 if (p.hasPermission("masuitehomes.home.list.other")) {
-                    new PluginChannel(plugin, p, new Object[]{"ListHomeCommand", p.getName(), args[0]}).send();
+                    new BukkitPluginChannel(plugin, p, new Object[]{"ListHomeCommand", p.getName(), args[0]}).send();
                 } else {
                     formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
                 }

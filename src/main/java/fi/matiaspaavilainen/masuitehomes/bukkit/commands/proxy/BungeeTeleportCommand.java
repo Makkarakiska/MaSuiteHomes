@@ -1,8 +1,8 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy;
 
 import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
+import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
-import fi.matiaspaavilainen.masuitecore.core.objects.PluginChannel;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -36,31 +36,31 @@ public class BungeeTeleportCommand implements CommandExecutor {
             plugin.in_command.add(cs);
 
             Player p = (Player) cs;
-                switch (args.length) {
-                    case (0):
-                        if (checkCooldown(p)) {
-                            sendLastLoc(p);
-                            new PluginChannel(plugin, p, new Object[]{"HomeCommand", p.getName(), "home"}).send();
-                        }
-                        break;
-                    case (1):
-                        if (checkCooldown(p)) {
-                            sendLastLoc(p);
-                            new PluginChannel(plugin, p, new Object[]{"HomeCommand", p.getName(), args[0]}).send();
-                        }
-                        break;
-                    case (2):
-                        if (p.hasPermission("masuitehomes.home.teleport.other")) {
-                            sendLastLoc(p);
-                            new PluginChannel(plugin, p, new Object[]{"HomeOtherCommand", p.getName(), args[0], args[1]}).send();
-                        } else {
-                            formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
-                        }
-                        break;
-                    default:
-                        formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.teleport"));
-                        break;
-                }
+            switch (args.length) {
+                case (0):
+                    if (checkCooldown(p)) {
+                        sendLastLoc(p);
+                        new BukkitPluginChannel(plugin, p, new Object[]{"HomeCommand", p.getName(), "home"}).send();
+                    }
+                    break;
+                case (1):
+                    if (checkCooldown(p)) {
+                        sendLastLoc(p);
+                        new BukkitPluginChannel(plugin, p, new Object[]{"HomeCommand", p.getName(), args[0]}).send();
+                    }
+                    break;
+                case (2):
+                    if (p.hasPermission("masuitehomes.home.teleport.other")) {
+                        sendLastLoc(p);
+                        new BukkitPluginChannel(plugin, p, new Object[]{"HomeOtherCommand", p.getName(), args[0], args[1]}).send();
+                    } else {
+                        formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
+                    }
+                    break;
+                default:
+                    formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.teleport"));
+                    break;
+            }
 
             plugin.in_command.remove(cs);
         });
@@ -87,7 +87,7 @@ public class BungeeTeleportCommand implements CommandExecutor {
 
     private void sendLastLoc(Player p) {
         Location loc = p.getLocation();
-        new PluginChannel(plugin, p, new Object[]{"MaSuiteTeleports", "GetLocation", p.getName(), loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":"
+        new BukkitPluginChannel(plugin, p, new Object[]{"MaSuiteTeleports", "GetLocation", p.getName(), loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":"
                 + loc.getYaw() + ":" + loc.getPitch()}).send();
     }
 }
