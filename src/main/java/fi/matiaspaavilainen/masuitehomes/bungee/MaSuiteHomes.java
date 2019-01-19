@@ -2,6 +2,7 @@ package fi.matiaspaavilainen.masuitehomes.bungee;
 
 import fi.matiaspaavilainen.masuitecore.bungee.Utils;
 import fi.matiaspaavilainen.masuitecore.core.Updator;
+import fi.matiaspaavilainen.masuitecore.core.channels.BungeePluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
 import fi.matiaspaavilainen.masuitecore.core.objects.Location;
@@ -30,7 +31,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         getProxy().getPluginManager().registerListener(this, this);
 
         //Commands
-        ConnectionManager.db.createTable("homes","(id INT(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, owner VARCHAR(36) NOT NULL, server VARCHAR(100) NOT NULL, world VARCHAR(100) NOT NULL, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+        ConnectionManager.db.createTable("homes", "(id INT(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, owner VARCHAR(36) NOT NULL, server VARCHAR(100) NOT NULL, world VARCHAR(100) NOT NULL, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
         // Check updates
         new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
@@ -111,18 +112,13 @@ public class MaSuiteHomes extends Plugin implements Listener {
     }
 
     public void sendCooldown(ProxiedPlayer p, Home home) {
-        try (ByteArrayOutputStream b = new ByteArrayOutputStream();
-             DataOutputStream out = new DataOutputStream(b)) {
-            out.writeUTF("HomeCooldown");
-            out.writeUTF(p.getUniqueId().toString());
-            out.writeLong(System.currentTimeMillis());
-            if (!getProxy().getServerInfo(home.getServer()).getName().equals(p.getServer().getInfo().getName())) {
-                getProxy().getScheduler().schedule(this, () -> p.getServer().sendData("BungeeCord", b.toByteArray()), 500, TimeUnit.MILLISECONDS);
-            } else {
-                p.getServer().sendData("BungeeCord", b.toByteArray());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        BungeePluginChannel bpc = new BungeePluginChannel(this, p.getServer().getInfo(), new Object[]{
+                new Object[]{"HomeCooldown", p.getUniqueId().toString(), System.currentTimeMillis()}
+        });
+        if (!getProxy().getServerInfo(home.getServer()).getName().equals(p.getServer().getInfo().getName())) {
+            getProxy().getScheduler().schedule(this, bpc::send, 500, TimeUnit.MILLISECONDS);
+        } else {
+            bpc.send();
         }
 
     }
