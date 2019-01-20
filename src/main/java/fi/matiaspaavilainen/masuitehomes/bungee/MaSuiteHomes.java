@@ -112,9 +112,8 @@ public class MaSuiteHomes extends Plugin implements Listener {
     }
 
     public void sendCooldown(ProxiedPlayer p, Home home) {
-        BungeePluginChannel bpc = new BungeePluginChannel(this, p.getServer().getInfo(), new Object[]{
-                new Object[]{"HomeCooldown", p.getUniqueId().toString(), System.currentTimeMillis()}
-        });
+        BungeePluginChannel bpc = new BungeePluginChannel(this, p.getServer().getInfo(),
+                new Object[]{"HomeCooldown", p.getUniqueId().toString(), System.currentTimeMillis()});
         if (!getProxy().getServerInfo(home.getServer()).getName().equals(p.getServer().getInfo().getName())) {
             getProxy().getScheduler().schedule(this, bpc::send, 500, TimeUnit.MILLISECONDS);
         } else {
