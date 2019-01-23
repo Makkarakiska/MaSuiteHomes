@@ -4,11 +4,12 @@ import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.bungee.Home;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class List {
@@ -18,19 +19,38 @@ public class List {
 
     public void list(ProxiedPlayer p) {
         Home h = new Home();
-        TextComponent homes = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.title")));
 
-        int i = 0;
-        String split = formator.colorize(config.load("homes", "messages.yml").getString("homes.split"));
+        HashMap<String, ArrayList<Home>> homeList = new HashMap<>();
         for (Home home : h.getHomes(p.getUniqueId())) {
-            if (i++ == h.getHomes(p.getUniqueId()).size() - 1) {
-                list(homes, home, p.getName(), p.getName());
-            } else {
-                list(homes, home, p.getName(), p.getName());
-                homes.addExtra(split);
+            if (!homeList.containsKey(home.getServer())) {
+                homeList.put(home.getServer(), new ArrayList<>());
             }
+            homeList.get(home.getServer()).add(home);
         }
-        p.sendMessage(homes);
+
+        BaseComponent baseHome = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.title")));
+        baseHome.addExtra("\n");
+
+        int homeTotal = h.getHomes(p.getUniqueId()).size() - 1;
+        AtomicInteger count = new AtomicInteger();
+
+        homeList.forEach((s, homes) -> {
+            final int[] i = {0};
+            TextComponent serverTitle = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", s)));
+            homes.forEach(home -> {
+                if (i[0]++ == homes.size() - 1) {
+                    serverTitle.addExtra(addToList(home, p.getName(), p.getName(), false));
+                } else {
+                    serverTitle.addExtra(addToList(home, p.getName(), p.getName(), true));
+                }
+            });
+            if (count.getAndIncrement() != homeTotal) {
+                serverTitle.addExtra("\n");
+            }
+            baseHome.addExtra(serverTitle);
+        });
+
+        p.sendMessage(baseHome);
 
     }
 
@@ -41,23 +61,44 @@ public class List {
             return;
         }
         Home h = new Home();
-        TextComponent homes = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.title")));
-
-        int i = 0;
-        String split = formator.colorize(config.load("homes", "messages.yml").getString("homes.split"));
-        for (Home home : h.getHomes(msp.getUniqueId())) {
-            if (i++ == h.getHomes(msp.getUniqueId()).size() - 1) {
-                list(homes, home, p.getName(), msp.getUsername());
-            } else {
-                list(homes, home, p.getName(), msp.getUsername());
-                homes.addExtra(split);
+        HashMap<String, ArrayList<Home>> homeList = new HashMap<>();
+        for (Home home : h.getHomes(p.getUniqueId())) {
+            if (!homeList.containsKey(home.getServer())) {
+                homeList.put(home.getServer(), new ArrayList<>());
             }
+            homeList.get(home.getServer()).add(home);
         }
-        p.sendMessage(homes);
+
+        BaseComponent baseHome = new TextComponent(
+                formator.colorize(config.load("homes", "messages.yml")
+                        .getString("homes.title-others")
+                        .replace("%player%", msp.getUsername())));
+        baseHome.addExtra("\n");
+
+        int homeTotal = h.getHomes(msp.getUniqueId()).size() - 1;
+        AtomicInteger count = new AtomicInteger();
+        homeList.forEach((s, homes) -> {
+            final int[] i = {0};
+            TextComponent serverTitle = new TextComponent(
+                    formator.colorize(config.load("homes", "messages.yml")
+                            .getString("homes.server-name").replace("%server%", s)));
+            homes.forEach(home -> {
+                if (i[0]++ == homes.size() - 1) {
+                    serverTitle.addExtra(addToList(home, p.getName(), msp.getUsername(), false));
+                } else {
+                    serverTitle.addExtra(addToList(home, p.getName(), msp.getUsername(), true));
+                }
+            });
+            if (count.getAndIncrement() != homeTotal) {
+                serverTitle.addExtra("\n");
+            }
+            baseHome.addExtra(serverTitle);
+        });
+        p.sendMessage(baseHome);
 
     }
 
-    private void list(TextComponent homes, Home home, String requester, String owner) {
+    private TextComponent addToList(Home home, String requester, String owner, boolean splitter) {
         TextComponent hc = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.name").replace("%home%", home.getName())));
         if (requester.equalsIgnoreCase(owner)) {
             hc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + home.getName()));
@@ -65,6 +106,10 @@ public class List {
             hc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + owner + " " + home.getName()));
         }
         hc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(formator.colorize(config.load("homes", "messages.yml").getString("home-hover-text").replace("%home%", home.getName()))).create()));
-        homes.addExtra(hc);
+        if (splitter) {
+            hc.addExtra(formator.colorize(config.load("homes", "messages.yml").getString("homes.split")));
+        }
+
+        return hc;
     }
 }
