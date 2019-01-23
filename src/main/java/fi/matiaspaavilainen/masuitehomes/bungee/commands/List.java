@@ -3,7 +3,7 @@ package fi.matiaspaavilainen.masuitehomes.bungee.commands;
 import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitehomes.bungee.Home;
+import fi.matiaspaavilainen.masuitehomes.core.Home;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -31,7 +31,7 @@ public class List {
         BaseComponent baseHome = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.title")));
         baseHome.addExtra("\n");
 
-        int homeTotal = h.getHomes(p.getUniqueId()).size() - 1;
+        int homeTotal = homeList.size() - 1;
         AtomicInteger count = new AtomicInteger();
 
         homeList.forEach((s, homes) -> {
