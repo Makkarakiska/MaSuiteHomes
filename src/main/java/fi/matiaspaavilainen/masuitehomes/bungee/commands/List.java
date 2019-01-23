@@ -75,7 +75,7 @@ public class List {
                         .replace("%player%", msp.getUsername())));
         baseHome.addExtra("\n");
 
-        int homeTotal = h.getHomes(msp.getUniqueId()).size() - 1;
+        int homeTotal = homeList.size() - 1;
         AtomicInteger count = new AtomicInteger();
         homeList.forEach((s, homes) -> {
             final int[] i = {0};
