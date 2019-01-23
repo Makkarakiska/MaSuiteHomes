@@ -61,6 +61,8 @@ public class MaSuiteHomes extends JavaPlugin {
         try {
             FileConfiguration fb = config.load("homes", "messages.yml");
             fb.addDefault("in-cooldown", "&cYou can go to home after %time% seconds");
+            fb.addDefault("homes.title-others", "&9%player%''s &7homes: ");
+            fb.addDefault("homes.server-name", "&9%server%&7: ");
             fb.save("plugins/MaSuite/homes/messages.yml");
         } catch (IOException e) {
             e.printStackTrace();

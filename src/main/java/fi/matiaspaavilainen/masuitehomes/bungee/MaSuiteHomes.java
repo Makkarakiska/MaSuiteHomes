@@ -16,7 +16,9 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class MaSuiteHomes extends Plugin implements Listener {
@@ -35,6 +37,9 @@ public class MaSuiteHomes extends Plugin implements Listener {
 
         // Check updates
         new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
+
+        config.addDefault("homes/messages.yml", "homes.title-others", "&9%player%''s &7homes: ");
+        config.addDefault("homes/messages.yml", "homes.server-name", "&9%server%&7: ");
     }
 
     @EventHandler
