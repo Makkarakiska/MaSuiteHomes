@@ -10,6 +10,7 @@ import fi.matiaspaavilainen.masuitehomes.bungee.commands.Delete;
 import fi.matiaspaavilainen.masuitehomes.bungee.commands.List;
 import fi.matiaspaavilainen.masuitehomes.bungee.commands.Set;
 import fi.matiaspaavilainen.masuitehomes.bungee.commands.Teleport;
+import fi.matiaspaavilainen.masuitehomes.core.Home;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;

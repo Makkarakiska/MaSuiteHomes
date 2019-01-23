@@ -4,7 +4,7 @@ import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
-import fi.matiaspaavilainen.masuitehomes.bungee.Home;
+import fi.matiaspaavilainen.masuitehomes.core.Home;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;

@@ -5,7 +5,7 @@ import fi.matiaspaavilainen.masuitecore.core.adapters.BukkitAdapter;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
-import fi.matiaspaavilainen.masuitehomes.bungee.Home;
+import fi.matiaspaavilainen.masuitehomes.core.Home;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;

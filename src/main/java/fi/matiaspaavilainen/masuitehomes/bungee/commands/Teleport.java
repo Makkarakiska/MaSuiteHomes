@@ -4,8 +4,8 @@ import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.channels.BungeePluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitehomes.bungee.Home;
 import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
+import fi.matiaspaavilainen.masuitehomes.core.Home;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
