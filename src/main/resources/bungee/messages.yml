@@ -1,13 +1,15 @@
-home-limit-reached: "&cYou have reached home limit"
-home-not-found: "&cHome with that name not found"
-home-hover-text: "&8Teleport to &9%home%"
-player-not-found: "&cCould not found player with that name!"
+home-limit-reached: '&cYou have reached home limit'
+home-not-found: '&cHome with that name not found'
+home-hover-text: '&8Teleport to &9%home%'
+player-not-found: '&cCould not found player with that name!'
 home:
-  set: "&7Created home with name &b%home%&7!"
-  updated: "&7Updated home with name &b%home%&7!"
-  deleted: "&7Deleted home with name &b%home%&7!"
-  teleported: "&7Teleported to &b%home%&7!"
+  set: '&7Created home with name &9%home%&7!'
+  updated: '&7Updated home with name &9%home%&7!'
+  deleted: '&7Deleted home with name &9%home%&7!'
+  teleported: '&7Teleported to &9%home%&7!'
 homes:
-  title: "&7Your homes: &b"
-  name: "&b%home%"
-  split: "&7, " #Splits homes
+  title: '&9Your &7homes: &b'
+  name: '&7%home%'
+  split: '&7, '
+  title-others: '&9%player%''s &7homes: '
+  server-name: ' &9%server%&7: '
