@@ -32,10 +32,11 @@ public class Home {
 
     /**
      * Constructor for MaSuiteHomes
-     * @param name name of the home
+     *
+     * @param name   name of the home
      * @param server server of the home
-     * @param owner owner of the home
-     * @param loc location of the home
+     * @param owner  owner of the home
+     * @param loc    location of the home
      */
     public Home(String name, String server, UUID owner, Location loc) {
         this.name = name;
@@ -46,6 +47,7 @@ public class Home {
 
     /**
      * Create home
+     *
      * @return created home
      */
     public Home create() {
@@ -85,6 +87,7 @@ public class Home {
 
     /**
      * Update home point
+     *
      * @return updated home point
      */
     public Home update() {
@@ -124,7 +127,8 @@ public class Home {
 
     /**
      * Find home by exactly name and the owner's uuid
-     * @param name name of the home point
+     *
+     * @param name  name of the home point
      * @param owner uuid of the owner
      * @return result of the query
      */
@@ -183,7 +187,8 @@ public class Home {
 
     /**
      * Find home by like name and the owner's uuid
-     * @param name name of the home point
+     *
+     * @param name  name of the home point
      * @param owner uuid of the owner
      * @return result of the query
      */
@@ -241,6 +246,7 @@ public class Home {
 
     /**
      * Get all homes by UUID
+     *
      * @param owner uuid of the owner
      * @return set of homes
      */
@@ -249,7 +255,7 @@ public class Home {
         ResultSet rs = null;
         try {
             connection = db.hikari.getConnection();
-            statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE owner = ?;");
+            statement = connection.prepareStatement("SELECT * FROM " + tablePrefix + "homes WHERE owner = ? ORDER by name;");
             statement.setString(1, owner.toString());
             rs = statement.executeQuery();
             while (rs.next()) {
@@ -290,7 +296,8 @@ public class Home {
     }
 
     /**
-     * BungeeDeleteCommand home
+     * Delete home
+     *
      * @return if deletion was successful or not
      */
     public Boolean delete() {
