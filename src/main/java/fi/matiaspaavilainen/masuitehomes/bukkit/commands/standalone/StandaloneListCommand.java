@@ -63,7 +63,8 @@ public class StandaloneListCommand implements CommandExecutor {
                         return;
                     }
                     Home h = new Home();
-                    TextComponent homes = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.title")));
+                    TextComponent homes = new TextComponent(formator.colorize(config.load("homes", "messages.yml")
+                            .getString("homes.title-others").replace("%player%", msp.getUsername())));
 
                     int i = 0;
                     String split = formator.colorize(config.load("homes", "messages.yml").getString("homes.split"));
