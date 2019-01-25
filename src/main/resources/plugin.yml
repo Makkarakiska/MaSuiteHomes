@@ -19,3 +19,7 @@ commands:
     description: Lists all available homes
     aliases: [homelist, listhomes]
     permission: masuitehomes.home.list
+  homegui:
+    description: Lists all available homes in GUI
+    aliases: [homesgui, guihomes, guihome]
+    permission: masuitehomes.home.gui

@@ -4,6 +4,7 @@ import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.core.Updator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
+import fi.matiaspaavilainen.masuitehomes.bukkit.commands.GUICommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.HomeTabCompleter;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeDeleteCommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeListCommand;
@@ -45,6 +46,9 @@ public class MaSuiteHomes extends JavaPlugin {
             setupNoBungee();
         }
         registerListeners();
+        loadDefaults();
+        getCommand("homegui").setExecutor(new GUICommand(this));
+
         new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
     }
 
@@ -62,8 +66,8 @@ public class MaSuiteHomes extends JavaPlugin {
     }
 
     private void setupNoBungee() {
-        config.copyFromBungee(this, "homes", "messages.yml");
         try {
+            config.copyFromBungee(this, "homes", "messages.yml");
             FileConfiguration fb = config.load("homes", "messages.yml");
             fb.addDefault("in-cooldown", "&cYou can go to home after %time% seconds");
             fb.addDefault("homes.title-others", "&9%player%''s &7homes: ");
@@ -82,7 +86,7 @@ public class MaSuiteHomes extends JavaPlugin {
         getCommand("homes").setExecutor(new StandaloneListCommand(this));
     }
 
-    private void registerListeners(){
+    private void registerListeners() {
         // Tab completions
         getCommand("sethome").setTabCompleter(new HomeTabCompleter(this));
         getCommand("delhome").setTabCompleter(new HomeTabCompleter(this));
@@ -91,5 +95,23 @@ public class MaSuiteHomes extends JavaPlugin {
         // Events
         getServer().getPluginManager().registerEvents(new JoinEvent(this), this);
         getServer().getPluginManager().registerEvents(new LeaveEvent(this), this);
+    }
+
+    private void loadDefaults() {
+        try {
+            FileConfiguration fb = config.load("homes", "messages.yml");
+            fb.addDefault("gui.title", "&5Homes");
+            fb.addDefault("gui.name", "&5%home%");
+            fb.addDefault("gui.item", "IRON_AXE");
+
+            List<String> description = new ArrayList<>();
+            description.add("&dClick to teleport!");
+            description.add("&dAdd your own values here!");
+            fb.addDefault("gui.description", description);
+
+            fb.save("plugins/MaSuite/homes/messages.yml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
