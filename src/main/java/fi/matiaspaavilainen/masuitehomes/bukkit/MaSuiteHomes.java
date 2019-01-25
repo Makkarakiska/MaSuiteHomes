@@ -39,15 +39,14 @@ public class MaSuiteHomes extends JavaPlugin {
         // Create configs
         config.create(this, "homes", "config.yml");
         config.create(this, "homes", "syntax.yml");
-
+        loadDefaults();
         if (MaSuiteCore.bungee) {
             setupBungee();
         } else {
             setupNoBungee();
         }
         registerListeners();
-        loadDefaults();
-        getCommand("homegui").setExecutor(new GUICommand(this));
+
 
         new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
     }
@@ -62,7 +61,12 @@ public class MaSuiteHomes extends JavaPlugin {
         getCommand("sethome").setExecutor(new BungeeSetCommand(this));
         getCommand("delhome").setExecutor(new BungeeDeleteCommand(this));
         getCommand("home").setExecutor(new BungeeTeleportCommand(this));
-        getCommand("homes").setExecutor(new BungeeListCommand(this));
+
+        if (config.load("homes", "config.yml").getBoolean("use-gui")) {
+            getCommand("homes").setExecutor(new GUICommand(this));
+        } else {
+            getCommand("homes").setExecutor(new BungeeListCommand(this));
+        }
     }
 
     private void setupNoBungee() {
@@ -83,7 +87,12 @@ public class MaSuiteHomes extends JavaPlugin {
         getCommand("sethome").setExecutor(new StandaloneSetCommand(this));
         getCommand("delhome").setExecutor(new StandaloneDeleteCommand(this));
         getCommand("home").setExecutor(new StandaloneTeleportCommand(this));
-        getCommand("homes").setExecutor(new StandaloneListCommand(this));
+        if (config.load("homes", "config.yml").getBoolean("use-gui")) {
+            getCommand("homes").setExecutor(new GUICommand(this));
+        } else {
+            getCommand("homes").setExecutor(new StandaloneListCommand(this));
+        }
+
     }
 
     private void registerListeners() {
@@ -99,17 +108,22 @@ public class MaSuiteHomes extends JavaPlugin {
 
     private void loadDefaults() {
         try {
-            FileConfiguration fb = config.load("homes", "messages.yml");
-            fb.addDefault("gui.title", "&5Homes");
-            fb.addDefault("gui.name", "&5%home%");
-            fb.addDefault("gui.item", "IRON_AXE");
+            FileConfiguration msg = config.load("homes", "messages.yml");
+            msg.addDefault("gui.title", "&5Homes");
+            msg.addDefault("gui.name", "&5%home%");
+            msg.addDefault("gui.item", "IRON_AXE");
 
             List<String> description = new ArrayList<>();
             description.add("&dClick to teleport!");
             description.add("&dAdd your own values here!");
-            fb.addDefault("gui.description", description);
+            msg.addDefault("gui.description", description);
+            msg.save("plugins/MaSuite/homes/messages.yml");
 
-            fb.save("plugins/MaSuite/homes/messages.yml");
+            FileConfiguration cnf = config.load("homes", "config.yml");
+            cnf.addDefault("use-gui", true);
+            cnf.save("plugins/MaSuite/homes/config.yml");
+
+            System.out.println("[MaSuite] [Homes] Added default value(s) to config(s)");
         } catch (IOException e) {
             e.printStackTrace();
         }
