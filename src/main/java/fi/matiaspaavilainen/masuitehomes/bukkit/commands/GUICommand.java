@@ -42,27 +42,29 @@ public class GUICommand implements CommandExecutor {
 
             Player p = (Player) cs;
 
-
-
             FileConfiguration fc = config.load("homes", "messages.yml");
             String title = fc.getString("gui.title");
             String name = fc.getString("gui.name");
             String[] description = fc.getStringList("gui.description").toArray(new String[0]);
             Material material = Material.getMaterial(fc.getString("gui.item").toUpperCase());
-            if(material == null){
+            if (material == null) {
                 return;
             }
             int homesCount = plugin.homes.get(p.getUniqueId()).size();
 
             MaSuiteGUI gui = new MaSuiteGUI(title, 9);
             if (homesCount <= 9) {
-                gui = new MaSuiteGUI("Homes", 9);
+                gui = new MaSuiteGUI(title, 9);
             } else if (homesCount <= 18) {
-                gui = new MaSuiteGUI("Homes", 18);
+                gui = new MaSuiteGUI(title, 18);
             } else if (homesCount <= 27) {
-                gui = new MaSuiteGUI("Homes", 27);
+                gui = new MaSuiteGUI(title, 27);
             } else if (homesCount <= 36) {
-                gui = new MaSuiteGUI("Homes", 36);
+                gui = new MaSuiteGUI(title, 36);
+            } else if (homesCount <= 45) {
+                gui = new MaSuiteGUI(title, 45);
+            } else if (homesCount <= 54) {
+                gui = new MaSuiteGUI(title, 54);
             }
             int i = 0;
             for (String home : plugin.homes.get(p.getUniqueId())) {
