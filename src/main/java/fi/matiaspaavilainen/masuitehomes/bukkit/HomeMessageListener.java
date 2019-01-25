@@ -8,9 +8,18 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class HomeMessageListener implements PluginMessageListener {
+
+    private MaSuiteHomes plugin;
+
+    public HomeMessageListener(MaSuiteHomes plugin) {
+        this.plugin = plugin;
+    }
 
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
         if (!channel.equals("BungeeCord")) {
@@ -30,7 +39,14 @@ public class HomeMessageListener implements PluginMessageListener {
             if (subchannel.equals("HomeCooldown")) {
                 Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
                 if (p != null) {
-                    MaSuiteHomes.cooldowns.put(p.getUniqueId(), in.readLong());
+                    plugin.cooldowns.put(p.getUniqueId(), in.readLong());
+                }
+            }
+            if (subchannel.equals("ListHomes")) {
+                Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
+                if (p != null) {
+                    List<String> homes = new ArrayList<>(Arrays.asList(in.readUTF().split(":")));
+                    plugin.homes.put(p.getUniqueId(), homes);
                 }
             }
         } catch (IOException e) {

@@ -3,6 +3,7 @@ package fi.matiaspaavilainen.masuitehomes.bungee.commands;
 import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
+import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -10,6 +11,12 @@ public class Delete {
 
     private Formator formator = new Formator();
     private BungeeConfiguration config = new BungeeConfiguration();
+
+    private MaSuiteHomes plugin;
+
+    public Delete(MaSuiteHomes plugin) {
+        this.plugin = plugin;
+    }
 
     public void delete(ProxiedPlayer p, String hs) {
         Home home = new Home().findExact(hs, p.getUniqueId());
@@ -22,7 +29,7 @@ public class Delete {
         } else {
             System.out.println("[MaSuite] [Homes] There was an error during removing home.");
         }
-
+        plugin.listHomes(p);
     }
 
     public void delete(ProxiedPlayer p, String name, String hs) {
@@ -43,6 +50,6 @@ public class Delete {
         } else {
             System.out.println("[MaSuite] [Homes] There was an error during saving home.");
         }
-
+        plugin.listHomes(p);
     }
 }

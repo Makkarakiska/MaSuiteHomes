@@ -87,9 +87,9 @@ public class StandaloneTeleportCommand implements CommandExecutor {
 
     private Boolean checkCooldown(Player p) {
         if (config.load("homes", "config.yml").getInt("cooldown") > 0) {
-            if (MaSuiteHomes.cooldowns.containsKey(p.getUniqueId())) {
-                if (System.currentTimeMillis() - MaSuiteHomes.cooldowns.get(p.getUniqueId()) > config.load("homes", "config.yml").getInt("cooldown") * 1000) {
-                    MaSuiteHomes.cooldowns.remove(p.getUniqueId());
+            if (plugin.cooldowns.containsKey(p.getUniqueId())) {
+                if (System.currentTimeMillis() - plugin.cooldowns.get(p.getUniqueId()) > config.load("homes", "config.yml").getInt("cooldown") * 1000) {
+                    plugin.cooldowns.remove(p.getUniqueId());
                     return true;
                 } else {
                     formator.sendMessage(p, config.load("homes", "messages.yml").getString("in-cooldown").replace("%time%", config.load("homes", "config.yml").getString("cooldown")));

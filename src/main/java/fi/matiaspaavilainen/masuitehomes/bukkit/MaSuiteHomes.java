@@ -4,6 +4,7 @@ import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.core.Updator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
+import fi.matiaspaavilainen.masuitehomes.bukkit.commands.HomeTabCompleter;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeDeleteCommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeListCommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy.BungeeSetCommand;
@@ -12,6 +13,8 @@ import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneDe
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneListCommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneSetCommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneTeleportCommand;
+import fi.matiaspaavilainen.masuitehomes.bukkit.events.JoinEvent;
+import fi.matiaspaavilainen.masuitehomes.bukkit.events.LeaveEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,10 +22,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class MaSuiteHomes extends JavaPlugin {
-    public static HashMap<UUID, Long> cooldowns = new HashMap<>();
+    public HashMap<UUID, Long> cooldowns = new HashMap<>();
+    public HashMap<UUID, List<String>> homes = new HashMap<>();
     public final java.util.List<CommandSender> in_command = new ArrayList<>();
 
     private BukkitConfiguration config = new BukkitConfiguration();
@@ -39,7 +44,7 @@ public class MaSuiteHomes extends JavaPlugin {
         } else {
             setupNoBungee();
         }
-
+        registerListeners();
         new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
     }
 
@@ -47,7 +52,7 @@ public class MaSuiteHomes extends JavaPlugin {
         config.create(this, "homes", "messages.yml");
         // Register channels
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new HomeMessageListener());
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new HomeMessageListener(this));
 
         // Register commands
         getCommand("sethome").setExecutor(new BungeeSetCommand(this));
@@ -68,12 +73,23 @@ public class MaSuiteHomes extends JavaPlugin {
             e.printStackTrace();
         }
 
-        ConnectionManager.db.createTable("homes","(id INT(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, owner VARCHAR(36) NOT NULL, server VARCHAR(100) NOT NULL, world VARCHAR(100) NOT NULL, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+        ConnectionManager.db.createTable("homes", "(id INT(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, owner VARCHAR(36) NOT NULL, server VARCHAR(100) NOT NULL, world VARCHAR(100) NOT NULL, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
         // Register commands
         getCommand("sethome").setExecutor(new StandaloneSetCommand(this));
         getCommand("delhome").setExecutor(new StandaloneDeleteCommand(this));
         getCommand("home").setExecutor(new StandaloneTeleportCommand(this));
         getCommand("homes").setExecutor(new StandaloneListCommand(this));
+    }
+
+    private void registerListeners(){
+        // Tab completions
+        getCommand("sethome").setTabCompleter(new HomeTabCompleter(this));
+        getCommand("delhome").setTabCompleter(new HomeTabCompleter(this));
+        getCommand("home").setTabCompleter(new HomeTabCompleter(this));
+
+        // Events
+        getServer().getPluginManager().registerEvents(new JoinEvent(this), this);
+        getServer().getPluginManager().registerEvents(new LeaveEvent(this), this);
     }
 }

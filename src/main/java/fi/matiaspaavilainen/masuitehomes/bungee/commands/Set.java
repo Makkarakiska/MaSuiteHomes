@@ -4,10 +4,17 @@ import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.Location;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
+import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class Set {
+
+    private MaSuiteHomes plugin;
+
+    public Set(MaSuiteHomes plugin) {
+        this.plugin = plugin;
+    }
 
     private Formator formator = new Formator();
     private BungeeConfiguration config = new BungeeConfiguration();
@@ -25,8 +32,9 @@ public class Set {
             } else {
                 formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-limit-reached"));
             }
-
         }
+
+        plugin.listHomes(p);
     }
 
     public void set(ProxiedPlayer p, String name, String hs, int max, Location loc) {
@@ -47,7 +55,8 @@ public class Set {
             } else {
                 formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-limit-reached"));
             }
-
         }
+
+        plugin.listHomes(p);
     }
 }
