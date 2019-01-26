@@ -62,7 +62,7 @@ public class List {
         }
         Home h = new Home();
         HashMap<String, ArrayList<Home>> homeList = new HashMap<>();
-        for (Home home : h.getHomes(p.getUniqueId())) {
+        for (Home home : h.getHomes(msp.getUniqueId())) {
             if (!homeList.containsKey(home.getServer())) {
                 homeList.put(home.getServer(), new ArrayList<>());
             }
