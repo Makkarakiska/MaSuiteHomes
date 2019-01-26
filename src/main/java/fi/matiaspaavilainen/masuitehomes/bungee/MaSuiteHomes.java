@@ -20,7 +20,6 @@ import net.md_5.bungee.event.EventHandler;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
