@@ -16,6 +16,7 @@ import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneSe
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneTeleportCommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.JoinEvent;
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.LeaveEvent;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -130,10 +131,40 @@ public class MaSuiteHomes extends JavaPlugin {
 
         List<String> description = new ArrayList<>();
         description.add("&dClick to teleport!");
-
         config.addDefault("homes/messages.yml", "gui.description", description);
-        config.addDefault("homes/config.yml", "use-gui", true);
 
-        System.out.println("Debug" + config.load("homes", "config.yml"));
+        // Borders
+        List<String> placeholders = new ArrayList<>();
+        placeholders.add("BLUE_STAINED_GLASS_PANE");
+        placeholders.add("GRAY_STAINED_GLASS_PANE");
+        config.addDefault("homes/messages.yml", "gui.placeholders", placeholders);
+
+        // Previous button
+        config.addDefault("homes/messages.yml", "gui.controls.previous.title", "&5Previous");
+        config.addDefault("homes/messages.yml", "gui.controls.previous.item", "PAPER");
+
+        List<String> prevDesc = new ArrayList<>();
+        prevDesc.add("&dGo to the previous page!");
+        config.addDefault("homes/messages.yml", "gui.controls.previous.description", prevDesc);
+
+        // Info/center button
+        config.addDefault("homes/messages.yml", "gui.controls.info.title", "&5Home info");
+        config.addDefault("homes/messages.yml", "gui.controls.info.unlimited", "unlimited");
+        config.addDefault("homes/messages.yml", "gui.controls.info.item", "COMPASS");
+
+        List<String> infoDesc = new ArrayList<>();
+        infoDesc.add("&dHomes used: %used%");
+        infoDesc.add("&dHomes available: %total%");
+        config.addDefault("homes/messages.yml", "gui.controls.info.description", infoDesc);
+
+        // Next button
+        config.addDefault("homes/messages.yml", "gui.controls.next.title", "&5Next");
+        config.addDefault("homes/messages.yml", "gui.controls.next.item", "PAPER");
+
+        List<String> nextDesc = new ArrayList<>();
+        nextDesc.add("&dGo to the next page!");
+        config.addDefault("homes/messages.yml", "gui.controls.next.description", nextDesc);
+
+        config.addDefault("homes/config.yml", "use-gui", true);
     }
 }

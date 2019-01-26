@@ -6,3 +6,24 @@ gui:
   description:
     - "&dClick to teleport!"
     - "&dAdd your own values here!"
+  placeholders:
+    - BLUE_STAINED_GLASS_PANE
+    - GRAY_STAINED_GLASS_PANE
+  controls:
+    previous:
+      title: '&5Previous'
+      item: PAPER
+      description:
+        - '&dGo to the previous page!'
+    info:
+      title: '&5Home info'
+      unlimited: unlimited
+      item: COMPASS
+      description:
+        - '&dHomes used: %used%'
+        - '&dHomes available: %total%'
+    next:
+      title: '&5Next'
+      item: PAPER
+      description:
+        - '&dGo to the next page!'

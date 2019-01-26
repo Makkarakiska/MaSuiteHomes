@@ -14,6 +14,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GUICommand implements CommandExecutor {
 
@@ -47,27 +51,39 @@ public class GUICommand implements CommandExecutor {
             String name = fc.getString("gui.name");
             String[] description = fc.getStringList("gui.description").toArray(new String[0]);
             Material material = Material.getMaterial(fc.getString("gui.item").toUpperCase());
+
+            List<Material> placeholders = new ArrayList<>();
+            for (String placeholderItem : fc.getStringList("gui.placeholders")) {
+                if (Material.getMaterial(placeholderItem.toUpperCase()) == null) {
+                    continue;
+                }
+                placeholders.add(Material.valueOf(placeholderItem.toUpperCase()));
+            }
             if (material == null) {
                 return;
             }
             int homesCount = plugin.homes.get(p.getUniqueId()).size();
 
             MaSuiteGUI gui = new MaSuiteGUI(title, 54);
-            int[] slots = {0, 1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 26, 35, 44, 53, 52, 51, 50, 49, 48, 47, 46, 45, 36, 27, 18, 9};
-            Material lastItem = Material.ORANGE_STAINED_GLASS_PANE;
-            for (int i = 0; i < slots.length; i++) {
-                if (lastItem.equals(Material.ORANGE_STAINED_GLASS_PANE)) {
-                    gui.setItem(new ItemStack(Material.LIME_STAINED_GLASS_PANE), slots[i]);
-                    lastItem = Material.LIME_STAINED_GLASS_PANE;
-                } else {
-                    gui.setItem(new ItemStack(Material.ORANGE_STAINED_GLASS_PANE), slots[i]);
-                    lastItem = Material.ORANGE_STAINED_GLASS_PANE;
+            int[] slots = {0, 1, 2, 3, 4, 5, 6, 7, 8, 17, 26, 35, 44, 53, 52, 51, 50, 49, 48, 47, 46, 45, 36, 27, 18, 9};
+
+            int i = 0;
+            for (int slot : slots) {
+                if (i == placeholders.size()) {
+                    i = 0;
                 }
+                ItemStack is = new ItemStack(placeholders.get(i));
+                ItemMeta meta = is.getItemMeta();
+                meta.setDisplayName("");
+                is.setItemMeta(meta);
+                gui.setItem(new ItemStack(is), slot);
+                i++;
             }
 
-            int i = 10;
+            i = 10;
             for (String home : plugin.homes.get(p.getUniqueId())) {
                 if (gui.getSourceInventory().getItem(i) == null) {
+
                     gui.setItem(new ItemStack(material), name.replace("%home%", home), i, new MaSuiteGUI.ClickRunnable() {
                         @Override
                         public void run(InventoryClickEvent e) {
@@ -78,34 +94,35 @@ public class GUICommand implements CommandExecutor {
                 } else {
                     i++;
                 }
+
+
             }
             int max = plugin.getMaxHomes(p);
 
-            gui.setItem(new ItemStack(Material.PAPER), ChatColor.DARK_PURPLE + "Previous", 47, new MaSuiteGUI.ClickRunnable() {
-                        @Override
-                        public void run(InventoryClickEvent e) {
-                        }
-                    }, ChatColor.LIGHT_PURPLE + "Go to the previous page!");
+            gui.setItem(new ItemStack(Material.getMaterial(fc.getString("gui.controls.previous.item").toUpperCase())), fc.getString("gui.controls.previous.title"), 47, new MaSuiteGUI.ClickRunnable() {
+                @Override
+                public void run(InventoryClickEvent e) {
+                }
+            }, fc.getStringList("gui.controls.previous.description").toArray(new String[0]));
 
-            gui.setItem(new ItemStack(Material.COMPASS), ChatColor.DARK_PURPLE + "Page 1/1", 49, new MaSuiteGUI.ClickRunnable() {
+            List<String> infoDesc = new ArrayList<>();
+            for(String string : fc.getStringList("gui.controls.info.description")){
+                infoDesc.add(string.replace("%used%", "" + homesCount).replace("%total%", "" + (max == -1 ? fc.getString("gui.controls.info.unlimited") : max)));
+            }
+
+            gui.setItem(new ItemStack(Material.getMaterial(fc.getString("gui.controls.info.item").toUpperCase())), fc.getString("gui.controls.info.title"), 49, new MaSuiteGUI.ClickRunnable() {
                 @Override
                 public void run(InventoryClickEvent e) {
                     p.closeInventory();
                 }
-            }, ChatColor.LIGHT_PURPLE + "Click to close!");
+            }, infoDesc.toArray(new String[0]));
 
-            gui.setItem(new ItemStack(Material.PAPER), ChatColor.DARK_PURPLE + "Next", 51, new MaSuiteGUI.ClickRunnable() {
+            gui.setItem(new ItemStack(Material.getMaterial(fc.getString("gui.controls.next.item").toUpperCase())), fc.getString("gui.controls.next.title"), 51, new MaSuiteGUI.ClickRunnable() {
                 @Override
                 public void run(InventoryClickEvent e) {
+                    gui.openInventory(p);
                 }
-            }, ChatColor.LIGHT_PURPLE + "Go to the next page");
-
-            gui.setItem(new ItemStack(Material.CLOCK), ChatColor.DARK_PURPLE + "Home info", 53, new MaSuiteGUI.ClickRunnable() {
-                        @Override
-                        public void run(InventoryClickEvent e) {
-                        }
-                    }, ChatColor.LIGHT_PURPLE + "Homes used: " + homesCount,
-                    ChatColor.LIGHT_PURPLE + "Homes available: " + (max == -1 ? "unlimited" : max));
+            }, fc.getStringList("gui.controls.next.description").toArray(new String[0]));
 
             gui.openInventory(p);
 
