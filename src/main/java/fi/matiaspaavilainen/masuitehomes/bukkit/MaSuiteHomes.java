@@ -93,9 +93,9 @@ public class MaSuiteHomes extends JavaPlugin {
 
     private void setupNoBungee() {
         config.copyFromBungee(this, "homes", "messages.yml");
-        config.load("homes", "messages.yml").addDefault("in-cooldown", "&cYou can go to home after %time% seconds");
-        config.load("homes", "messages.yml").addDefault("homes.title-others", "&9%player%''s &7homes: ");
-        config.load("homes", "messages.yml").addDefault("homes.server-name", "&9%server%&7: ");
+        config.addDefault("homes/messages.yml", "in-cooldown", "&cYou can go to home after %time% seconds");
+        config.addDefault("homes/messages.yml", "homes.title-others", "&9%player%''s &7homes: ");
+        config.addDefault("homes/messages.yml", "homes.server-name", "&9%server%&7: ");
 
         ConnectionManager.db.createTable("homes", "(id INT(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, owner VARCHAR(36) NOT NULL, server VARCHAR(100) NOT NULL, world VARCHAR(100) NOT NULL, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
@@ -123,7 +123,7 @@ public class MaSuiteHomes extends JavaPlugin {
     }
 
     private void loadDefaults() {
-        config.addDefault("homes/messages.yml", "gui.title", "&5Homes");
+        config.addDefault("homes/messages.yml", "gui.title", "Homes");
         config.addDefault("homes/messages.yml", "gui.name", "&5%home%");
         config.addDefault("homes/messages.yml", "gui.item", "EMERALD");
         config.addDefault("homes/messages.yml", "gui.title", "&5Homes");
