@@ -52,34 +52,65 @@ public class GUICommand implements CommandExecutor {
             }
             int homesCount = plugin.homes.get(p.getUniqueId()).size();
 
-            MaSuiteGUI gui = new MaSuiteGUI(title, 9);
-            if (homesCount <= 9) {
-                gui = new MaSuiteGUI(title, 9);
-            } else if (homesCount <= 18) {
-                gui = new MaSuiteGUI(title, 18);
-            } else if (homesCount <= 27) {
-                gui = new MaSuiteGUI(title, 27);
-            } else if (homesCount <= 36) {
-                gui = new MaSuiteGUI(title, 36);
-            } else if (homesCount <= 45) {
-                gui = new MaSuiteGUI(title, 45);
-            } else if (homesCount <= 54) {
-                gui = new MaSuiteGUI(title, 54);
+            MaSuiteGUI gui = new MaSuiteGUI(title, 54);
+            int[] slots = {0, 1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 26, 35, 44, 53, 52, 51, 50, 49, 48, 47, 46, 45, 36, 27, 18, 9};
+            Material lastItem = Material.ORANGE_STAINED_GLASS_PANE;
+            for (int i = 0; i < slots.length; i++) {
+                if (lastItem.equals(Material.ORANGE_STAINED_GLASS_PANE)) {
+                    gui.setItem(new ItemStack(Material.LIME_STAINED_GLASS_PANE), slots[i]);
+                    lastItem = Material.LIME_STAINED_GLASS_PANE;
+                } else {
+                    gui.setItem(new ItemStack(Material.ORANGE_STAINED_GLASS_PANE), slots[i]);
+                    lastItem = Material.ORANGE_STAINED_GLASS_PANE;
+                }
             }
-            int i = 0;
+
+            int i = 10;
             for (String home : plugin.homes.get(p.getUniqueId())) {
-                gui.setItem(new ItemStack(material), name.replace("%home%", home), i, new MaSuiteGUI.ClickRunnable() {
-                    @Override
-                    public void run(InventoryClickEvent e) {
-                        p.performCommand("home " + home);
-                    }
-                }, description);
-                i++;
+                if (gui.getSourceInventory().getItem(i) == null) {
+                    gui.setItem(new ItemStack(material), name.replace("%home%", home), i, new MaSuiteGUI.ClickRunnable() {
+                        @Override
+                        public void run(InventoryClickEvent e) {
+                            p.performCommand("home " + home);
+                        }
+                    }, description);
+                    i++;
+                } else {
+                    i++;
+                }
             }
+            int max = plugin.getMaxHomes(p);
+
+            gui.setItem(new ItemStack(Material.PAPER), ChatColor.DARK_PURPLE + "Previous", 47, new MaSuiteGUI.ClickRunnable() {
+                        @Override
+                        public void run(InventoryClickEvent e) {
+                        }
+                    }, ChatColor.LIGHT_PURPLE + "Go to the previous page!");
+
+            gui.setItem(new ItemStack(Material.COMPASS), ChatColor.DARK_PURPLE + "Page 1/1", 49, new MaSuiteGUI.ClickRunnable() {
+                @Override
+                public void run(InventoryClickEvent e) {
+                    p.closeInventory();
+                }
+            }, ChatColor.LIGHT_PURPLE + "Click to close!");
+
+            gui.setItem(new ItemStack(Material.PAPER), ChatColor.DARK_PURPLE + "Next", 51, new MaSuiteGUI.ClickRunnable() {
+                @Override
+                public void run(InventoryClickEvent e) {
+                }
+            }, ChatColor.LIGHT_PURPLE + "Go to the next page");
+
+            gui.setItem(new ItemStack(Material.CLOCK), ChatColor.DARK_PURPLE + "Home info", 53, new MaSuiteGUI.ClickRunnable() {
+                        @Override
+                        public void run(InventoryClickEvent e) {
+                        }
+                    }, ChatColor.LIGHT_PURPLE + "Homes used: " + homesCount,
+                    ChatColor.LIGHT_PURPLE + "Homes available: " + (max == -1 ? "unlimited" : max));
 
             gui.openInventory(p);
 
             plugin.in_command.remove(cs);
+
         });
 
         return true;
