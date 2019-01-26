@@ -17,12 +17,10 @@ import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneTe
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.JoinEvent;
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.LeaveEvent;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,16 +92,10 @@ public class MaSuiteHomes extends JavaPlugin {
     }
 
     private void setupNoBungee() {
-        try {
-            config.copyFromBungee(this, "homes", "messages.yml");
-            FileConfiguration fb = config.load("homes", "messages.yml");
-            fb.addDefault("in-cooldown", "&cYou can go to home after %time% seconds");
-            fb.addDefault("homes.title-others", "&9%player%''s &7homes: ");
-            fb.addDefault("homes.server-name", "&9%server%&7: ");
-            fb.save("plugins/MaSuite/homes/messages.yml");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        config.copyFromBungee(this, "homes", "messages.yml");
+        config.load("homes", "messages.yml").addDefault("in-cooldown", "&cYou can go to home after %time% seconds");
+        config.load("homes", "messages.yml").addDefault("homes.title-others", "&9%player%''s &7homes: ");
+        config.load("homes", "messages.yml").addDefault("homes.server-name", "&9%server%&7: ");
 
         ConnectionManager.db.createTable("homes", "(id INT(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, owner VARCHAR(36) NOT NULL, server VARCHAR(100) NOT NULL, world VARCHAR(100) NOT NULL, x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
@@ -131,25 +123,17 @@ public class MaSuiteHomes extends JavaPlugin {
     }
 
     private void loadDefaults() {
-        try {
-            FileConfiguration msg = config.load("homes", "messages.yml");
-            msg.addDefault("gui.title", "&5Homes");
-            msg.addDefault("gui.name", "&5%home%");
-            msg.addDefault("gui.item", "EMERALD");
+        config.addDefault("homes/messages.yml", "gui.title", "&5Homes");
+        config.addDefault("homes/messages.yml", "gui.name", "&5%home%");
+        config.addDefault("homes/messages.yml", "gui.item", "EMERALD");
+        config.addDefault("homes/messages.yml", "gui.title", "&5Homes");
 
-            List<String> description = new ArrayList<>();
-            description.add("&dClick to teleport!");
-            description.add("&dAdd your own values here!");
-            msg.addDefault("gui.description", description);
-            msg.save("plugins/MaSuite/homes/messages.yml");
+        List<String> description = new ArrayList<>();
+        description.add("&dClick to teleport!");
 
-            FileConfiguration cnf = config.load("homes", "config.yml");
-            cnf.addDefault("use-gui", true);
-            cnf.save("plugins/MaSuite/homes/config.yml");
+        config.addDefault("homes/messages.yml", "gui.description", description);
+        config.addDefault("homes/config.yml", "use-gui", true);
 
-            System.out.println("[MaSuite] [Homes] Added default value(s) to config(s)");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        System.out.println("Debug" + config.load("homes", "config.yml"));
     }
 }
