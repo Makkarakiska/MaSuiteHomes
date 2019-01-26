@@ -12,7 +12,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.UUID;
 
@@ -38,24 +37,7 @@ public class StandaloneSetCommand implements CommandExecutor {
             plugin.in_command.add(cs);
 
             Player p = (Player) cs;
-            int max = 0;
-            for (PermissionAttachmentInfo permInfo : p.getEffectivePermissions()) {
-                String perm = permInfo.getPermission();
-                if (perm.startsWith("masuitehomes.home.limit.")) {
-                    String amount = perm.replace("masuitehomes.home.limit.", "");
-                    if (amount.equalsIgnoreCase("*")) {
-                        max = -1;
-                        break;
-                    }
-                    try {
-                        if (Integer.parseInt(amount) > max) {
-                            max = Integer.parseInt(amount);
-                        }
-                    } catch (NumberFormatException ex) {
-                        System.out.println("[MaSuite] [Homes] Please check your home limit permissions (Not an integer or *) ");
-                    }
-                }
-            }
+            int max = plugin.getMaxHomes(p);
             switch (args.length) {
                 case (0):
                     set(p.getUniqueId(), p,"home", max, p.getLocation());

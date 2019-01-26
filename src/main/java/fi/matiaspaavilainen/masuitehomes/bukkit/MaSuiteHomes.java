@@ -18,6 +18,8 @@ import fi.matiaspaavilainen.masuitehomes.bukkit.events.JoinEvent;
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.LeaveEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -49,6 +51,28 @@ public class MaSuiteHomes extends JavaPlugin {
 
 
         new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
+    }
+
+    public int getMaxHomes(Player p) {
+        int max = 0;
+        for (PermissionAttachmentInfo permInfo : p.getEffectivePermissions()) {
+            String perm = permInfo.getPermission();
+            if (perm.startsWith("masuitehomes.home.limit.")) {
+                String amount = perm.replace("masuitehomes.home.limit.", "");
+                if (amount.equalsIgnoreCase("*")) {
+                    max = -1;
+                    break;
+                }
+                try {
+                    if (Integer.parseInt(amount) > max) {
+                        max = Integer.parseInt(amount);
+                    }
+                } catch (NumberFormatException ex) {
+                    System.out.println("[MaSuite] [Homes] Please check your home limit permissions (Not an integer or *) ");
+                }
+            }
+        }
+        return max;
     }
 
     private void setupBungee() {
@@ -111,7 +135,7 @@ public class MaSuiteHomes extends JavaPlugin {
             FileConfiguration msg = config.load("homes", "messages.yml");
             msg.addDefault("gui.title", "&5Homes");
             msg.addDefault("gui.name", "&5%home%");
-            msg.addDefault("gui.item", "IRON_AXE");
+            msg.addDefault("gui.item", "EMERALD");
 
             List<String> description = new ArrayList<>();
             description.add("&dClick to teleport!");
