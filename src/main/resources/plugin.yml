@@ -2,6 +2,7 @@ name: MaSuiteHomes
 main: fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes
 version: ${project.version}
 author: Masagameplay
+api-version: 1.13
 depend: [MaSuiteCore]
 commands:
   sethome:
