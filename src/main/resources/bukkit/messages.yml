@@ -2,7 +2,7 @@ in-cooldown: "&cYou can go to home after %time% seconds"
 gui:
   title: "&5Homes"
   name: "&5%home%"
-  item: "IRON_AXE"
+  item: "EMERALD"
   description:
     - "&dClick to teleport!"
     - "&dAdd your own values here!"
