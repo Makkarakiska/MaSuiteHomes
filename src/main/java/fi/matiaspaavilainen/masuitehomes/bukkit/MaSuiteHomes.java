@@ -16,7 +16,7 @@ import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneSe
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneTeleportCommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.JoinEvent;
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.LeaveEvent;
-import org.bukkit.Material;
+import fi.matiaspaavilainen.masuitehomes.core.Home;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -29,7 +29,7 @@ import java.util.UUID;
 
 public class MaSuiteHomes extends JavaPlugin {
     public HashMap<UUID, Long> cooldowns = new HashMap<>();
-    public HashMap<UUID, List<String>> homes = new HashMap<>();
+    public HashMap<UUID, List<Home>> homes = new HashMap<>();
     public final java.util.List<CommandSender> in_command = new ArrayList<>();
 
     private BukkitConfiguration config = new BukkitConfiguration();
@@ -40,6 +40,8 @@ public class MaSuiteHomes extends JavaPlugin {
         // Create configs
         config.create(this, "homes", "config.yml");
         config.create(this, "homes", "syntax.yml");
+        config.create(this, "homes", "gui.yml");
+
         loadDefaults();
         if (MaSuiteCore.bungee) {
             setupBungee();
@@ -124,47 +126,6 @@ public class MaSuiteHomes extends JavaPlugin {
     }
 
     private void loadDefaults() {
-        config.addDefault("homes/messages.yml", "gui.title", "Homes");
-        config.addDefault("homes/messages.yml", "gui.name", "&5%home%");
-        config.addDefault("homes/messages.yml", "gui.item", "EMERALD");
-        config.addDefault("homes/messages.yml", "gui.title", "&5Homes");
-
-        List<String> description = new ArrayList<>();
-        description.add("&dClick to teleport!");
-        config.addDefault("homes/messages.yml", "gui.description", description);
-
-        // Borders
-        List<String> placeholders = new ArrayList<>();
-        placeholders.add("BLUE_STAINED_GLASS_PANE");
-        placeholders.add("GRAY_STAINED_GLASS_PANE");
-        config.addDefault("homes/messages.yml", "gui.placeholders", placeholders);
-
-        // Previous button
-        config.addDefault("homes/messages.yml", "gui.controls.previous.title", "&5Previous");
-        config.addDefault("homes/messages.yml", "gui.controls.previous.item", "PAPER");
-
-        List<String> prevDesc = new ArrayList<>();
-        prevDesc.add("&dGo to the previous page!");
-        config.addDefault("homes/messages.yml", "gui.controls.previous.description", prevDesc);
-
-        // Info/center button
-        config.addDefault("homes/messages.yml", "gui.controls.info.title", "&5Home info");
-        config.addDefault("homes/messages.yml", "gui.controls.info.unlimited", "unlimited");
-        config.addDefault("homes/messages.yml", "gui.controls.info.item", "COMPASS");
-
-        List<String> infoDesc = new ArrayList<>();
-        infoDesc.add("&dHomes used: %used%");
-        infoDesc.add("&dHomes available: %total%");
-        config.addDefault("homes/messages.yml", "gui.controls.info.description", infoDesc);
-
-        // Next button
-        config.addDefault("homes/messages.yml", "gui.controls.next.title", "&5Next");
-        config.addDefault("homes/messages.yml", "gui.controls.next.item", "PAPER");
-
-        List<String> nextDesc = new ArrayList<>();
-        nextDesc.add("&dGo to the next page!");
-        config.addDefault("homes/messages.yml", "gui.controls.next.description", nextDesc);
-
         config.addDefault("homes/config.yml", "use-gui", true);
     }
 }
