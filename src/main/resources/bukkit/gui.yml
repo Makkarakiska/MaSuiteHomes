@@ -1,0 +1,42 @@
+list:
+  title: Homes
+  name: "&9%home%"
+  item: "LAPIS_LAZULI"
+  description:
+    - "&9Server&7: %server%"
+    - "&9World&7: %world%"
+    - "&9X&7: %x%"
+    - "&9Y&7: %y%"
+    - "&9Z&7: %z%"
+    - ""
+    - "&7Click to &9teleport&7!"
+  placeholders:
+    - BLUE_STAINED_GLASS_PANE
+    - GRAY_STAINED_GLASS_PANE
+  controls:
+    previous:
+      title: "&5Previous"
+      item: PAPER
+      description:
+        - "&dGo to the previous page!"
+    info:
+      title: "&5Home info"
+      unlimited: unlimited
+      item: "COMPASS"
+      description:
+        - "&dHomes used: %used%"
+        - "&dHomes available: %total%"
+    next:
+      title: "&5Next"
+      item: "PAPER"
+      description:
+        - "&dGo to the next page!"
+edit:
+  title: "Edit: %name%"
+  placeholder: "GRAY_STAINED_GLASS_PANE"
+  delete:
+    title: "&cDelete home"
+    item: "BARRIER"
+    description:
+      - ""
+      - "&c&lThis will remove your home permanently!"
