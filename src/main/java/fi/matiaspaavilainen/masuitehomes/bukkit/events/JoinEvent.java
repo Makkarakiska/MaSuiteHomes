@@ -34,10 +34,7 @@ public class JoinEvent implements Listener {
             }
         } else {
             plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-                List<String> homes = new ArrayList<>();
-                for (Home home : new Home().getHomes(e.getPlayer().getUniqueId())) {
-                    homes.add(home.getName());
-                }
+                List<Home> homes = new ArrayList<>(new Home().getHomes(e.getPlayer().getUniqueId()));
                 plugin.homes.put(e.getPlayer().getUniqueId(), homes);
             }, 20);
         }

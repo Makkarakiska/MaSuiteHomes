@@ -135,15 +135,24 @@ public class MaSuiteHomes extends Plugin implements Listener {
 
     public void listHomes(ProxiedPlayer p) {
         if (utils.isOnline(p)) {
-            StringJoiner homes = new StringJoiner(":");
             for (Home home : new Home().getHomes(p.getUniqueId())) {
-                homes.add(home.getName());
+                StringJoiner info = new StringJoiner(":");
+                Location loc = home.getLocation();
+                info.add(home.getName())
+                        .add(home.getServer())
+                        .add(loc.getWorld())
+                        .add(loc.getX().toString())
+                        .add(loc.getY().toString())
+                        .add(loc.getZ().toString());
+
+                new BungeePluginChannel(this, p.getServer().getInfo(), new Object[]{
+                        "AddHome",
+                        p.getUniqueId().toString(),
+                        info.toString()
+                }).send();
+
             }
-            new BungeePluginChannel(this, p.getServer().getInfo(), new Object[]{
-                    "ListHomes",
-                    p.getUniqueId().toString(),
-                    homes.toString()
-            }).send();
+
         }
     }
 }

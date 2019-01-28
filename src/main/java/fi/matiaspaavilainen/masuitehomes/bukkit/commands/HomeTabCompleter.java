@@ -1,6 +1,7 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit.commands;
 
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
+import fi.matiaspaavilainen.masuitehomes.core.Home;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -27,11 +28,15 @@ public class HomeTabCompleter implements TabCompleter {
             if (plugin.homes.get(player.getUniqueId()) == null) {
                 return new ArrayList<>();
             }
-            List<String> homes = new ArrayList<>(plugin.homes.get(player.getUniqueId()));
-            if (args.length == 1) {
-                return StringUtil.copyPartialMatches(args[0], new ArrayList<>(homes), new ArrayList<>());
+
+            List<String> homeList = new ArrayList<>();
+            for (Home home : plugin.homes.get(player.getUniqueId())) {
+                homeList.add(home.getName());
             }
-            return new ArrayList<>(homes);
+            if (args.length == 1) {
+                return StringUtil.copyPartialMatches(args[0], new ArrayList<>(homeList), new ArrayList<>());
+            }
+            return new ArrayList<>(homeList);
         }
         return null;
     }
