@@ -1,5 +1,6 @@
 package fi.matiaspaavilainen.masuitehomes.core;
 
+import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
 import fi.matiaspaavilainen.masuitecore.core.database.Database;
 import fi.matiaspaavilainen.masuitecore.core.objects.Location;
@@ -17,7 +18,7 @@ public class Home {
     private Database db = ConnectionManager.db;
     private Connection connection = null;
     private PreparedStatement statement = null;
-    private String tablePrefix = db.getTablePrefix();
+    private String tablePrefix = db == null ? "" : db.getTablePrefix();
     private int id;
     private String name;
     private String server;
