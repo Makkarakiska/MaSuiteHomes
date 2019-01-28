@@ -8,11 +8,11 @@ import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-public class Set {
+public class SetCommand {
 
     private MaSuiteHomes plugin;
 
-    public Set(MaSuiteHomes plugin) {
+    public SetCommand(MaSuiteHomes plugin) {
         this.plugin = plugin;
     }
 

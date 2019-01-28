@@ -6,10 +6,10 @@ import fi.matiaspaavilainen.masuitecore.core.channels.BungeePluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
 import fi.matiaspaavilainen.masuitecore.core.objects.Location;
-import fi.matiaspaavilainen.masuitehomes.bungee.commands.Delete;
-import fi.matiaspaavilainen.masuitehomes.bungee.commands.List;
-import fi.matiaspaavilainen.masuitehomes.bungee.commands.Set;
-import fi.matiaspaavilainen.masuitehomes.bungee.commands.Teleport;
+import fi.matiaspaavilainen.masuitehomes.bungee.commands.DeleteCommand;
+import fi.matiaspaavilainen.masuitehomes.bungee.commands.ListCommand;
+import fi.matiaspaavilainen.masuitehomes.bungee.commands.SetCommand;
+import fi.matiaspaavilainen.masuitehomes.bungee.commands.TeleportCommand;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -52,7 +52,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(e.getData()));
         String subchannel = in.readUTF();
         if (subchannel.equals("HomeCommand")) {
-            Teleport teleport = new Teleport(this);
+            TeleportCommand teleport = new TeleportCommand(this);
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
                 teleport.teleport(p, in.readUTF());
@@ -60,7 +60,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
 
         }
         if (subchannel.equals("HomeOtherCommand")) {
-            Teleport teleport = new Teleport(this);
+            TeleportCommand teleport = new TeleportCommand(this);
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
                 teleport.teleport(p, in.readUTF(), in.readUTF());
@@ -69,7 +69,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("SetHomeCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
-                Set set = new Set(this);
+                SetCommand set = new SetCommand(this);
                 String[] location = in.readUTF().split(":");
                 set.set(p, in.readUTF(), in.readInt(), new Location(location[0], Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]), Float.parseFloat(location[4]), Float.parseFloat(location[5])));
             }
@@ -79,7 +79,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             String player = in.readUTF();
             if (utils.isOnline(p)) {
-                Set set = new Set(this);
+                SetCommand set = new SetCommand(this);
                 String[] location = in.readUTF().split(":");
                 set.set(p, player, in.readUTF(), in.readInt(), new Location(location[0], Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]), Float.parseFloat(location[4]), Float.parseFloat(location[5])));
             }
@@ -88,7 +88,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("DelHomeCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
-                Delete delete = new Delete(this);
+                DeleteCommand delete = new DeleteCommand(this);
                 delete.delete(p, in.readUTF());
             }
         }
@@ -96,7 +96,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("DelHomeOtherCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
-                Delete delete = new Delete(this);
+                DeleteCommand delete = new DeleteCommand(this);
                 delete.delete(p, in.readUTF(), in.readUTF());
             }
         }
@@ -104,7 +104,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("ListHomeCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
-                List list = new List();
+                ListCommand list = new ListCommand();
                 list.list(p);
             }
         }
@@ -112,7 +112,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("ListHomeOtherCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
-                List list = new List();
+                ListCommand list = new ListCommand();
                 list.list(p, in.readUTF());
             }
         }

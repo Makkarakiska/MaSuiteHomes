@@ -7,14 +7,14 @@ import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-public class Delete {
+public class DeleteCommand {
 
     private Formator formator = new Formator();
     private BungeeConfiguration config = new BungeeConfiguration();
 
     private MaSuiteHomes plugin;
 
-    public Delete(MaSuiteHomes plugin) {
+    public DeleteCommand(MaSuiteHomes plugin) {
         this.plugin = plugin;
     }
 

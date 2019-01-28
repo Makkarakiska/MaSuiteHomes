@@ -9,10 +9,11 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class List {
+public class ListCommand {
 
     private BungeeConfiguration config = new BungeeConfiguration();
     private Formator formator = new Formator();
@@ -20,7 +21,7 @@ public class List {
     public void list(ProxiedPlayer p) {
         Home h = new Home();
 
-        HashMap<String, ArrayList<Home>> homeList = new HashMap<>();
+        HashMap<String, List<Home>> homeList = new HashMap<>();
         for (Home home : h.getHomes(p.getUniqueId())) {
             if (!homeList.containsKey(home.getServer())) {
                 homeList.put(home.getServer(), new ArrayList<>());
@@ -60,9 +61,8 @@ public class List {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
         }
-        Home h = new Home();
-        HashMap<String, ArrayList<Home>> homeList = new HashMap<>();
-        for (Home home : h.getHomes(msp.getUniqueId())) {
+        HashMap<String, List<Home>> homeList = new HashMap<>();
+        for (Home home : new Home().getHomes(msp.getUniqueId())) {
             if (!homeList.containsKey(home.getServer())) {
                 homeList.put(home.getServer(), new ArrayList<>());
             }

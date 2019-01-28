@@ -11,13 +11,13 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.concurrent.TimeUnit;
 
-public class Teleport {
+public class TeleportCommand {
 
     private MaSuiteHomes plugin;
     private Formator formator = new Formator();
     private BungeeConfiguration config = new BungeeConfiguration();
 
-    public Teleport(MaSuiteHomes p) {
+    public TeleportCommand(MaSuiteHomes p) {
         plugin = p;
     }
 
