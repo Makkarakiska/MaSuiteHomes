@@ -15,22 +15,22 @@ list:
     - GRAY_STAINED_GLASS_PANE
   controls:
     previous:
-      title: "&5Previous"
+      title: "&9Previous"
       item: PAPER
       description:
-        - "&dGo to the previous page!"
+        - "&7Go to the previous page!"
     info:
-      title: "&5Home info"
+      title: "&9Home info"
       unlimited: unlimited
       item: "COMPASS"
       description:
-        - "&dHomes used: %used%"
-        - "&dHomes available: %total%"
+        - "&7Homes used: %used%"
+        - "&7Homes available: %total%"
     next:
-      title: "&5Next"
+      title: "&9Next"
       item: "PAPER"
       description:
-        - "&dGo to the next page!"
+        - "&7Go to the next page!"
 edit:
   title: "Edit: %name%"
   placeholder: "GRAY_STAINED_GLASS_PANE"

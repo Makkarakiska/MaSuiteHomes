@@ -1,3 +1,4 @@
+
 package fi.matiaspaavilainen.masuitehomes.bukkit.commands;
 
 import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
@@ -49,6 +50,9 @@ public class GUICommand implements CommandExecutor {
 
             Player p = (Player) cs;
 
+            if (!plugin.homes.containsKey(p.getUniqueId())) {
+                plugin.homes.put(p.getUniqueId(), new ArrayList<>());
+            }
 
             String title = guicfg.getString("list.title");
 
