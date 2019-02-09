@@ -1,6 +1,5 @@
 package fi.matiaspaavilainen.masuitehomes.core;
 
-import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
 import fi.matiaspaavilainen.masuitecore.core.database.Database;
 import fi.matiaspaavilainen.masuitecore.core.objects.Location;
