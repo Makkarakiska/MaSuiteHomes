@@ -11,6 +11,7 @@ import fi.matiaspaavilainen.masuitehomes.bungee.commands.ListCommand;
 import fi.matiaspaavilainen.masuitehomes.bungee.commands.SetCommand;
 import fi.matiaspaavilainen.masuitehomes.bungee.commands.TeleportCommand;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -120,6 +121,10 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("ListHomes")) {
             listHomes(getProxy().getPlayer(in.readUTF()));
         }
+
+        if (subchannel.equals("ReadyListHomes")) {
+            readyTolist(getProxy().getPlayer(in.readUTF()));
+        }
     }
 
     public void sendCooldown(ProxiedPlayer p, Home home) {
@@ -135,24 +140,29 @@ public class MaSuiteHomes extends Plugin implements Listener {
 
     public void listHomes(ProxiedPlayer p) {
         if (utils.isOnline(p)) {
-            for (Home home : new Home().getHomes(p.getUniqueId())) {
-                StringJoiner info = new StringJoiner(":");
-                Location loc = home.getLocation();
-                info.add(home.getName())
-                        .add(home.getServer())
-                        .add(loc.getWorld())
-                        .add(loc.getX().toString())
-                        .add(loc.getY().toString())
-                        .add(loc.getZ().toString());
+            new BungeePluginChannel(this, p.getServer().getInfo(), new Object[]{
+                    "ResetHomes",
+                    p.getUniqueId().toString()
+            }).send();
+        }
+    }
 
-                new BungeePluginChannel(this, p.getServer().getInfo(), new Object[]{
-                        "AddHome",
-                        p.getUniqueId().toString(),
-                        info.toString()
-                }).send();
+    public void readyTolist(ProxiedPlayer p) {
+        for (Home home : new Home().getHomes(p.getUniqueId())) {
+            StringJoiner info = new StringJoiner(":");
+            Location loc = home.getLocation();
+            info.add(home.getName())
+                    .add(home.getServer())
+                    .add(loc.getWorld())
+                    .add(loc.getX().toString())
+                    .add(loc.getY().toString())
+                    .add(loc.getZ().toString());
 
-            }
-
+            new BungeePluginChannel(this, p.getServer().getInfo(), new Object[]{
+                    "AddHome",
+                    p.getUniqueId().toString(),
+                    info.toString()
+            }).send();
         }
     }
 }

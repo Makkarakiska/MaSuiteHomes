@@ -1,5 +1,6 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit;
 
+import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.objects.Location;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
 import org.bukkit.Bukkit;
@@ -42,12 +43,19 @@ public class HomeMessageListener implements PluginMessageListener {
                     plugin.cooldowns.put(p.getUniqueId(), in.readLong());
                 }
             }
+            if (subchannel.equals("ResetHomes")) {
+                Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
+                if (p != null) {
+                    if (! plugin.homes.containsKey(p.getUniqueId())) {
+                        plugin.homes.put(p.getUniqueId(), new ArrayList<>());
+                    }
+                    plugin.homes.get(p.getUniqueId()).clear();
+                    new BukkitPluginChannel(plugin, p, new Object[]{"ReadyListHomes", p.getName()}).send();
+                }
+            }
             if (subchannel.equals("AddHome")) {
                 Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
                 if (p != null) {
-                    if (!plugin.homes.containsKey(p.getUniqueId())) {
-                        plugin.homes.put(p.getUniqueId(), new ArrayList<>());
-                    }
                     String[] info = in.readUTF().split(":");
                     Home home = new Home(info[0], info[1], p.getUniqueId(),
                             new Location(info[2], Double.parseDouble(info[3]), Double.parseDouble(info[4]), Double.parseDouble(info[5])));
