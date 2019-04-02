@@ -30,48 +30,35 @@ public class StandaloneTeleportCommand implements CommandExecutor {
             return false;
         }
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        Player p = (Player) cs;
 
-            if (plugin.in_command.contains(cs)) {
-                formator.sendMessage(cs, config.load(null, "messages.yml").getString("on-active-command"));
-                return;
-            }
-
-            plugin.in_command.add(cs);
-
-            Player p = (Player) cs;
-
-                switch (args.length) {
-                    case (0):
-                        if (checkCooldown(p)) {
-                            teleport("home", p, p.getUniqueId());
-                        }
-                        break;
-                    case (1):
-                        if (checkCooldown(p)) {
-                            teleport(args[0], p, p.getUniqueId());
-                        }
-                        break;
-                    case (2):
-                        if (p.hasPermission("masuitehomes.home.teleport.other")) {
-                            MaSuitePlayer msp = new MaSuitePlayer().find(args[0]);
-                            if (msp.getUniqueId() != null) {
-                                teleport(args[1], p, msp.getUniqueId());
-                            } else {
-                                formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
-                            }
-                        } else {
-                            formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
-                        }
-                        break;
-                    default:
-                        formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.teleport"));
-                        break;
+        switch (args.length) {
+            case (0):
+                if (checkCooldown(p)) {
+                    teleport("home", p, p.getUniqueId());
                 }
-
-            plugin.in_command.remove(cs);
-        });
-
+                break;
+            case (1):
+                if (checkCooldown(p)) {
+                    teleport(args[0], p, p.getUniqueId());
+                }
+                break;
+            case (2):
+                if (p.hasPermission("masuitehomes.home.teleport.other")) {
+                    MaSuitePlayer msp = new MaSuitePlayer().find(args[0]);
+                    if (msp.getUniqueId() != null) {
+                        teleport(args[1], p, msp.getUniqueId());
+                    } else {
+                        formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
+                    }
+                } else {
+                    formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
+                }
+                break;
+            default:
+                formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.teleport"));
+                break;
+        }
         return true;
     }
 
