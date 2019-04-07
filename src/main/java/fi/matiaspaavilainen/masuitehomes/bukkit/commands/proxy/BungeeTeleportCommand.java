@@ -5,14 +5,13 @@ import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.utils.BukkitWarmup;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
+import fi.matiaspaavilainen.masuitehomes.core.Home;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 public class BungeeTeleportCommand implements CommandExecutor {
     private MaSuiteHomes plugin;
@@ -89,15 +88,17 @@ public class BungeeTeleportCommand implements CommandExecutor {
     }
 
     private boolean checkHome(Player cs, String homeName) {
-        if (plugin.homes.get(cs.getUniqueId()).stream().noneMatch(home -> home.getName().equalsIgnoreCase(homeName))) {
+        boolean val = false;
+        for (Home home : plugin.homes.get(cs.getUniqueId())) {
             plugin.in_command.remove(cs);
-            return false;
+            if (home.getName().equalsIgnoreCase(homeName)) val = true;
         }
-        return true;
+        return val;
+
     }
 
     private void sendHome(Player p, String home) {
-        if (!checkHome(p, "home")) return;
+        if (!checkHome(p, home)) return;
         if (checkCooldown(p)) {
             if (plugin.config.load("homes", "config.yml").getInt("warmup") > 0) {
                 MaSuiteHomes.warmups.add(p.getUniqueId());
