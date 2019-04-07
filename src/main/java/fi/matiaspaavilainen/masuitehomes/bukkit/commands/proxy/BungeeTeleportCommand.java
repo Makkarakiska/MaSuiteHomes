@@ -3,6 +3,7 @@ package fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy;
 import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
+import fi.matiaspaavilainen.masuitecore.core.utils.BukkitWarmup;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,6 +11,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class BungeeTeleportCommand implements CommandExecutor {
     private MaSuiteHomes plugin;
@@ -38,16 +41,10 @@ public class BungeeTeleportCommand implements CommandExecutor {
             Player p = (Player) cs;
             switch (args.length) {
                 case (0):
-                    if (checkCooldown(p)) {
-                        sendLastLoc(p);
-                        new BukkitPluginChannel(plugin, p, new Object[]{"HomeCommand", p.getName(), "home"}).send();
-                    }
+                    sendHome(p, "home");
                     break;
                 case (1):
-                    if (checkCooldown(p)) {
-                        sendLastLoc(p);
-                        new BukkitPluginChannel(plugin, p, new Object[]{"HomeCommand", p.getName(), args[0]}).send();
-                    }
+                    sendHome(p, args[0]);
                     break;
                 case (2):
                     if (p.hasPermission("masuitehomes.home.teleport.other")) {
@@ -89,5 +86,42 @@ public class BungeeTeleportCommand implements CommandExecutor {
         Location loc = p.getLocation();
         new BukkitPluginChannel(plugin, p, new Object[]{"MaSuiteTeleports", "GetLocation", p.getName(), loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":"
                 + loc.getYaw() + ":" + loc.getPitch()}).send();
+    }
+
+    private boolean checkHome(Player cs, String homeName) {
+        if (plugin.homes.get(cs.getUniqueId()).stream().noneMatch(home -> home.getName().equalsIgnoreCase(homeName))) {
+            plugin.in_command.remove(cs);
+            return false;
+        }
+        return true;
+    }
+
+    private void sendHome(Player p, String home) {
+        if (!checkHome(p, "home")) return;
+        if (checkCooldown(p)) {
+            if (plugin.config.load("homes", "config.yml").getInt("warmup") > 0) {
+                MaSuiteHomes.warmups.add(p.getUniqueId());
+                formator.sendMessage(p, config.load("homes", "messages.yml").getString("teleportation-started").replace("%time%", String.valueOf(config.load("homes", "config.yml").getInt("warmup"))));
+                new BukkitWarmup(config.load("homes", "config.yml").getInt("warmup"), plugin) {
+                    @Override
+                    public void count(int current) {
+                        if (current == 0) {
+                            if (MaSuiteHomes.warmups.contains(p.getUniqueId())) {
+                                teleport(p, home);
+                                MaSuiteHomes.warmups.remove(p.getUniqueId());
+                            }
+                        }
+                    }
+                }.start();
+            } else {
+                teleport(p, home);
+            }
+        }
+    }
+
+    private void teleport(Player p, String home) {
+        sendLastLoc(p);
+        new BukkitPluginChannel(plugin, p, new Object[]{"HomeCommand", p.getName(), home}).send();
+        plugin.in_command.remove(p);
     }
 }
