@@ -1,6 +1,7 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit;
 
 import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
+import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.Updator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
@@ -16,23 +17,23 @@ import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneSe
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneTeleportCommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.JoinEvent;
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.LeaveEvent;
+import fi.matiaspaavilainen.masuitehomes.bukkit.events.MoveEvent;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class MaSuiteHomes extends JavaPlugin {
     public HashMap<UUID, Long> cooldowns = new HashMap<>();
+    public static HashSet<UUID> warmups = new HashSet<>();
     public HashMap<UUID, List<Home>> homes = new HashMap<>();
     public final java.util.List<CommandSender> in_command = new ArrayList<>();
 
-    private BukkitConfiguration config = new BukkitConfiguration();
+    public BukkitConfiguration config = new BukkitConfiguration();
+    public Formator formator = new Formator();
 
     @Override
     public void onEnable() {
@@ -123,9 +124,12 @@ public class MaSuiteHomes extends JavaPlugin {
         // Events
         getServer().getPluginManager().registerEvents(new JoinEvent(this), this);
         getServer().getPluginManager().registerEvents(new LeaveEvent(this), this);
+        getServer().getPluginManager().registerEvents(new MoveEvent(this), this);
     }
 
     private void loadDefaults() {
-        config.addDefault("homes/config.yml", "use-gui", true);
+        config.addDefault("homes/config.yml", "use-gui", false);
+        config.addDefault("homes/config.yml", "warmup", 3);
+        config.addDefault("homes/messages.yml", "teleportation-started", "&7You will be teleported in &a%time%&7 seconds! &cDont move!");
     }
 }

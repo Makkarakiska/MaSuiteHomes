@@ -1,8 +1,6 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone;
 
-import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.adapters.BukkitAdapter;
-import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
@@ -18,8 +16,6 @@ import java.util.UUID;
 public class StandaloneSetCommand implements CommandExecutor {
 
     private MaSuiteHomes plugin;
-    private Formator formator = new Formator();
-    private BukkitConfiguration config = new BukkitConfiguration();
 
     public StandaloneSetCommand(MaSuiteHomes p) {
         plugin = p;
@@ -30,7 +26,7 @@ public class StandaloneSetCommand implements CommandExecutor {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 
             if (plugin.in_command.contains(cs)) {
-                formator.sendMessage(cs, config.load(null, "messages.yml").getString("on-active-command"));
+                plugin.formator.sendMessage(cs, plugin.config.load(null, "messages.yml").getString("on-active-command"));
                 return;
             }
 
@@ -40,7 +36,7 @@ public class StandaloneSetCommand implements CommandExecutor {
             int max = plugin.getMaxHomes(p);
             switch (args.length) {
                 case (0):
-                    set(p.getUniqueId(), p,"home", max, p.getLocation());
+                    set(p.getUniqueId(), p, "home", max, p.getLocation());
                     break;
                 case (1):
                     set(p.getUniqueId(), p, args[0], max, p.getLocation());
@@ -48,17 +44,17 @@ public class StandaloneSetCommand implements CommandExecutor {
                 case (2):
                     if (p.hasPermission("masuitehomes.home.set.other")) {
                         MaSuitePlayer msp = new MaSuitePlayer().find(args[0]);
-                        if(msp.getUniqueId() != null){
+                        if (msp.getUniqueId() != null) {
                             set(msp.getUniqueId(), p, args[1], max, p.getLocation());
                         } else {
-                            formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
+                            plugin.formator.sendMessage(p, plugin.config.load("homes", "messages.yml").getString("player-not-found"));
                         }
                     } else {
-                        formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
+                        plugin.formator.sendMessage(p, plugin.config.load(null, "messages.yml").getString("no-permission"));
                     }
                     break;
                 default:
-                    formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.set"));
+                    plugin.formator.sendMessage(p, plugin.config.load("homes", "syntax.yml").getString("home.set"));
                     break;
             }
 
@@ -72,13 +68,13 @@ public class StandaloneSetCommand implements CommandExecutor {
         java.util.Set<Home> homes = new Home().getHomes(owner);
         if (h != null) {
             Home home = new Home(hs, "standalone", owner, BukkitAdapter.adapt(loc)).update();
-            formator.sendMessage(creator, config.load("homes", "messages.yml").getString("home.updated").replace("%home%", home.getName()));
+            plugin.formator.sendMessage(creator, plugin.config.load("homes", "messages.yml").getString("home.updated").replace("%home%", home.getName()));
         } else {
             if (homes.size() < max || max == -1) {
                 Home home = new Home(hs, "standalone", owner, BukkitAdapter.adapt(loc)).create();
-                formator.sendMessage(creator, config.load("homes", "messages.yml").getString("home.set").replace("%home%", home.getName()));
+                plugin.formator.sendMessage(creator, plugin.config.load("homes", "messages.yml").getString("home.set").replace("%home%", home.getName()));
             } else {
-                formator.sendMessage(creator, config.load("homes", "messages.yml").getString("home-limit-reached"));
+                plugin.formator.sendMessage(creator, plugin.config.load("homes", "messages.yml").getString("home-limit-reached"));
             }
 
         }

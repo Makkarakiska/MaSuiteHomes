@@ -1,7 +1,5 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone;
 
-import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
-import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
@@ -16,8 +14,6 @@ import java.util.UUID;
 public class StandaloneDeleteCommand implements CommandExecutor {
 
     private MaSuiteHomes plugin;
-    private Formator formator = new Formator();
-    private BukkitConfiguration config = new BukkitConfiguration();
 
     public StandaloneDeleteCommand(MaSuiteHomes p) {
         plugin = p;
@@ -32,7 +28,7 @@ public class StandaloneDeleteCommand implements CommandExecutor {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 
             if (plugin.in_command.contains(cs)) {
-                formator.sendMessage(cs, config.load(null, "messages.yml").getString("on-active-command"));
+                plugin.formator.sendMessage(cs, plugin.config.load(null, "messages.yml").getString("on-active-command"));
                 return;
             }
 
@@ -52,14 +48,14 @@ public class StandaloneDeleteCommand implements CommandExecutor {
                         if (msp.getUniqueId() != null) {
                             delete(args[0], p, msp.getUniqueId());
                         } else {
-                            formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
+                            plugin.formator.sendMessage(p, plugin.config.load("homes", "messages.yml").getString("player-not-found"));
                         }
                     } else {
-                        formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
+                        plugin.formator.sendMessage(p, plugin.config.load(null, "messages.yml").getString("no-permission"));
                     }
                     break;
                 default:
-                    formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.delete"));
+                    plugin.formator.sendMessage(p, plugin.config.load("homes", "syntax.yml").getString("home.delete"));
                     break;
             }
             plugin.in_command.remove(cs);
@@ -72,12 +68,12 @@ public class StandaloneDeleteCommand implements CommandExecutor {
         Home home = new Home().findExact(name, uuid);
         if (home != null) {
             if (home.delete()) {
-                formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.deleted").replace("%home%", home.getName()));
+                plugin.formator.sendMessage(p, plugin.config.load("homes", "messages.yml").getString("home.deleted").replace("%home%", home.getName()));
             } else {
                 System.out.println("[MaSuite] [Homes] There was an error during removing home.");
             }
         } else {
-            formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-not-found"));
+            plugin.formator.sendMessage(p, plugin.config.load("homes", "messages.yml").getString("home-not-found"));
         }
     }
 }

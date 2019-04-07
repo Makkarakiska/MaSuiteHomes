@@ -1,8 +1,6 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy;
 
-import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
-import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -13,8 +11,6 @@ import org.bukkit.entity.Player;
 public class BungeeDeleteCommand implements CommandExecutor {
 
     private MaSuiteHomes plugin;
-    private Formator formator = new Formator();
-    private BukkitConfiguration config = new BukkitConfiguration();
 
     public BungeeDeleteCommand(MaSuiteHomes p) {
         plugin = p;
@@ -29,7 +25,7 @@ public class BungeeDeleteCommand implements CommandExecutor {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 
             if (plugin.in_command.contains(cs)) {
-                formator.sendMessage(cs, config.load(null, "messages.yml").getString("on-active-command"));
+                plugin.formator.sendMessage(cs, plugin.config.load(null, "messages.yml").getString("on-active-command"));
                 return;
             }
 
@@ -47,11 +43,11 @@ public class BungeeDeleteCommand implements CommandExecutor {
                     if (p.hasPermission("masuitehomes.home.delete.other")) {
                         new BukkitPluginChannel(plugin, p, new Object[]{"DelHomeOtherCommand", p.getName(), args[0], args[1]}).send();
                     } else {
-                        formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
+                        plugin.formator.sendMessage(p, plugin.config.load(null, "messages.yml").getString("no-permission"));
                     }
                     break;
                 default:
-                    formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.delete"));
+                    plugin.formator.sendMessage(p, plugin.config.load("homes", "syntax.yml").getString("home.delete"));
                     break;
             }
             plugin.in_command.remove(cs);

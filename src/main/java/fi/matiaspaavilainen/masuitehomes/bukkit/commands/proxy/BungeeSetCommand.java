@@ -1,8 +1,6 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit.commands.proxy;
 
-import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
-import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,8 +12,6 @@ import org.bukkit.entity.Player;
 public class BungeeSetCommand implements CommandExecutor {
 
     private MaSuiteHomes plugin;
-    private Formator formator = new Formator();
-    private BukkitConfiguration config = new BukkitConfiguration();
 
     public BungeeSetCommand(MaSuiteHomes p) {
         plugin = p;
@@ -30,7 +26,7 @@ public class BungeeSetCommand implements CommandExecutor {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 
             if (plugin.in_command.contains(cs)) {
-                formator.sendMessage(cs, config.load(null, "messages.yml").getString("on-active-command"));
+                plugin.formator.sendMessage(cs, plugin.config.load(null, "messages.yml").getString("on-active-command"));
                 return;
             }
 
@@ -51,11 +47,11 @@ public class BungeeSetCommand implements CommandExecutor {
                     if (p.hasPermission("masuitehomes.home.set.other")) {
                         new BukkitPluginChannel(plugin, p, new Object[]{"SetHomeOtherCommand", p.getName(), args[0], l, args[1], -1}).send();
                     } else {
-                        formator.sendMessage(p, config.load(null, "messages.yml").getString("no-permission"));
+                        plugin.formator.sendMessage(p, plugin.config.load(null, "messages.yml").getString("no-permission"));
                     }
                     break;
                 default:
-                    formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.set"));
+                    plugin.formator.sendMessage(p, plugin.config.load("homes", "syntax.yml").getString("home.set"));
                     break;
             }
 
