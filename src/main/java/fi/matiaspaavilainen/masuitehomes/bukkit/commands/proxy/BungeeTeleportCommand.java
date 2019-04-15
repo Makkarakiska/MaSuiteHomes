@@ -101,6 +101,7 @@ public class BungeeTeleportCommand implements CommandExecutor {
         if (!checkHome(p, home)) return;
         if (checkCooldown(p)) {
             if (plugin.config.load("homes", "config.yml").getInt("warmup") > 0) {
+                if(p.hasPermission("masuitehomes.warmup.override")) { teleport(p, home); return; }
                 MaSuiteHomes.warmups.add(p.getUniqueId());
                 formator.sendMessage(p, config.load("homes", "messages.yml").getString("teleportation-started").replace("%time%", String.valueOf(config.load("homes", "config.yml").getInt("warmup"))));
                 new BukkitWarmup(config.load("homes", "config.yml").getInt("warmup"), plugin) {
