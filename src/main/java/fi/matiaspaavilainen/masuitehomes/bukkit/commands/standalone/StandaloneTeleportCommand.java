@@ -68,10 +68,8 @@ public class StandaloneTeleportCommand implements CommandExecutor {
                         formator.sendMessage(p, config.load("homes", "syntax.yml").getString("home.teleport"));
                         break;
                 }
-
-            plugin.in_command.remove(cs);
         });
-
+        plugin.in_command.remove(cs);
         return true;
     }
 
