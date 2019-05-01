@@ -32,6 +32,7 @@ public class StandaloneTeleportCommand implements CommandExecutor {
                 if (checkCooldown(p)) {
                     teleport("home", p, p.getUniqueId());
                 }
+<<<<<<< HEAD
                 break;
             case (1):
                 if (checkCooldown(p)) {
@@ -54,6 +55,10 @@ public class StandaloneTeleportCommand implements CommandExecutor {
                 plugin.formator.sendMessage(p, plugin.config.load("homes", "syntax.yml").getString("home.teleport"));
                 break;
         }
+=======
+        });
+        plugin.in_command.remove(cs);
+>>>>>>> 23ba8d4... Fixed standalone issue
         return true;
     }
 
