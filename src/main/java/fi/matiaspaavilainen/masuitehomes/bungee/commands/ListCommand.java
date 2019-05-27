@@ -10,48 +10,61 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import java.util.UUID;
 
 public class ListCommand {
 
     private BungeeConfiguration config = new BungeeConfiguration();
     private Formator formator = new Formator();
 
-    public void list(ProxiedPlayer p) {
+    private HashMap<String, List<Home>> loadHomes(UUID uuid){
         Home h = new Home();
 
         HashMap<String, List<Home>> homeList = new HashMap<>();
-        for (Home home : h.getHomes(p.getUniqueId())) {
+        for (Home home : h.getHomes(uuid)) {
             if (!homeList.containsKey(home.getServer())) {
                 homeList.put(home.getServer(), new ArrayList<>());
             }
             homeList.get(home.getServer()).add(home);
         }
+        return homeList;
+    }
+
+    public void list(ProxiedPlayer p) {
+
 
         BaseComponent baseHome = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.title")));
-        baseHome.addExtra("\n");
+        p.sendMessage(baseHome);
 
-        int homeTotal = homeList.size() - 1;
-        AtomicInteger count = new AtomicInteger();
+        loadHomes(p.getUniqueId()).forEach((server, homes) -> {
 
-        homeList.forEach((s, homes) -> {
-            final int[] i = {0};
-            TextComponent serverTitle = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", s)));
-            homes.forEach(home -> {
-                if (i[0]++ == homes.size() - 1) {
-                    serverTitle.addExtra(addToList(home, p.getName(), p.getName(), false));
+            TextComponent message = new TextComponent();
+            TextComponent serverTitle = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", server)));
+
+            message.addExtra(serverTitle);
+
+            int i = 0;
+            int counter = 0;
+            for (Home home : homes) {
+                if (i++ == homes.size() - 1) {
+                    message.addExtra(addToList(home, p.getName(), p.getName(), false));
                 } else {
-                    serverTitle.addExtra(addToList(home, p.getName(), p.getName(), true));
+                    message.addExtra(addToList(home, p.getName(), p.getName(), true));
                 }
-            });
-            if (count.getAndIncrement() != homeTotal) {
-                serverTitle.addExtra("\n");
+                counter++;
+                if (counter == 20) {
+                    p.sendMessage(message);
+                    message = new TextComponent();
+                    counter = 0;
+                }
+
             }
-            baseHome.addExtra(serverTitle);
+            if (homes.size() - 1 < 20) {
+                p.sendMessage(message);
+            }
+
         });
 
-        p.sendMessage(baseHome);
 
     }
 
@@ -61,40 +74,38 @@ public class ListCommand {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
         }
-        HashMap<String, List<Home>> homeList = new HashMap<>();
-        for (Home home : new Home().getHomes(msp.getUniqueId())) {
-            if (!homeList.containsKey(home.getServer())) {
-                homeList.put(home.getServer(), new ArrayList<>());
-            }
-            homeList.get(home.getServer()).add(home);
-        }
 
-        BaseComponent baseHome = new TextComponent(
-                formator.colorize(config.load("homes", "messages.yml")
-                        .getString("homes.title-others")
-                        .replace("%player%", msp.getUsername())));
-        baseHome.addExtra("\n");
-
-        int homeTotal = homeList.size() - 1;
-        AtomicInteger count = new AtomicInteger();
-        homeList.forEach((s, homes) -> {
-            final int[] i = {0};
-            TextComponent serverTitle = new TextComponent(
-                    formator.colorize(config.load("homes", "messages.yml")
-                            .getString("homes.server-name").replace("%server%", s)));
-            homes.forEach(home -> {
-                if (i[0]++ == homes.size() - 1) {
-                    serverTitle.addExtra(addToList(home, p.getName(), msp.getUsername(), false));
-                } else {
-                    serverTitle.addExtra(addToList(home, p.getName(), msp.getUsername(), true));
-                }
-            });
-            if (count.getAndIncrement() != homeTotal) {
-                serverTitle.addExtra("\n");
-            }
-            baseHome.addExtra(serverTitle);
-        });
+        BaseComponent baseHome = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.title-others").replace("%player%", msp.getUsername())));
         p.sendMessage(baseHome);
+
+        loadHomes(msp.getUniqueId()).forEach((server, homes) -> {
+
+            TextComponent message = new TextComponent();
+            TextComponent serverTitle = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", server)));
+
+            message.addExtra(serverTitle);
+
+            int i = 0;
+            int counter = 0;
+            for (Home home : homes) {
+                if (i++ == homes.size() - 1) {
+                    message.addExtra(addToList(home, p.getName(), msp.getUsername(), false));
+                } else {
+                    message.addExtra(addToList(home, p.getName(), msp.getUsername(), true));
+                }
+                counter++;
+                if (counter == 20) {
+                    p.sendMessage(message);
+                    message = new TextComponent();
+                    counter = 0;
+                }
+
+            }
+            if (homes.size() - 1 < 20) {
+                p.sendMessage(message);
+            }
+
+        });
 
     }
 
