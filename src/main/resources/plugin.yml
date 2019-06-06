@@ -4,6 +4,7 @@ version: ${project.version}
 author: Masagameplay
 api-version: 1.13
 depend: [MaSuiteCore]
+softdepend: [Multiverse, Multiworld]
 commands:
   sethome:
     description: Sets home point
