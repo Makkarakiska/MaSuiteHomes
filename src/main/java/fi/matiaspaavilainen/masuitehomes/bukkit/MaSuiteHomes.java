@@ -126,6 +126,6 @@ public class MaSuiteHomes extends JavaPlugin {
     }
 
     private void loadDefaults() {
-        config.addDefault("homes/config.yml", "use-gui", true);
+        config.addDefault("homes/config.yml", "use-gui", false);
     }
 }

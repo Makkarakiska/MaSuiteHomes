@@ -70,6 +70,7 @@ public class BungeeTeleportCommand implements CommandExecutor {
 
     private Boolean checkCooldown(Player p) {
         if (config.load("homes", "config.yml").getInt("cooldown") > 0) {
+            if (p.hasPermission("masuitehomes.cooldown.override")) return true;
             if (plugin.cooldowns.containsKey(p.getUniqueId())) {
                 if (System.currentTimeMillis() - plugin.cooldowns.get(p.getUniqueId()) > config.load("homes", "config.yml").getInt("cooldown") * 1000) {
                     plugin.cooldowns.remove(p.getUniqueId());
