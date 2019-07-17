@@ -2,6 +2,7 @@ package fi.matiaspaavilainen.masuitehomes.bukkit;
 
 import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.core.Updator;
+import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.GUICommand;
@@ -17,17 +18,19 @@ import fi.matiaspaavilainen.masuitehomes.bukkit.commands.standalone.StandaloneTe
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.JoinEvent;
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.LeaveEvent;
 import fi.matiaspaavilainen.masuitehomes.core.Home;
+import me.lucko.helper.Commands;
+import me.lucko.helper.internal.HelperImplementationPlugin;
+import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class MaSuiteHomes extends JavaPlugin {
+@HelperImplementationPlugin
+public class MaSuiteHomes extends ExtendedJavaPlugin {
     public HashMap<UUID, Long> cooldowns = new HashMap<>();
     public HashMap<UUID, List<Home>> homes = new HashMap<>();
     public final java.util.List<CommandSender> in_command = new ArrayList<>();
@@ -35,7 +38,7 @@ public class MaSuiteHomes extends JavaPlugin {
     private BukkitConfiguration config = new BukkitConfiguration();
 
     @Override
-    public void onEnable() {
+    public void enable() {
 
         // Create configs
         config.create(this, "homes", "config.yml");
@@ -52,6 +55,15 @@ public class MaSuiteHomes extends JavaPlugin {
 
 
         new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
+
+        Commands.create()
+                .assertPermission("masuitehomes.home.teleport")
+                .assertPlayer()
+                .assertUsage("<home> [player]").handler(c -> {
+                    System.out.println(c.arg(0).parse(String.class) + " " + c.sender().getUniqueId());
+                    new BukkitPluginChannel(this, c.sender(), new Object[]{"HomeCommand", c.sender().getUniqueId(), c.arg(0).parse(String.class)}).send();
+                }
+        ).register("home");
     }
 
     public int getMaxHomes(Player p) {
@@ -118,7 +130,7 @@ public class MaSuiteHomes extends JavaPlugin {
         // Tab completions
         getCommand("sethome").setTabCompleter(new HomeTabCompleter(this));
         getCommand("delhome").setTabCompleter(new HomeTabCompleter(this));
-        getCommand("home").setTabCompleter(new HomeTabCompleter(this));
+        //getCommand("home").setTabCompleter(new HomeTabCompleter(this));
 
         // Events
         getServer().getPluginManager().registerEvents(new JoinEvent(this), this);
