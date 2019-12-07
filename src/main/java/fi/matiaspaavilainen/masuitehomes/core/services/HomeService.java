@@ -151,13 +151,19 @@ public class HomeService {
             return homes.get(uuid);
         }
 
-        System.out.println("adddd");
         List<Home> homesList = entityManager.createQuery(
-                "SELECT h FROM Home WHERE h.owner = :owner ORDER BY h.name", Home.class)
+                "SELECT h FROM Home h WHERE h.owner = :owner ORDER BY h.name", Home.class)
                 .setParameter("owner", uuid).getResultList();
         homes.put(uuid, homesList);
 
         return homesList;
+    }
+
+    public void initializeHomes(UUID uuid) {
+        List<Home> homesList = entityManager.createQuery(
+                "SELECT h FROM Home h WHERE h.owner = :owner ORDER BY h.name", Home.class)
+                .setParameter("owner", uuid).getResultList();
+        homes.put(uuid, homesList);
     }
 
     /**
