@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +38,13 @@ public class MaSuiteHomes extends JavaPlugin {
 
         PaperCommandManager manager = new PaperCommandManager(this);
         manager.registerCommand(new HomeCommand(this));
+        manager.getCommandCompletions().registerAsyncCompletion("homes", c -> {
+            List<String> homeNames = new ArrayList<>();
+            for (Home home : homes.get(c.getPlayer().getUniqueId())) {
+                homeNames.add(home.getName());
+            }
+            return homeNames;
+        });
 
         new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
     }
