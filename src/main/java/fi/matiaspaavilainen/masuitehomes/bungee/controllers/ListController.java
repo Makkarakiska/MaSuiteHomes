@@ -1,6 +1,6 @@
 package fi.matiaspaavilainen.masuitehomes.bungee.controllers;
 
-import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
+import fi.matiaspaavilainen.masuitecore.core.models.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.models.Home;
 import net.md_5.bungee.api.chat.*;
@@ -67,7 +67,7 @@ public class ListController {
     }
 
     public void list(ProxiedPlayer p, String name) {
-        MaSuitePlayer msp = new MaSuitePlayer().find(name);
+        MaSuitePlayer msp = plugin.api.getPlayerService().getPlayer(name);
         if (msp.getUniqueId() == null) {
             plugin.formator.sendMessage(p, plugin.config.load("homes", "messages.yml").getString("player-not-found"));
             return;

@@ -3,7 +3,7 @@ package fi.matiaspaavilainen.masuitehomes.core.services;
 import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.channels.BungeePluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
-import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
+import fi.matiaspaavilainen.masuitecore.core.models.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.HibernateUtil;
 import fi.matiaspaavilainen.masuitehomes.core.models.Home;
@@ -185,7 +185,7 @@ public class HomeService {
      * @return returns home or null
      */
     public Home getHome(String username, String home) {
-        MaSuitePlayer player = new MaSuitePlayer().find(username);
+        MaSuitePlayer player = plugin.api.getPlayerService().getPlayer(username);
         if (player == null) {
             return null;
         }
