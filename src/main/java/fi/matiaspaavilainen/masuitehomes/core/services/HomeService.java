@@ -157,8 +157,6 @@ public class HomeService {
                 .setParameter("owner", uuid).getResultList();
         homes.put(uuid, homesList);
 
-        System.out.println(homes.toString());
-
         return homesList;
     }
 
