@@ -1,7 +1,7 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit;
 
 import fi.matiaspaavilainen.masuitecore.core.objects.Location;
-import fi.matiaspaavilainen.masuitehomes.core.Home;
+import fi.matiaspaavilainen.masuitehomes.core.models.Home;
 import org.bukkit.Bukkit;
 
 import org.bukkit.entity.Player;
