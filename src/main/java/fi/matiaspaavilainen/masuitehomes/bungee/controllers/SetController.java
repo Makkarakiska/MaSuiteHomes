@@ -36,18 +36,23 @@ public class SetController {
     }
 
     private void setHome(ProxiedPlayer player, String homeName, int max, Location loc, UUID uniqueId) {
-        Home h = plugin.homeService.getHomeExact(uniqueId, homeName);
+        Home home = plugin.homeService.getHomeExact(uniqueId, homeName);
         List<Home> homes = plugin.homeService.getHomes(uniqueId);
-        if (h != null) {
-            Home home = plugin.homeService.updateHome(new Home(homeName, player.getServer().getInfo().getName(), uniqueId, loc));
+
+        if (home != null) {
+            home.setServer(player.getServer().getInfo().getName());
+            home.setLocation(loc);
+            plugin.homeService.updateHome(home);
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("home.updated").replace("%home%", home.getName()));
+            plugin.listHomes(player);
+            return;
+        }
+
+        if (homes.size() < max || max == -1) {
+            Home h = plugin.homeService.createHome(new Home(homeName, player.getServer().getInfo().getName(), uniqueId, loc));
+            formator.sendMessage(player, config.load("homes", "messages.yml").getString("home.set").replace("%home%", h.getName()));
         } else {
-            if (homes.size() < max || max == -1) {
-                Home home = plugin.homeService.createHome(new Home(homeName, player.getServer().getInfo().getName(), uniqueId, loc));
-                formator.sendMessage(player, config.load("homes", "messages.yml").getString("home.set").replace("%home%", home.getName()));
-            } else {
-                formator.sendMessage(player, config.load("homes", "messages.yml").getString("home-limit-reached"));
-            }
+            formator.sendMessage(player, config.load("homes", "messages.yml").getString("home-limit-reached"));
         }
 
         plugin.listHomes(player);
