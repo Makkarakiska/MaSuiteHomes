@@ -1,8 +1,6 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit.events;
 
-import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
-import fi.matiaspaavilainen.masuitehomes.core.Home;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -10,8 +8,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class JoinEvent implements Listener {
 
@@ -23,20 +19,13 @@ public class JoinEvent implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (MaSuiteCore.bungee) {
-            try (ByteArrayOutputStream b = new ByteArrayOutputStream();
-                 DataOutputStream out = new DataOutputStream(b)) {
-                out.writeUTF("ListHomes");
-                out.writeUTF(e.getPlayer().getName());
-                plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> e.getPlayer().sendPluginMessage(plugin, "BungeeCord", b.toByteArray()), 20);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        } else {
-            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-                List<Home> homes = new ArrayList<>(new Home().getHomes(e.getPlayer().getUniqueId()));
-                plugin.homes.put(e.getPlayer().getUniqueId(), homes);
-            }, 20);
+        try (ByteArrayOutputStream b = new ByteArrayOutputStream();
+             DataOutputStream out = new DataOutputStream(b)) {
+            out.writeUTF("ListHomes");
+            out.writeUTF(e.getPlayer().getName());
+            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> e.getPlayer().sendPluginMessage(plugin, "BungeeCord", b.toByteArray()), 20);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 }
