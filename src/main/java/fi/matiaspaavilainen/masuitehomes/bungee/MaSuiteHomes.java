@@ -1,18 +1,22 @@
 package fi.matiaspaavilainen.masuitehomes.bungee;
 
+import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.bungee.Utils;
 import fi.matiaspaavilainen.masuitecore.core.Updator;
 import fi.matiaspaavilainen.masuitecore.core.channels.BungeePluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
 import fi.matiaspaavilainen.masuitecore.core.objects.Location;
-import fi.matiaspaavilainen.masuitehomes.bungee.commands.DeleteCommand;
-import fi.matiaspaavilainen.masuitehomes.bungee.commands.ListCommand;
-import fi.matiaspaavilainen.masuitehomes.bungee.commands.SetCommand;
-import fi.matiaspaavilainen.masuitehomes.bungee.commands.TeleportCommand;
-import fi.matiaspaavilainen.masuitehomes.core.Home;
+import fi.matiaspaavilainen.masuitehomes.bungee.controllers.DeleteController;
+import fi.matiaspaavilainen.masuitehomes.bungee.controllers.ListController;
+import fi.matiaspaavilainen.masuitehomes.bungee.controllers.SetController;
+import fi.matiaspaavilainen.masuitehomes.bungee.controllers.TeleportController;
+import fi.matiaspaavilainen.masuitehomes.core.HibernateUtil;
+import fi.matiaspaavilainen.masuitehomes.core.models.Home;
+import fi.matiaspaavilainen.masuitehomes.core.services.HomeService;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
@@ -20,6 +24,7 @@ import net.md_5.bungee.event.EventHandler;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
@@ -27,10 +32,14 @@ public class MaSuiteHomes extends Plugin implements Listener {
 
     private Utils utils = new Utils();
 
+    public HomeService homeService;
+
+    public BungeeConfiguration config = new BungeeConfiguration();
+    public Formator formator = new Formator();
+
     @Override
     public void onEnable() {
         //Configs
-        BungeeConfiguration config = new BungeeConfiguration();
         config.create(this, "homes", "messages.yml");
         getProxy().getPluginManager().registerListener(this, this);
 
@@ -42,6 +51,21 @@ public class MaSuiteHomes extends Plugin implements Listener {
 
         config.addDefault("homes/messages.yml", "homes.title-others", "&9%player%''s &7homes: ");
         config.addDefault("homes/messages.yml", "homes.server-name", "&9%server%&7: ");
+
+        homeService = new HomeService(this);
+    }
+
+    @Override
+    public void onDisable() {
+        HibernateUtil.shutdown();
+    }
+
+    @EventHandler
+    public void onJoin(PostLoginEvent event) {
+        if (!homeService.homes.containsKey(event.getPlayer().getUniqueId())) {
+            homeService.homes.put(event.getPlayer().getUniqueId(), new ArrayList<>());
+        }
+        getProxy().getScheduler().runAsync(this, () -> homeService.getHomes(event.getPlayer().getUniqueId()));
     }
 
     @EventHandler
@@ -52,7 +76,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(e.getData()));
         String subchannel = in.readUTF();
         if (subchannel.equals("HomeCommand")) {
-            TeleportCommand teleport = new TeleportCommand(this);
+            TeleportController teleport = new TeleportController(this);
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
                 teleport.teleport(p, in.readUTF());
@@ -60,7 +84,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
 
         }
         if (subchannel.equals("HomeOtherCommand")) {
-            TeleportCommand teleport = new TeleportCommand(this);
+            TeleportController teleport = new TeleportController(this);
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
                 teleport.teleport(p, in.readUTF(), in.readUTF());
@@ -69,7 +93,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("SetHomeCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
-                SetCommand set = new SetCommand(this);
+                SetController set = new SetController(this);
                 String[] location = in.readUTF().split(":");
                 set.set(p, in.readUTF(), in.readInt(), new Location(location[0], Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]), Float.parseFloat(location[4]), Float.parseFloat(location[5])));
             }
@@ -79,7 +103,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             String player = in.readUTF();
             if (utils.isOnline(p)) {
-                SetCommand set = new SetCommand(this);
+                SetController set = new SetController(this);
                 String[] location = in.readUTF().split(":");
                 set.set(p, player, in.readUTF(), in.readInt(), new Location(location[0], Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]), Float.parseFloat(location[4]), Float.parseFloat(location[5])));
             }
@@ -88,7 +112,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("DelHomeCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
-                DeleteCommand delete = new DeleteCommand(this);
+                DeleteController delete = new DeleteController(this);
                 delete.delete(p, in.readUTF());
             }
         }
@@ -96,7 +120,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("DelHomeOtherCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
-                DeleteCommand delete = new DeleteCommand(this);
+                DeleteController delete = new DeleteController(this);
                 delete.delete(p, in.readUTF(), in.readUTF());
             }
         }
@@ -104,7 +128,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("ListHomeCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
-                ListCommand list = new ListCommand();
+                ListController list = new ListController(this);
                 list.list(p);
             }
         }
@@ -112,7 +136,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("ListHomeOtherCommand")) {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
-                ListCommand list = new ListCommand();
+                ListController list = new ListController(this);
                 list.list(p, in.readUTF());
             }
         }
@@ -135,7 +159,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
 
     public void listHomes(ProxiedPlayer p) {
         if (utils.isOnline(p)) {
-            for (Home home : new Home().getHomes(p.getUniqueId())) {
+            for (Home home : homeService.getHomes(p.getUniqueId())) {
                 StringJoiner info = new StringJoiner(":");
                 Location loc = home.getLocation();
                 info.add(home.getName())
@@ -150,9 +174,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
                         p.getUniqueId().toString(),
                         info.toString()
                 }).send();
-
             }
-
         }
     }
 }
