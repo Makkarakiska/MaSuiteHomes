@@ -1,9 +1,8 @@
-package fi.matiaspaavilainen.masuitehomes.bungee.commands;
+package fi.matiaspaavilainen.masuitehomes.bungee.controllers;
 
-import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
-import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitehomes.core.Home;
+import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
+import fi.matiaspaavilainen.masuitehomes.core.models.Home;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -12,16 +11,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class ListCommand {
+public class ListController {
+    
+    private MaSuiteHomes plugin;
 
-    private BungeeConfiguration config = new BungeeConfiguration();
-    private Formator formator = new Formator();
+    public ListController(MaSuiteHomes plugin) {
+        this.plugin = plugin;
+    }
 
-    private HashMap<String, List<Home>> loadHomes(UUID uuid){
-        Home h = new Home();
-
+    private HashMap<String, List<Home>> loadHomes(UUID uuid) {
         HashMap<String, List<Home>> homeList = new HashMap<>();
-        for (Home home : h.getHomes(uuid)) {
+        for (Home home : plugin.homeService.getHomes(uuid)) {
             if (!homeList.containsKey(home.getServer())) {
                 homeList.put(home.getServer(), new ArrayList<>());
             }
@@ -31,15 +31,13 @@ public class ListCommand {
     }
 
     public void list(ProxiedPlayer p) {
-
-
-        BaseComponent baseHome = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.title")));
+        BaseComponent baseHome = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.title")));
         p.sendMessage(baseHome);
 
         loadHomes(p.getUniqueId()).forEach((server, homes) -> {
 
             TextComponent message = new TextComponent();
-            TextComponent serverTitle = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", server)));
+            TextComponent serverTitle = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", server)));
 
             message.addExtra(serverTitle);
 
@@ -71,17 +69,17 @@ public class ListCommand {
     public void list(ProxiedPlayer p, String name) {
         MaSuitePlayer msp = new MaSuitePlayer().find(name);
         if (msp.getUniqueId() == null) {
-            formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
+            plugin.formator.sendMessage(p, plugin.config.load("homes", "messages.yml").getString("player-not-found"));
             return;
         }
 
-        BaseComponent baseHome = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.title-others").replace("%player%", msp.getUsername())));
+        BaseComponent baseHome = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.title-others").replace("%player%", msp.getUsername())));
         p.sendMessage(baseHome);
 
         loadHomes(msp.getUniqueId()).forEach((server, homes) -> {
 
             TextComponent message = new TextComponent();
-            TextComponent serverTitle = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", server)));
+            TextComponent serverTitle = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", server)));
 
             message.addExtra(serverTitle);
 
@@ -110,15 +108,15 @@ public class ListCommand {
     }
 
     private TextComponent addToList(Home home, String requester, String owner, boolean splitter) {
-        TextComponent hc = new TextComponent(formator.colorize(config.load("homes", "messages.yml").getString("homes.name").replace("%home%", home.getName())));
+        TextComponent hc = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.name").replace("%home%", home.getName())));
         if (requester.equalsIgnoreCase(owner)) {
             hc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + home.getName()));
         } else {
             hc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + owner + " " + home.getName()));
         }
-        hc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(formator.colorize(config.load("homes", "messages.yml").getString("home-hover-text").replace("%home%", home.getName()))).create()));
+        hc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("home-hover-text").replace("%home%", home.getName()))).create()));
         if (splitter) {
-            hc.addExtra(formator.colorize(config.load("homes", "messages.yml").getString("homes.split")));
+            hc.addExtra(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.split")));
         }
 
         return hc;
