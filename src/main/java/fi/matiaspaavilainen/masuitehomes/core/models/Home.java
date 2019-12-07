@@ -26,6 +26,7 @@ import java.util.UUID;
 public class Home {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     /**
      * Name of the home
