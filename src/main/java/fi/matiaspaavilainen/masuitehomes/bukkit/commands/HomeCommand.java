@@ -1,9 +1,7 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit.commands;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.*;
 import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.Location;
@@ -20,98 +18,75 @@ public class HomeCommand extends BaseCommand {
     @CommandAlias("home")
     @CommandPermission("masuitehomes.home.teleport")
     @Description("Teleports to home")
-    public void teleportHomeCommand(Player player, String[] args) {
-        if (args.length == 0) {
-            new BukkitPluginChannel(plugin, player, new Object[]{"HomeCommand", player.getName(), "home"}).send();
+    @CommandCompletion("@homes")
+    public void teleportHomeCommand(Player player, @Default("home") String home, @Optional String searchPlayer) {
+        if (searchPlayer == null) {
+            new BukkitPluginChannel(plugin, player, new Object[]{"HomeCommand", player.getName(), home}).send();
             return;
         }
 
-        if (args.length == 1) {
-            new BukkitPluginChannel(plugin, player, new Object[]{"HomeCommand", player.getName(), args[0]}).send();
-            return;
+        if (!player.hasPermission("masuitehomes.home.teleport.other")) {
+            plugin.formator.sendMessage(player, plugin.config.load(null, "messages.yml").getString("no-permission"));
         }
 
-        if (args.length == 2) {
-            new BukkitPluginChannel(plugin, player, new Object[]{"HomeOtherCommand", player.getName(), args[0], args[1]}).send();
-            return;
-        }
+        new BukkitPluginChannel(plugin, player, new Object[]{"HomeOtherCommand", player.getName(), home, searchPlayer}).send();
 
-        plugin.formator.sendMessage(player, plugin.config.load("homes", "syntax.yml").getString("home.teleport"));
     }
 
     @CommandAlias("sethome|createhome|homeset")
     @CommandPermission("masuitehomes.home.set")
     @Description("Sets home point")
-    public void setHomeCommand(Player player, String[] args) {
+    @CommandCompletion("@homes")
+    public void setHomeCommand(Player player, @Default("home") String home, @Optional String searchPlayer) {
         Location loc = player.getLocation();
         int max = plugin.getMaxHomes(player);
 
         String location = loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":" + loc.getYaw() + ":" + loc.getPitch();
-        if (args.length == 0) {
-            new BukkitPluginChannel(plugin, player, new Object[]{"SetHomeCommand", player.getName(), location, "home", max}).send();
+
+        if (searchPlayer == null) {
+            new BukkitPluginChannel(plugin, player, new Object[]{"SetHomeCommand", player.getName(), location, home, max}).send();
             return;
         }
 
-        if (args.length == 1) {
-            new BukkitPluginChannel(plugin, player, new Object[]{"SetHomeCommand", player.getName(), location, args[0], max}).send();
-            return;
-        }
-
-        if (args.length == 2) {
-            if (player.hasPermission("masuitehomes.home.set.other")) {
-                new BukkitPluginChannel(plugin, player, new Object[]{"SetHomeOtherCommand", player.getName(), args[0], location, args[1], -1}).send();
-                return;
-            }
+        if (!player.hasPermission("masuitehomes.home.set.other")) {
             plugin.formator.sendMessage(player, plugin.config.load(null, "messages.yml").getString("no-permission"));
             return;
         }
 
-        plugin.formator.sendMessage(player, plugin.config.load("homes", "syntax.yml").getString("home.set"));
+        new BukkitPluginChannel(plugin, player, new Object[]{"SetHomeOtherCommand", player.getName(), home, location, searchPlayer, -1}).send();
     }
 
     @CommandAlias("delhome|deletehome|homedel")
     @CommandPermission("masuitehomes.home.delete")
     @Description("Deletes home point")
-    public void delHomeCommand(Player player, String[] args) {
-        if (args.length == 0) {
-            new BukkitPluginChannel(plugin, player, new Object[]{"DelHomeCommand", player.getName(), "home"}).send();
+    @CommandCompletion("@homes")
+    public void delHomeCommand(Player player, @Default("home") String home, @Optional String searchPlayer) {
+        if (searchPlayer == null) {
+            new BukkitPluginChannel(plugin, player, new Object[]{"DelHomeCommand", player.getName(), home}).send();
             return;
         }
 
-        if (args.length == 1) {
-            new BukkitPluginChannel(plugin, player, new Object[]{"DelHomeCommand", player.getName(), args[0]}).send();
-            return;
-        }
-
-        if (args.length == 2) {
-            if (player.hasPermission("masuitehomes.home.delete.other")) {
-                new BukkitPluginChannel(plugin, player, new Object[]{"DelHomeOtherCommand", player.getName(), args[0], args[1]}).send();
-                return;
-            }
+        if (!player.hasPermission("masuitehomes.home.delete.other")) {
             plugin.formator.sendMessage(player, plugin.config.load(null, "messages.yml").getString("no-permission"));
             return;
         }
 
-        plugin.formator.sendMessage(player, plugin.config.load("homes", "syntax.yml").getString("home.delete"));
+        new BukkitPluginChannel(plugin, player, new Object[]{"DelHomeOtherCommand", player.getName(), home, searchPlayer}).send();
     }
 
     @CommandAlias("homes|listhomes|homelist")
     @CommandPermission("masuitehomes.home.list")
     @Description("List homes")
-    public void listHomeCommand(Player player, String[] args) {
-        if (args.length == 0) {
+    public void listHomeCommand(Player player, @Optional String searchPlayer) {
+        if (searchPlayer == null) {
             new BukkitPluginChannel(plugin, player, new Object[]{"ListHomeCommand", player.getName()}).send();
             return;
         }
 
-        if (args.length == 1) {
-            if (player.hasPermission("masuitehomes.home.list.other")) {
-                new BukkitPluginChannel(plugin, player, new Object[]{"ListHomeOtherCommand", player.getName(), args[0]}).send();
-                return;
-            }
+        if (!player.hasPermission("masuitehomes.home.list.other")) {
             plugin.formator.sendMessage(player, plugin.config.load(null, "messages.yml").getString("no-permission"));
-            return;
         }
-        plugin.formator.sendMessage(player, plugin.config.load("homes", "syntax.yml").getString("home.list"));
+
+        new BukkitPluginChannel(plugin, player, new Object[]{"ListHomeOtherCommand", player.getName(), searchPlayer}).send();
     }
 }
