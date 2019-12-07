@@ -2,7 +2,7 @@ package fi.matiaspaavilainen.masuitehomes.bungee.controllers;
 
 import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
-import fi.matiaspaavilainen.masuitecore.core.objects.MaSuitePlayer;
+import fi.matiaspaavilainen.masuitecore.core.models.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.models.Home;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -25,7 +25,7 @@ public class DeleteController {
     }
 
     public void delete(ProxiedPlayer p, String name, String homeName) {
-        MaSuitePlayer msp = new MaSuitePlayer().find(name);
+        MaSuitePlayer msp = plugin.api.getPlayerService().getPlayer(name);
         if (msp.getUniqueId() == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
             return;

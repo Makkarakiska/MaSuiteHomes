@@ -1,8 +1,9 @@
 package fi.matiaspaavilainen.masuitehomes.bungee;
 
-import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.bungee.Utils;
+import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.Updator;
+import fi.matiaspaavilainen.masuitecore.core.api.MaSuiteCoreAPI;
 import fi.matiaspaavilainen.masuitecore.core.channels.BungeePluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.database.ConnectionManager;
@@ -36,6 +37,8 @@ public class MaSuiteHomes extends Plugin implements Listener {
 
     public BungeeConfiguration config = new BungeeConfiguration();
     public Formator formator = new Formator();
+
+    public MaSuiteCoreAPI api = new MaSuiteCoreAPI();
 
     @Override
     public void onEnable() {
