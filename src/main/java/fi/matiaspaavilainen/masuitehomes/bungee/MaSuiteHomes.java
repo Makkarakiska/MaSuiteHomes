@@ -65,7 +65,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (!homeService.homes.containsKey(event.getPlayer().getUniqueId())) {
             homeService.homes.put(event.getPlayer().getUniqueId(), new ArrayList<>());
         }
-        getProxy().getScheduler().runAsync(this, () -> homeService.getHomes(event.getPlayer().getUniqueId()));
+        getProxy().getScheduler().runAsync(this, () -> homeService.initializeHomes(event.getPlayer().getUniqueId()));
     }
 
     @EventHandler
