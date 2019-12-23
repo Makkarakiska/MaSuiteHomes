@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class JoinEvent implements Listener {
 
@@ -19,6 +20,7 @@ public class JoinEvent implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        plugin.homes.put(e.getPlayer().getUniqueId(), new ArrayList<>());
         try (ByteArrayOutputStream b = new ByteArrayOutputStream();
              DataOutputStream out = new DataOutputStream(b)) {
             out.writeUTF("ListHomes");
