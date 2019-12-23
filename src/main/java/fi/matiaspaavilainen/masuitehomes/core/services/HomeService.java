@@ -11,10 +11,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import javax.persistence.EntityManager;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -76,10 +73,10 @@ public class HomeService {
             return;
         }
 
-        if (!player.getServer().getInfo().getName().equals(home.getServer())) {
-            player.connect(ProxyServer.getInstance().getServerInfo(home.getServer()));
+        if (!player.getServer().getInfo().getName().equals(home.getLocation().getServer())) {
+            player.connect(ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()));
         }
-        BungeePluginChannel bpc = new BungeePluginChannel(plugin, ProxyServer.getInstance().getServerInfo(home.getServer()),
+        BungeePluginChannel bpc = new BungeePluginChannel(plugin, ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()),
                 new Object[]{"HomePlayer",
                         player.getUniqueId().toString(),
                         home.getLocation().getWorld(),
@@ -89,7 +86,7 @@ public class HomeService {
                         home.getLocation().getYaw(),
                         home.getLocation().getPitch()
                 });
-        if (!player.getServer().getInfo().getName().equals(home.getServer())) {
+        if (!player.getServer().getInfo().getName().equals(home.getLocation().getServer())) {
             plugin.getProxy().getScheduler().schedule(plugin, bpc::send, 500, TimeUnit.MILLISECONDS);
         } else {
             bpc.send();
@@ -224,9 +221,11 @@ public class HomeService {
      */
     private Home loadHome(UUID uuid, String name, String type) {
         // Load the home from cache
-        Optional<Home> cachedHome = homes.get(uuid).stream().filter(home -> home.getName().equalsIgnoreCase(name)).findFirst();
-        if (cachedHome.isPresent()) {
-            return cachedHome.get();
+        if (homes.containsKey(uuid)) {
+            Optional<Home> cachedHome = homes.get(uuid).stream().filter(home -> home.getName().equalsIgnoreCase(name)).findFirst();
+            if (cachedHome.isPresent()) {
+                return cachedHome.get();
+            }
         }
 
         // Search home from database
@@ -237,6 +236,9 @@ public class HomeService {
 
         // Add home into cache if not null
         if (home != null) {
+            if(!homes.containsKey(uuid)) {
+                homes.put(uuid, new ArrayList<>());
+            }
             homes.get(uuid).add(home);
         }
         return home;
