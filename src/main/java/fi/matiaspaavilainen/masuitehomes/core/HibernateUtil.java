@@ -1,6 +1,8 @@
 package fi.matiaspaavilainen.masuitehomes.core;
 
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
+import fi.matiaspaavilainen.masuitehomes.core.models.Home;
+import org.hibernate.cfg.Environment;
 import net.md_5.bungee.config.Configuration;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,13 +10,11 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Environment;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.util.HashMap;
 import java.util.Map;
-
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 public class HibernateUtil {
 
     private static EntityManagerFactory emFactory;
@@ -42,9 +42,9 @@ public class HibernateUtil {
                 // Maximum waiting time for a connection from the pool
                 settings.put("hibernate.hikari.connectionTimeout", "20000");
                 // Minimum number of ideal connections in the pool
-                settings.put("hibernate.hikari.minimumIdle", "10");
+                settings.put("hibernate.hikari.minimumIdle", "1");
                 // Maximum number of actual connection in the pool
-                settings.put("hibernate.hikari.maximumPoolSize", "20");
+                settings.put("hibernate.hikari.maximumPoolSize", "10");
                 // Maximum time that a connection is allowed to sit ideal in the pool
                 settings.put("hibernate.hikari.idleTimeout", "300000");
 
@@ -52,7 +52,7 @@ public class HibernateUtil {
 
                 registry = registryBuilder.build();
                 MetadataSources sources = new MetadataSources(registry)
-                        .addAnnotatedClass(fi.matiaspaavilainen.masuitehomes.core.models.Home.class);
+                        .addAnnotatedClass(Home.class);
                 Metadata metadata = sources.getMetadataBuilder().build();
                 sessionFactory = metadata.getSessionFactoryBuilder().build();
             } catch (Exception e) {
@@ -72,7 +72,7 @@ public class HibernateUtil {
     }
 
     public static EntityManager getEntityManager() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = getSessionFactory().openSession()) {
             emFactory = session.getEntityManagerFactory();
         } catch (Exception e) {
             e.printStackTrace();
