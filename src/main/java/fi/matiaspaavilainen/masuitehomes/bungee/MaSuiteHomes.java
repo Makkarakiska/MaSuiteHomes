@@ -152,7 +152,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
     public void sendCooldown(ProxiedPlayer p, Home home) {
         BungeePluginChannel bpc = new BungeePluginChannel(this, p.getServer().getInfo(),
                 new Object[]{"HomeCooldown", p.getUniqueId().toString(), System.currentTimeMillis()});
-        if (!getProxy().getServerInfo(home.getServer()).getName().equals(p.getServer().getInfo().getName())) {
+        if (!home.getLocation().getServer().equals(p.getServer().getInfo().getName())) {
             getProxy().getScheduler().schedule(this, bpc::send, 500, TimeUnit.MILLISECONDS);
         } else {
             bpc.send();
@@ -166,7 +166,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
                 StringJoiner info = new StringJoiner(":");
                 Location loc = home.getLocation();
                 info.add(home.getName())
-                        .add(home.getServer())
+                        .add(home.getLocation().getServer())
                         .add(loc.getWorld())
                         .add(loc.getX().toString())
                         .add(loc.getY().toString())
