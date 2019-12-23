@@ -49,14 +49,13 @@ public class HomeMessageListener implements PluginMessageListener {
                         plugin.homes.put(p.getUniqueId(), new ArrayList<>());
                     }
                     String[] info = in.readUTF().split(":");
-                    Home home = new Home(info[0], info[1], p.getUniqueId(),
-                            new Location(info[2], Double.parseDouble(info[3]), Double.parseDouble(info[4]), Double.parseDouble(info[5])));
+                    Home home = new Home(info[0], p.getUniqueId(),
+                            new Location(info[1], info[2], Double.parseDouble(info[3]), Double.parseDouble(info[4]), Double.parseDouble(info[5])));
                     plugin.homes.get(p.getUniqueId()).add(home);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
