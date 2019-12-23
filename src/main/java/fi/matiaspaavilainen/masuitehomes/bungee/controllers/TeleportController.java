@@ -24,12 +24,12 @@ public class TeleportController {
 
     public void teleport(ProxiedPlayer player, String homeName, String name) {
         MaSuitePlayer msp = plugin.api.getPlayerService().getPlayer(name);
-        if (msp.getUniqueId() == null) {
+        if (msp == null) {
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
         }
         Home home = plugin.homeService.getHome(msp.getUniqueId(), homeName);
-        plugin.homeService.teleportToHome(msp, home);
+        plugin.homeService.teleportToHome(player, home);
     }
 
 }
