@@ -15,6 +15,7 @@ public class HomeCommand extends BaseCommand {
         this.plugin = plugin;
     }
 
+    // TODO: Add last location
     @CommandAlias("home")
     @CommandPermission("masuitehomes.home.teleport")
     @Description("Teleports to home")
