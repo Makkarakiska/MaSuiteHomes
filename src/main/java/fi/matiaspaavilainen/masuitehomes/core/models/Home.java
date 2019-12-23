@@ -36,13 +36,6 @@ public class Home {
     private String name;
 
     /**
-     * Server
-     */
-    @NonNull
-    @Column(name = "server")
-    private String server;
-
-    /**
      * Owner of the Home
      */
     @NonNull
@@ -59,7 +52,8 @@ public class Home {
             @AttributeOverride(name = "y", column = @Column(name = "y")),
             @AttributeOverride(name = "z", column = @Column(name = "z")),
             @AttributeOverride(name = "yaw", column = @Column(name = "yaw")),
-            @AttributeOverride(name = "pitch", column = @Column(name = "pitch"))
+            @AttributeOverride(name = "pitch", column = @Column(name = "pitch")),
+            @AttributeOverride(name = "server", column = @Column(name = "server"))
     })
     @NonNull
     private Location location;
