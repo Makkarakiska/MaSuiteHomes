@@ -1,6 +1,6 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit;
 
-import co.aikar.commands.PaperCommandManager;
+import fi.matiaspaavilainen.masuitecore.acf.PaperCommandManager;
 import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.Updator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
@@ -38,10 +38,12 @@ public class MaSuiteHomes extends JavaPlugin {
 
         PaperCommandManager manager = new PaperCommandManager(this);
         manager.registerCommand(new HomeCommand(this));
-        manager.getCommandCompletions().registerAsyncCompletion("homes", c -> {
+        manager.getCommandCompletions().registerCompletion("homes", c -> {
             List<String> homeNames = new ArrayList<>();
-            for (Home home : homes.get(c.getPlayer().getUniqueId())) {
-                homeNames.add(home.getName());
+            if (homes.containsKey(c.getPlayer().getUniqueId())) {
+                for (Home home : homes.get(c.getPlayer().getUniqueId())) {
+                    homeNames.add(home.getName());
+                }
             }
             return homeNames;
         });
