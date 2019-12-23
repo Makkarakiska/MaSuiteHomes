@@ -28,7 +28,7 @@ public class SetController {
 
     public void set(ProxiedPlayer player, String name, String homeName, int max, Location loc) {
         MaSuitePlayer msp = plugin.api.getPlayerService().getPlayer(name);
-        if (msp.getUniqueId() == null) {
+        if (msp == null) {
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
         }
@@ -38,9 +38,8 @@ public class SetController {
     private void setHome(ProxiedPlayer player, String homeName, int max, Location loc, UUID uniqueId) {
         Home home = plugin.homeService.getHomeExact(uniqueId, homeName);
         List<Home> homes = plugin.homeService.getHomes(uniqueId);
-
+        loc.setServer(player.getServer().getInfo().getName());
         if (home != null) {
-            home.setServer(player.getServer().getInfo().getName());
             home.setLocation(loc);
             plugin.homeService.updateHome(home);
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("home.updated").replace("%home%", home.getName()));
@@ -49,7 +48,7 @@ public class SetController {
         }
 
         if (homes.size() < max || max == -1) {
-            Home h = plugin.homeService.createHome(new Home(homeName, player.getServer().getInfo().getName(), uniqueId, loc));
+            Home h = plugin.homeService.createHome(new Home(homeName, uniqueId, loc));
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("home.set").replace("%home%", h.getName()));
         } else {
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("home-limit-reached"));

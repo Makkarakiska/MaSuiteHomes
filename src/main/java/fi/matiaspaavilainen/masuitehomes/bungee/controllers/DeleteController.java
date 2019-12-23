@@ -26,7 +26,7 @@ public class DeleteController {
 
     public void delete(ProxiedPlayer p, String name, String homeName) {
         MaSuitePlayer msp = plugin.api.getPlayerService().getPlayer(name);
-        if (msp.getUniqueId() == null) {
+        if (msp == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
         }
