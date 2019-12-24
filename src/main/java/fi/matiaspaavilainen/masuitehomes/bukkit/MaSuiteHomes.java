@@ -4,6 +4,7 @@ import fi.matiaspaavilainen.masuitecore.acf.PaperCommandManager;
 import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.Updator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
+import fi.matiaspaavilainen.masuitecore.core.utils.CommandManagerUtil;
 import fi.matiaspaavilainen.masuitehomes.bukkit.commands.HomeCommand;
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.JoinEvent;
 import fi.matiaspaavilainen.masuitehomes.bukkit.events.LeaveEvent;
@@ -22,8 +23,6 @@ public class MaSuiteHomes extends JavaPlugin {
     public HashMap<UUID, List<Home>> homes = new HashMap<>();
 
     public BukkitConfiguration config = new BukkitConfiguration();
-
-    public Formator formator = new Formator();
 
     @Override
     public void onEnable() {
@@ -48,7 +47,9 @@ public class MaSuiteHomes extends JavaPlugin {
             return homeNames;
         });
 
-        new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
+        CommandManagerUtil.registerMaSuitePlayerCommandCompletion(manager);
+
+        new Updator(getDescription().getVersion(), getDescription().getName(), "60632").checkUpdates();
     }
 
     public int getMaxHomes(Player p) {
