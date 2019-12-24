@@ -46,7 +46,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         getProxy().getPluginManager().registerListener(this, this);
 
         // Check updates
-        new Updator(new String[]{getDescription().getVersion(), getDescription().getName(), "60632"}).checkUpdates();
+        new Updator(getDescription().getVersion(), getDescription().getName(), "60632").checkUpdates();
 
         config.addDefault("homes/messages.yml", "homes.title-others", "&9%player%''s &7homes: ");
         config.addDefault("homes/messages.yml", "homes.server-name", "&9%server%&7: ");
