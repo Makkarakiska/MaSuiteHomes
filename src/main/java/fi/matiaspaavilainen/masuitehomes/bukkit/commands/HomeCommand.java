@@ -19,19 +19,19 @@ public class HomeCommand extends BaseCommand {
     @CommandAlias("home")
     @CommandPermission("masuitehomes.home.teleport")
     @Description("Teleports to home")
-    @CommandCompletion("@homes *")
+    @CommandCompletion("@homes @masuite_players *")
     public void teleportHomeCommand(Player player, @Default("home") String home, @Optional @CommandPermission("masuitehomes.home.teleport.other") String searchPlayer) {
         if (searchPlayer == null) {
-            new BukkitPluginChannel(plugin, player, new Object[]{"HomeCommand", player.getName(), home}).send();
+            new BukkitPluginChannel(plugin, player, "HomeCommand", player.getName(), home).send();
             return;
         }
-        new BukkitPluginChannel(plugin, player, new Object[]{"HomeOtherCommand", player.getName(), home, searchPlayer}).send();
+        new BukkitPluginChannel(plugin, player, "HomeOtherCommand", player.getName(), home, searchPlayer).send();
     }
 
     @CommandAlias("sethome|createhome|homeset")
     @CommandPermission("masuitehomes.home.set")
     @Description("Sets home point")
-    @CommandCompletion("@homes *")
+    @CommandCompletion("@homes @masuite_players *")
     public void setHomeCommand(Player player, @Default("home") String home, @Optional @CommandPermission("masuitehomes.home.set.other") String searchPlayer) {
         Location loc = player.getLocation();
         int max = plugin.getMaxHomes(player);
@@ -39,32 +39,33 @@ public class HomeCommand extends BaseCommand {
         String location = loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":" + loc.getYaw() + ":" + loc.getPitch();
 
         if (searchPlayer == null) {
-            new BukkitPluginChannel(plugin, player, new Object[]{"SetHomeCommand", player.getName(), location, home, max}).send();
+            new BukkitPluginChannel(plugin, player, "SetHomeCommand", player.getName(), location, home, max).send();
             return;
         }
-        new BukkitPluginChannel(plugin, player, new Object[]{"SetHomeOtherCommand", player.getName(), home, location, searchPlayer, -1}).send();
+        new BukkitPluginChannel(plugin, player, "SetHomeOtherCommand", player.getName(), home, location, searchPlayer, -1).send();
     }
 
     @CommandAlias("delhome|deletehome|homedel")
     @CommandPermission("masuitehomes.home.delete")
     @Description("Deletes home point")
-    @CommandCompletion("@homes *")
+    @CommandCompletion("@homes @masuite_players *")
     public void delHomeCommand(Player player, @Default("home") String home, @Optional @CommandPermission("masuitehomes.home.delete.other") String searchPlayer) {
         if (searchPlayer == null) {
-            new BukkitPluginChannel(plugin, player, new Object[]{"DelHomeCommand", player.getName(), home}).send();
+            new BukkitPluginChannel(plugin, player, "DelHomeCommand", player.getName(), home).send();
             return;
         }
-        new BukkitPluginChannel(plugin, player, new Object[]{"DelHomeOtherCommand", player.getName(), home, searchPlayer}).send();
+        new BukkitPluginChannel(plugin, player, "DelHomeOtherCommand", player.getName(), home, searchPlayer).send();
     }
 
     @CommandAlias("homes|listhomes|homelist")
     @CommandPermission("masuitehomes.home.list")
     @Description("List homes")
+    @CommandCompletion("@masuite_players *")
     public void listHomeCommand(Player player, @Optional @CommandPermission("masuitehomes.home.list.other") String searchPlayer) {
         if (searchPlayer == null) {
-            new BukkitPluginChannel(plugin, player, new Object[]{"ListHomeCommand", player.getName()}).send();
+            new BukkitPluginChannel(plugin, player, "ListHomeCommand", player.getName()).send();
             return;
         }
-        new BukkitPluginChannel(plugin, player, new Object[]{"ListHomeOtherCommand", player.getName(), searchPlayer}).send();
+        new BukkitPluginChannel(plugin, player, "ListHomeOtherCommand", player.getName(), searchPlayer).send();
     }
 }
