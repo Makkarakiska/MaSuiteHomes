@@ -11,7 +11,6 @@ import fi.matiaspaavilainen.masuitehomes.bungee.controllers.DeleteController;
 import fi.matiaspaavilainen.masuitehomes.bungee.controllers.ListController;
 import fi.matiaspaavilainen.masuitehomes.bungee.controllers.SetController;
 import fi.matiaspaavilainen.masuitehomes.bungee.controllers.TeleportController;
-import fi.matiaspaavilainen.masuitehomes.core.HibernateUtil;
 import fi.matiaspaavilainen.masuitehomes.core.models.Home;
 import fi.matiaspaavilainen.masuitehomes.core.services.HomeService;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -52,11 +51,6 @@ public class MaSuiteHomes extends Plugin implements Listener {
         config.addDefault("homes/messages.yml", "homes.server-name", "&9%server%&7: ");
 
         homeService = new HomeService(this);
-    }
-
-    @Override
-    public void onDisable() {
-        HibernateUtil.shutdown();
     }
 
     @EventHandler
@@ -146,10 +140,9 @@ public class MaSuiteHomes extends Plugin implements Listener {
     }
 
     public void sendCooldown(ProxiedPlayer p, Home home) {
-        BungeePluginChannel bpc = new BungeePluginChannel(this, p.getServer().getInfo(),
-                new Object[]{"HomeCooldown", p.getUniqueId().toString(), System.currentTimeMillis()});
+        BungeePluginChannel bpc = new BungeePluginChannel(this, p.getServer().getInfo(), "HomeCooldown", p.getUniqueId().toString(), System.currentTimeMillis());
         if (!home.getLocation().getServer().equals(p.getServer().getInfo().getName())) {
-            getProxy().getScheduler().schedule(this, bpc::send, 500, TimeUnit.MILLISECONDS);
+            getProxy().getScheduler().schedule(this, bpc::send, config.load(null, "config.yml").getInt("teleportation-delay"), TimeUnit.MILLISECONDS);
         } else {
             bpc.send();
         }
