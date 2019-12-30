@@ -1,7 +1,6 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit;
 
 import fi.matiaspaavilainen.masuitecore.acf.PaperCommandManager;
-import fi.matiaspaavilainen.masuitecore.bukkit.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.Updator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.utils.CommandManagerUtil;
