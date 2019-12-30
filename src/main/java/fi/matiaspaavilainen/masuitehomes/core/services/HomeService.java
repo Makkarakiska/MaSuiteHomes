@@ -77,7 +77,7 @@ public class HomeService {
             player.connect(ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()));
         }
         BungeePluginChannel bpc = new BungeePluginChannel(plugin, ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()),
-                new Object[]{"HomePlayer",
+                "HomePlayer",
                         player.getUniqueId().toString(),
                         home.getLocation().getWorld(),
                         home.getLocation().getX(),
@@ -85,9 +85,9 @@ public class HomeService {
                         home.getLocation().getZ(),
                         home.getLocation().getYaw(),
                         home.getLocation().getPitch()
-                });
+                );
         if (!player.getServer().getInfo().getName().equals(home.getLocation().getServer())) {
-            plugin.getProxy().getScheduler().schedule(plugin, bpc::send, 500, TimeUnit.MILLISECONDS);
+            plugin.getProxy().getScheduler().schedule(plugin, bpc::send, config.load(null, "config.yml").getInt("teleportation-delay"), TimeUnit.MILLISECONDS);
         } else {
             bpc.send();
         }
