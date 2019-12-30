@@ -5,7 +5,7 @@ import fi.matiaspaavilainen.masuitecore.core.channels.BungeePluginChannel;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.models.MaSuitePlayer;
 import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
-import fi.matiaspaavilainen.masuitehomes.core.HibernateUtil;
+import fi.matiaspaavilainen.masuitecore.core.utils.HibernateUtil;
 import fi.matiaspaavilainen.masuitehomes.core.models.Home;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class HomeService {
 
-    private EntityManager entityManager = HibernateUtil.getEntityManager();
+    private EntityManager entityManager = HibernateUtil.addClasses(Home.class).getEntityManager();
     public HashMap<UUID, List<Home>> homes = new HashMap<>();
 
     private MaSuiteHomes plugin;
@@ -78,14 +78,14 @@ public class HomeService {
         }
         BungeePluginChannel bpc = new BungeePluginChannel(plugin, ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()),
                 "HomePlayer",
-                        player.getUniqueId().toString(),
-                        home.getLocation().getWorld(),
-                        home.getLocation().getX(),
-                        home.getLocation().getY(),
-                        home.getLocation().getZ(),
-                        home.getLocation().getYaw(),
-                        home.getLocation().getPitch()
-                );
+                player.getUniqueId().toString(),
+                home.getLocation().getWorld(),
+                home.getLocation().getX(),
+                home.getLocation().getY(),
+                home.getLocation().getZ(),
+                home.getLocation().getYaw(),
+                home.getLocation().getPitch()
+        );
         if (!player.getServer().getInfo().getName().equals(home.getLocation().getServer())) {
             plugin.getProxy().getScheduler().schedule(plugin, bpc::send, config.load(null, "config.yml").getInt("teleportation-delay"), TimeUnit.MILLISECONDS);
         } else {
@@ -236,7 +236,7 @@ public class HomeService {
 
         // Add home into cache if not null
         if (home != null) {
-            if(!homes.containsKey(uuid)) {
+            if (!homes.containsKey(uuid)) {
                 homes.put(uuid, new ArrayList<>());
             }
             homes.get(uuid).add(home);
