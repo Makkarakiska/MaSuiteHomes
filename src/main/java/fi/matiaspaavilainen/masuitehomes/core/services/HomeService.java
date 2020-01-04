@@ -1,11 +1,9 @@
 package fi.matiaspaavilainen.masuitehomes.core.services;
 
-import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
 import fi.matiaspaavilainen.masuitecore.core.channels.BungeePluginChannel;
-import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.models.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitecore.core.utils.HibernateUtil;
+import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
 import fi.matiaspaavilainen.masuitehomes.core.models.Home;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -21,9 +19,6 @@ public class HomeService {
     public HashMap<UUID, List<Home>> homes = new HashMap<>();
 
     private MaSuiteHomes plugin;
-
-    private Formator formator = new Formator();
-    private BungeeConfiguration config = new BungeeConfiguration();
 
     public HomeService(MaSuiteHomes plugin) {
         this.plugin = plugin;
@@ -69,7 +64,7 @@ public class HomeService {
      */
     private void teleport(ProxiedPlayer player, Home home) {
         if (home == null) {
-            formator.sendMessage(player, config.load("homes", "messages.yml").getString("home-not-found"));
+            plugin.formator.sendMessage(player, plugin.config.load("homes", "messages.yml").getString("home-not-found"));
             return;
         }
 
@@ -87,11 +82,11 @@ public class HomeService {
                 home.getLocation().getPitch()
         );
         if (!player.getServer().getInfo().getName().equals(home.getLocation().getServer())) {
-            plugin.getProxy().getScheduler().schedule(plugin, bpc::send, config.load(null, "config.yml").getInt("teleportation-delay"), TimeUnit.MILLISECONDS);
+            plugin.getProxy().getScheduler().schedule(plugin, bpc::send, plugin.config.load(null, "plugin.config.yml").getInt("teleportation-delay"), TimeUnit.MILLISECONDS);
         } else {
             bpc.send();
         }
-        formator.sendMessage(player, config.load("homes", "messages.yml").getString("home.teleported").replace("%home%", home.getName()));
+        plugin.formator.sendMessage(player, plugin.config.load("homes", "messages.yml").getString("home.teleported").replace("%home%", home.getName()));
     }
 
     /**
