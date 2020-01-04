@@ -82,7 +82,7 @@ public class HomeService {
                 home.getLocation().getPitch()
         );
         if (!player.getServer().getInfo().getName().equals(home.getLocation().getServer())) {
-            plugin.getProxy().getScheduler().schedule(plugin, bpc::send, plugin.config.load(null, "plugin.config.yml").getInt("teleportation-delay"), TimeUnit.MILLISECONDS);
+            plugin.getProxy().getScheduler().schedule(plugin, bpc::send, plugin.config.load(null, "config.yml").getInt("teleportation-delay"), TimeUnit.MILLISECONDS);
         } else {
             bpc.send();
         }
