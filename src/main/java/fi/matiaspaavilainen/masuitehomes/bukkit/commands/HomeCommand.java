@@ -2,9 +2,9 @@ package fi.matiaspaavilainen.masuitehomes.bukkit.commands;
 
 import fi.matiaspaavilainen.masuitecore.acf.BaseCommand;
 import fi.matiaspaavilainen.masuitecore.acf.annotation.*;
+import fi.matiaspaavilainen.masuitecore.core.adapters.BukkitAdapter;
 import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class HomeCommand extends BaseCommand {
@@ -33,10 +33,8 @@ public class HomeCommand extends BaseCommand {
     @Description("Sets home point")
     @CommandCompletion("@homes @masuite_players *")
     public void setHomeCommand(Player player, @Default("home") String home, @Optional @CommandPermission("masuitehomes.home.set.other") String searchPlayer) {
-        Location loc = player.getLocation();
+        String location = BukkitAdapter.adapt(player.getLocation()).serialize();
         int max = plugin.getMaxHomes(player);
-
-        String location = loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":" + loc.getYaw() + ":" + loc.getPitch();
 
         if (searchPlayer == null) {
             new BukkitPluginChannel(plugin, player, "SetHomeCommand", player.getName(), location, home, max).send();

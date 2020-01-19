@@ -1,5 +1,6 @@
 package fi.matiaspaavilainen.masuitehomes.core.models;
 
+import com.google.gson.Gson;
 import fi.matiaspaavilainen.masuitecore.core.objects.Location;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -57,4 +58,12 @@ public class Home {
     })
     @NonNull
     private Location location;
+
+    public String serialize() {
+        return new Gson().toJson(this);
+    }
+
+    public Home deserialize(String json) {
+        return new Gson().fromJson(json, Home.class);
+    }
 }

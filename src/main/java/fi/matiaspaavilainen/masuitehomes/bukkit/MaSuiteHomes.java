@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class MaSuiteHomes extends JavaPlugin {
-    public HashMap<UUID, Long> cooldowns = new HashMap<>();
     public HashMap<UUID, List<Home>> homes = new HashMap<>();
 
     public BukkitConfiguration config = new BukkitConfiguration();
