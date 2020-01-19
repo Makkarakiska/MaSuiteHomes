@@ -15,7 +15,6 @@ import fi.matiaspaavilainen.masuitehomes.core.models.Home;
 import fi.matiaspaavilainen.masuitehomes.core.services.HomeService;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
@@ -23,8 +22,6 @@ import net.md_5.bungee.event.EventHandler;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
 public class MaSuiteHomes extends Plugin implements Listener {
@@ -43,7 +40,7 @@ public class MaSuiteHomes extends Plugin implements Listener {
         //Configs
         config.create(this, "homes", "messages.yml");
         getProxy().getPluginManager().registerListener(this, this);
-
+        getProxy().getPluginManager().registerListener(this, this);
         // Check updates
         new Updator(getDescription().getVersion(), getDescription().getName(), "60632").checkUpdates();
 
@@ -51,14 +48,6 @@ public class MaSuiteHomes extends Plugin implements Listener {
         config.addDefault("homes/messages.yml", "homes.server-name", "&9%server%&7: ");
 
         homeService = new HomeService(this);
-    }
-
-    @EventHandler
-    public void onJoin(PostLoginEvent event) {
-        if (!homeService.homes.containsKey(event.getPlayer().getUniqueId())) {
-            homeService.homes.put(event.getPlayer().getUniqueId(), new ArrayList<>());
-        }
-        getProxy().getScheduler().runAsync(this, () -> homeService.initializeHomes(event.getPlayer().getUniqueId()));
     }
 
     @EventHandler
@@ -87,8 +76,8 @@ public class MaSuiteHomes extends Plugin implements Listener {
             ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
             if (utils.isOnline(p)) {
                 SetController set = new SetController(this);
-                String[] location = in.readUTF().split(":");
-                set.set(p, in.readUTF(), in.readInt(), new Location(location[0], Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]), Float.parseFloat(location[4]), Float.parseFloat(location[5])));
+                Location location = new Location().deserialize(in.readUTF());
+                set.set(p, in.readUTF(), in.readInt(), location);
             }
         }
 
@@ -97,8 +86,8 @@ public class MaSuiteHomes extends Plugin implements Listener {
             String player = in.readUTF();
             if (utils.isOnline(p)) {
                 SetController set = new SetController(this);
-                String[] location = in.readUTF().split(":");
-                set.set(p, player, in.readUTF(), in.readInt(), new Location(location[0], Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]), Float.parseFloat(location[4]), Float.parseFloat(location[5])));
+                Location location = new Location().deserialize(in.readUTF());
+                set.set(p, player, in.readUTF(), in.readInt(), location);
             }
         }
 
@@ -152,20 +141,11 @@ public class MaSuiteHomes extends Plugin implements Listener {
     public void listHomes(ProxiedPlayer p) {
         if (utils.isOnline(p)) {
             for (Home home : homeService.getHomes(p.getUniqueId())) {
-                StringJoiner info = new StringJoiner(":");
-                Location loc = home.getLocation();
-                info.add(home.getName())
-                        .add(home.getLocation().getServer())
-                        .add(loc.getWorld())
-                        .add(loc.getX().toString())
-                        .add(loc.getY().toString())
-                        .add(loc.getZ().toString());
-
-                new BungeePluginChannel(this, p.getServer().getInfo(), new Object[]{
+                new BungeePluginChannel(this, p.getServer().getInfo(),
                         "AddHome",
                         p.getUniqueId().toString(),
-                        info.toString()
-                }).send();
+                        home.serialize()
+                ).send();
             }
         }
     }
