@@ -22,11 +22,10 @@ import net.md_5.bungee.event.EventHandler;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 public class MaSuiteHomes extends Plugin implements Listener {
 
-    private Utils utils = new Utils();
+    public Utils utils = new Utils();
 
     public HomeService homeService;
 
@@ -126,16 +125,6 @@ public class MaSuiteHomes extends Plugin implements Listener {
         if (subchannel.equals("ListHomes")) {
             listHomes(getProxy().getPlayer(in.readUTF()));
         }
-    }
-
-    public void sendCooldown(ProxiedPlayer p, Home home) {
-        BungeePluginChannel bpc = new BungeePluginChannel(this, p.getServer().getInfo(), "HomeCooldown", p.getUniqueId().toString(), System.currentTimeMillis());
-        if (!home.getLocation().getServer().equals(p.getServer().getInfo().getName())) {
-            getProxy().getScheduler().schedule(this, bpc::send, config.load(null, "config.yml").getInt("teleportation-delay"), TimeUnit.MILLISECONDS);
-        } else {
-            bpc.send();
-        }
-
     }
 
     public void listHomes(ProxiedPlayer p) {
