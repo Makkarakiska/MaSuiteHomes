@@ -20,6 +20,7 @@ public class HomeCommand extends BaseCommand {
     @CommandPermission("masuitehomes.home.teleport")
     @Description("Teleports to home")
     @CommandCompletion("@homes @masuite_players *")
+    @Conditions("cooldown:type=homes,bypass=masuitehomes.cooldown.override")
     public void teleportHomeCommand(Player player, @Default("home") String home, @Optional @CommandPermission("masuitehomes.home.teleport.other") String searchPlayer) {
         if (searchPlayer == null) {
             new BukkitPluginChannel(plugin, player, "HomeCommand", player.getName(), home).send();
