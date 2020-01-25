@@ -1,6 +1,7 @@
 package fi.matiaspaavilainen.masuitehomes.bukkit;
 
 import fi.matiaspaavilainen.masuitecore.acf.PaperCommandManager;
+import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
 import fi.matiaspaavilainen.masuitecore.core.Updator;
 import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
 import fi.matiaspaavilainen.masuitecore.core.utils.CommandManagerUtil;
@@ -46,8 +47,11 @@ public class MaSuiteHomes extends JavaPlugin {
         });
 
         CommandManagerUtil.registerMaSuitePlayerCommandCompletion(manager);
+        CommandManagerUtil.registerCooldownCondition(manager);
 
         new Updator(getDescription().getVersion(), getDescription().getName(), "60632").checkUpdates();
+
+        MaSuiteCore.cooldownService.addCooldownLength("homes", config.load("homes", "config.yml").getInt("cooldown"));
     }
 
     public int getMaxHomes(Player p) {
