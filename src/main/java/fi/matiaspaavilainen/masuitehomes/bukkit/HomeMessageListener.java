@@ -46,13 +46,6 @@ public class HomeMessageListener implements PluginMessageListener {
 
                 p.teleport(bukkitLocation);
             }
-            // TODO: Fix cooldown
-            /*if (subchannel.equals("HomeCooldown")) {
-                Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
-                if (p != null) {
-                    plugin.cooldowns.put(p.getUniqueId(), in.readLong());
-                }
-            }*/
             if (subchannel.equals("AddHome")) {
                 Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
                 if (p != null) {
