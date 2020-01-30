@@ -22,20 +22,20 @@ public class SetController {
     private Formator formator = new Formator();
     private BungeeConfiguration config = new BungeeConfiguration();
 
-    public void set(ProxiedPlayer player, String hs, int max, Location loc) {
-        setHome(player, hs, max, loc, player.getUniqueId());
+    public void set(ProxiedPlayer player, String home, Location loc, int maxGlobalHomes, int maxServerHomes) {
+        setHome(player, home, loc, player.getUniqueId(), maxGlobalHomes, maxServerHomes);
     }
 
-    public void set(ProxiedPlayer player, String name, String homeName, int max, Location loc) {
+    public void set(ProxiedPlayer player, String name, String home, Location loc, int maxGlobalHomes, int maxServerHomes) {
         MaSuitePlayer msp = plugin.api.getPlayerService().getPlayer(name);
         if (msp == null) {
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
         }
-        setHome(player, homeName, max, loc, msp.getUniqueId());
+        setHome(player, home, loc, msp.getUniqueId(), maxGlobalHomes, maxServerHomes);
     }
 
-    private void setHome(ProxiedPlayer player, String homeName, int max, Location loc, UUID uniqueId) {
+    private void setHome(ProxiedPlayer player, String homeName, Location loc, UUID uniqueId, int maxGlobalHomes, int maxServerHomes) {
         Home home = plugin.homeService.getHomeExact(uniqueId, homeName);
         List<Home> homes = plugin.homeService.getHomes(uniqueId);
         loc.setServer(player.getServer().getInfo().getName());
@@ -47,7 +47,11 @@ public class SetController {
             return;
         }
 
-        if (homes.size() < max || max == -1) {
+        long serverHomeCount = homes.stream().filter(filteredHome -> filteredHome.getLocation().getServer().equalsIgnoreCase(player.getServer().getInfo().getName())).count();
+
+        System.out.println(serverHomeCount);
+
+        if ((homes.size() < maxGlobalHomes || maxGlobalHomes == -1) && (serverHomeCount < maxServerHomes || maxServerHomes == -1)) {
             Home h = plugin.homeService.createHome(new Home(homeName, uniqueId, loc));
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("home.set").replace("%home%", h.getName()));
         } else {

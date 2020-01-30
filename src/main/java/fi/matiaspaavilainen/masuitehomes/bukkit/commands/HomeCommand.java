@@ -6,6 +6,7 @@ import fi.matiaspaavilainen.masuitecore.core.adapters.BukkitAdapter;
 import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
 import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 public class HomeCommand extends BaseCommand {
 
@@ -35,13 +36,14 @@ public class HomeCommand extends BaseCommand {
     @CommandCompletion("@homes @masuite_players *")
     public void setHomeCommand(Player player, @Default("home") String home, @Optional @CommandPermission("masuitehomes.home.set.other") String searchPlayer) {
         String location = BukkitAdapter.adapt(player.getLocation()).serialize();
-        int max = plugin.getMaxHomes(player);
 
         if (searchPlayer == null) {
-            new BukkitPluginChannel(plugin, player, "SetHomeCommand", player.getName(), location, home, max).send();
+            new BukkitPluginChannel(plugin, player, "SetHomeCommand", player.getName(), location, home,
+                    this.getMaxHomes(player, "global"),
+                    this.getMaxHomes(player, "server")).send();
             return;
         }
-        new BukkitPluginChannel(plugin, player, "SetHomeOtherCommand", player.getName(), home, location, searchPlayer, -1).send();
+        new BukkitPluginChannel(plugin, player, "SetHomeOtherCommand", player.getName(), home, location, searchPlayer, -1, -1).send();
     }
 
     @CommandAlias("delhome|deletehome|homedel")
@@ -66,5 +68,28 @@ public class HomeCommand extends BaseCommand {
             return;
         }
         new BukkitPluginChannel(plugin, player, "ListHomeOtherCommand", player.getName(), searchPlayer).send();
+    }
+
+
+    private int getMaxHomes(Player player, String type) {
+        int max = 0;
+        for (PermissionAttachmentInfo permInfo : player.getEffectivePermissions()) {
+            String perm = permInfo.getPermission();
+            if (perm.startsWith("masuitehomes.home.limit." + type)) {
+                String amount = perm.replace("masuitehomes.home.limit." + type + ".", "");
+                if (amount.equalsIgnoreCase("*")) {
+                    max = -1;
+                    break;
+                }
+                try {
+                    if (Integer.parseInt(amount) > max) {
+                        max = Integer.parseInt(amount);
+                    }
+                } catch (NumberFormatException ex) {
+                    System.out.println("[MaSuite] [Homes] Please check your home limit permissions (Not an integer or *) ");
+                }
+            }
+        }
+        return max;
     }
 }
