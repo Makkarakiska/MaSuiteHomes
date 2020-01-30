@@ -49,8 +49,6 @@ public class SetController {
 
         long serverHomeCount = homes.stream().filter(filteredHome -> filteredHome.getLocation().getServer().equalsIgnoreCase(player.getServer().getInfo().getName())).count();
 
-        System.out.println(serverHomeCount);
-
         if ((homes.size() < maxGlobalHomes || maxGlobalHomes == -1) && (serverHomeCount < maxServerHomes || maxServerHomes == -1)) {
             Home h = plugin.homeService.createHome(new Home(homeName, uniqueId, loc));
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("home.set").replace("%home%", h.getName()));
