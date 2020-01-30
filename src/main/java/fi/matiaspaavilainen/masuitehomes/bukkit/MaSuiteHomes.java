@@ -28,7 +28,6 @@ public class MaSuiteHomes extends JavaPlugin {
         config.create(this, "homes", "syntax.yml");
         config.create(this, "homes", "gui.yml");
 
-        config.create(this, "homes", "messages.yml");
         // Register channels
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new HomeMessageListener(this));
