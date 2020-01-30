@@ -58,67 +58,67 @@ public class MaSuiteHomes extends Plugin implements Listener {
         String subchannel = in.readUTF();
         if (subchannel.equals("HomeCommand")) {
             TeleportController teleport = new TeleportController(this);
-            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            if (utils.isOnline(p)) {
-                teleport.teleport(p, in.readUTF());
+            ProxiedPlayer player = getProxy().getPlayer(in.readUTF());
+            if (utils.isOnline(player)) {
+                teleport.teleport(player, in.readUTF());
             }
 
         }
         if (subchannel.equals("HomeOtherCommand")) {
             TeleportController teleport = new TeleportController(this);
-            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            if (utils.isOnline(p)) {
-                teleport.teleport(p, in.readUTF(), in.readUTF());
+            ProxiedPlayer player = getProxy().getPlayer(in.readUTF());
+            if (utils.isOnline(player)) {
+                teleport.teleport(player, in.readUTF(), in.readUTF());
             }
         }
         if (subchannel.equals("SetHomeCommand")) {
-            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            if (utils.isOnline(p)) {
+            ProxiedPlayer player = getProxy().getPlayer(in.readUTF());
+            if (utils.isOnline(player)) {
                 SetController set = new SetController(this);
                 Location location = new Location().deserialize(in.readUTF());
-                set.set(p, in.readUTF(), in.readInt(), location);
+                set.set(player, in.readUTF(), location, in.readInt(), in.readInt());
             }
         }
 
         if (subchannel.equals("SetHomeOtherCommand")) {
-            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            String player = in.readUTF();
-            if (utils.isOnline(p)) {
+            ProxiedPlayer player = getProxy().getPlayer(in.readUTF());
+            String owner = in.readUTF();
+            if (utils.isOnline(player)) {
                 SetController set = new SetController(this);
                 Location location = new Location().deserialize(in.readUTF());
-                set.set(p, player, in.readUTF(), in.readInt(), location);
+                set.set(player, owner, in.readUTF(), location, in.readInt(), in.readInt());
             }
         }
 
         if (subchannel.equals("DelHomeCommand")) {
-            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            if (utils.isOnline(p)) {
+            ProxiedPlayer player = getProxy().getPlayer(in.readUTF());
+            if (utils.isOnline(player)) {
                 DeleteController delete = new DeleteController(this);
-                delete.delete(p, in.readUTF());
+                delete.delete(player, in.readUTF());
             }
         }
 
         if (subchannel.equals("DelHomeOtherCommand")) {
-            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            if (utils.isOnline(p)) {
+            ProxiedPlayer player = getProxy().getPlayer(in.readUTF());
+            if (utils.isOnline(player)) {
                 DeleteController delete = new DeleteController(this);
-                delete.delete(p, in.readUTF(), in.readUTF());
+                delete.delete(player, in.readUTF(), in.readUTF());
             }
         }
 
         if (subchannel.equals("ListHomeCommand")) {
-            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            if (utils.isOnline(p)) {
+            ProxiedPlayer player = getProxy().getPlayer(in.readUTF());
+            if (utils.isOnline(player)) {
                 ListController list = new ListController(this);
-                list.list(p);
+                list.list(player);
             }
         }
 
         if (subchannel.equals("ListHomeOtherCommand")) {
-            ProxiedPlayer p = getProxy().getPlayer(in.readUTF());
-            if (utils.isOnline(p)) {
+            ProxiedPlayer player = getProxy().getPlayer(in.readUTF());
+            if (utils.isOnline(player)) {
                 ListController list = new ListController(this);
-                list.list(p, in.readUTF());
+                list.list(player, in.readUTF());
             }
         }
 
