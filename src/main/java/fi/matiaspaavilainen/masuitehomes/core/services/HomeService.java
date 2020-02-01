@@ -68,9 +68,13 @@ public class HomeService {
             return;
         }
 
-        if (!player.getServer().getInfo().getName().equals(home.getLocation().getServer())) {
-            player.connect(ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()));
-        }
+        new BungeePluginChannel(plugin,
+                player.getServer().getInfo(),
+                "MaSuiteTeleports",
+                "GetLocation",
+                player.getName(),
+                player.getServer().getInfo().getName()).send();
+
         BungeePluginChannel bpc = new BungeePluginChannel(plugin, ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()),
                 "HomePlayer",
                 player.getUniqueId().toString(),
@@ -78,6 +82,7 @@ public class HomeService {
         );
 
         if (!player.getServer().getInfo().getName().equals(home.getLocation().getServer())) {
+            player.connect(ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()));
             plugin.getProxy().getScheduler().schedule(plugin, () -> {
                 bpc.send();
                 plugin.utils.applyCooldown(plugin, player.getUniqueId(), "homes");
