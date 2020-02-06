@@ -26,7 +26,7 @@ public class MaSuiteHomes extends JavaPlugin {
         // Create configs
         config.create(this, "homes", "config.yml");
         config.create(this, "homes", "syntax.yml");
-        config.create(this, "homes", "gui.yml");
+        config.addDefault("homes/config.yml", "warmup", 3);
 
         // Register channels
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -53,5 +53,6 @@ public class MaSuiteHomes extends JavaPlugin {
         new Updator(getDescription().getVersion(), getDescription().getName(), "60632").checkUpdates();
 
         MaSuiteCore.cooldownService.addCooldownLength("homes", config.load("homes", "config.yml").getInt("cooldown"));
+        MaSuiteCore.warmupService.warmupTimes.put("homes", config.load("homes", "config.yml").getInt("warmup"));
     }
 }
