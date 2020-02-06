@@ -1,8 +1,8 @@
-package fi.matiaspaavilainen.masuitehomes.bungee.controllers;
+package dev.masa.masuitehomes.bungee.controllers;
 
-import fi.matiaspaavilainen.masuitecore.core.models.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
-import fi.matiaspaavilainen.masuitehomes.core.models.Home;
+import dev.masa.masuitecore.core.models.MaSuitePlayer;
+import dev.masa.masuitehomes.bungee.MaSuiteHomes;
+import dev.masa.masuitehomes.core.models.Home;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 

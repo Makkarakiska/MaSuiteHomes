@@ -1,7 +1,7 @@
-package fi.matiaspaavilainen.masuitehomes.bukkit.events;
+package dev.masa.masuitehomes.bukkit.events;
 
-import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
-import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
+import dev.masa.masuitecore.core.channels.BukkitPluginChannel;
+import dev.masa.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

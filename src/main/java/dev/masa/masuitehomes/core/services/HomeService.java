@@ -1,10 +1,10 @@
-package fi.matiaspaavilainen.masuitehomes.core.services;
+package dev.masa.masuitehomes.core.services;
 
-import fi.matiaspaavilainen.masuitecore.core.channels.BungeePluginChannel;
-import fi.matiaspaavilainen.masuitecore.core.models.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitecore.core.utils.HibernateUtil;
-import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
-import fi.matiaspaavilainen.masuitehomes.core.models.Home;
+import dev.masa.masuitecore.core.channels.BungeePluginChannel;
+import dev.masa.masuitecore.core.models.MaSuitePlayer;
+import dev.masa.masuitecore.core.utils.HibernateUtil;
+import dev.masa.masuitehomes.bungee.MaSuiteHomes;
+import dev.masa.masuitehomes.core.models.Home;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 

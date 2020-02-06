@@ -1,6 +1,6 @@
-package fi.matiaspaavilainen.masuitehomes.bungee.events;
+package dev.masa.masuitehomes.bungee.events;
 
-import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
+import dev.masa.masuitehomes.bungee.MaSuiteHomes;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;

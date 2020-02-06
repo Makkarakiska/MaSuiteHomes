@@ -1,8 +1,8 @@
-package fi.matiaspaavilainen.masuitehomes.bukkit;
+package dev.masa.masuitehomes.bukkit;
 
-import fi.matiaspaavilainen.masuitecore.core.adapters.BukkitAdapter;
-import fi.matiaspaavilainen.masuitecore.core.objects.Location;
-import fi.matiaspaavilainen.masuitehomes.core.models.Home;
+import dev.masa.masuitecore.core.adapters.BukkitAdapter;
+import dev.masa.masuitecore.core.objects.Location;
+import dev.masa.masuitehomes.core.models.Home;
 import org.bukkit.Bukkit;
 
 import org.bukkit.entity.Player;
