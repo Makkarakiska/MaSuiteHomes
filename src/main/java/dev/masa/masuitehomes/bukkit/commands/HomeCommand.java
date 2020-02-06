@@ -1,10 +1,10 @@
-package fi.matiaspaavilainen.masuitehomes.bukkit.commands;
+package dev.masa.masuitehomes.bukkit.commands;
 
-import fi.matiaspaavilainen.masuitecore.acf.BaseCommand;
-import fi.matiaspaavilainen.masuitecore.acf.annotation.*;
-import fi.matiaspaavilainen.masuitecore.core.adapters.BukkitAdapter;
-import fi.matiaspaavilainen.masuitecore.core.channels.BukkitPluginChannel;
-import fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes;
+import dev.masa.masuitehomes.bukkit.MaSuiteHomes;
+import dev.masa.masuitecore.acf.BaseCommand;
+import dev.masa.masuitecore.acf.annotation.*;
+import dev.masa.masuitecore.core.adapters.BukkitAdapter;
+import dev.masa.masuitecore.core.channels.BukkitPluginChannel;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 

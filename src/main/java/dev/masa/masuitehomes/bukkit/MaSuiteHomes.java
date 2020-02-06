@@ -1,14 +1,14 @@
-package fi.matiaspaavilainen.masuitehomes.bukkit;
+package dev.masa.masuitehomes.bukkit;
 
-import fi.matiaspaavilainen.masuitecore.acf.PaperCommandManager;
-import fi.matiaspaavilainen.masuitecore.bukkit.MaSuiteCore;
-import fi.matiaspaavilainen.masuitecore.core.Updator;
-import fi.matiaspaavilainen.masuitecore.core.configuration.BukkitConfiguration;
-import fi.matiaspaavilainen.masuitecore.core.utils.CommandManagerUtil;
-import fi.matiaspaavilainen.masuitehomes.bukkit.commands.HomeCommand;
-import fi.matiaspaavilainen.masuitehomes.bukkit.events.JoinEvent;
-import fi.matiaspaavilainen.masuitehomes.bukkit.events.LeaveEvent;
-import fi.matiaspaavilainen.masuitehomes.core.models.Home;
+import dev.masa.masuitehomes.bukkit.events.JoinEvent;
+import dev.masa.masuitehomes.bukkit.events.LeaveEvent;
+import dev.masa.masuitecore.acf.PaperCommandManager;
+import dev.masa.masuitecore.bukkit.MaSuiteCore;
+import dev.masa.masuitecore.core.Updator;
+import dev.masa.masuitecore.core.configuration.BukkitConfiguration;
+import dev.masa.masuitecore.core.utils.CommandManagerUtil;
+import dev.masa.masuitehomes.bukkit.commands.HomeCommand;
+import dev.masa.masuitehomes.core.models.Home;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;

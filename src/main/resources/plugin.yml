@@ -1,5 +1,5 @@
 name: MaSuiteHomes
-main: fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes
+main: dev.masa.masuitehomes.bukkit.MaSuiteHomes
 version: ${project.version}
 author: Masagameplay
 api-version: 1.14

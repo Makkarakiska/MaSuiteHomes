@@ -1,11 +1,11 @@
-package fi.matiaspaavilainen.masuitehomes.bungee.controllers;
+package dev.masa.masuitehomes.bungee.controllers;
 
-import fi.matiaspaavilainen.masuitecore.bungee.chat.Formator;
-import fi.matiaspaavilainen.masuitecore.core.configuration.BungeeConfiguration;
-import fi.matiaspaavilainen.masuitecore.core.objects.Location;
-import fi.matiaspaavilainen.masuitecore.core.models.MaSuitePlayer;
-import fi.matiaspaavilainen.masuitehomes.bungee.MaSuiteHomes;
-import fi.matiaspaavilainen.masuitehomes.core.models.Home;
+import dev.masa.masuitecore.bungee.chat.Formator;
+import dev.masa.masuitecore.core.configuration.BungeeConfiguration;
+import dev.masa.masuitecore.core.objects.Location;
+import dev.masa.masuitecore.core.models.MaSuitePlayer;
+import dev.masa.masuitehomes.bungee.MaSuiteHomes;
+import dev.masa.masuitehomes.core.models.Home;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.List;

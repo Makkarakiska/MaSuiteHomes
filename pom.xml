@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>fi.matiaspaavilainen</groupId>
+    <groupId>dev.masa</groupId>
     <artifactId>MaSuiteHomes</artifactId>
     <version>2.0.0</version>
     <distributionManagement>
@@ -64,9 +64,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>fi.matiaspaavilainen</groupId>
+            <groupId>dev.masa</groupId>
             <artifactId>MaSuiteCore</artifactId>
-            <version>2.0.0-20200128.101601-4</version>
+            <version>2.0.0-20200206.140402-1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
