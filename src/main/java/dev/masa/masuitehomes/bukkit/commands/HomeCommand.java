@@ -1,5 +1,6 @@
 package dev.masa.masuitehomes.bukkit.commands;
 
+import dev.masa.masuitecore.bukkit.MaSuiteCore;
 import dev.masa.masuitehomes.bukkit.MaSuiteHomes;
 import dev.masa.masuitecore.acf.BaseCommand;
 import dev.masa.masuitecore.acf.annotation.*;
@@ -16,18 +17,23 @@ public class HomeCommand extends BaseCommand {
         this.plugin = plugin;
     }
 
-    // TODO: Add last location
     @CommandAlias("home")
     @CommandPermission("masuitehomes.home.teleport")
     @Description("Teleports to home")
     @CommandCompletion("@homes @masuite_players *")
     @Conditions("cooldown:type=homes,bypass=masuitehomes.cooldown.override")
     public void teleportHomeCommand(Player player, @Default("home") String home, @Optional @CommandPermission("masuitehomes.home.teleport.other") String searchPlayer) {
-        if (searchPlayer == null) {
-            new BukkitPluginChannel(plugin, player, "HomeCommand", player.getName(), home).send();
+        if (searchPlayer != null) {
+            new BukkitPluginChannel(plugin, player, "HomeOtherCommand", player.getName(), home, searchPlayer).send();
             return;
         }
-        new BukkitPluginChannel(plugin, player, "HomeOtherCommand", player.getName(), home, searchPlayer).send();
+
+        MaSuiteCore.warmupService.applyWarmup(player, "masuitehomes.warmup.override", "homes", success -> {
+            if(success) {
+                new BukkitPluginChannel(plugin, player, "HomeCommand", player.getName(), home).send();
+            }
+        });
+
     }
 
     @CommandAlias("sethome|createhome|homeset")
