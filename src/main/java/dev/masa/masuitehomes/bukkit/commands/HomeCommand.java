@@ -1,11 +1,10 @@
 package dev.masa.masuitehomes.bukkit.commands;
 
-import dev.masa.masuitecore.bukkit.MaSuiteCore;
-import dev.masa.masuitehomes.bukkit.MaSuiteHomes;
 import dev.masa.masuitecore.acf.BaseCommand;
 import dev.masa.masuitecore.acf.annotation.*;
 import dev.masa.masuitecore.core.adapters.BukkitAdapter;
 import dev.masa.masuitecore.core.channels.BukkitPluginChannel;
+import dev.masa.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
@@ -28,8 +27,8 @@ public class HomeCommand extends BaseCommand {
             return;
         }
 
-        MaSuiteCore.warmupService.applyWarmup(player, "masuitehomes.warmup.override", "homes", success -> {
-            if(success) {
+        plugin.api.getWarmupService().applyWarmup(player, "masuitehomes.warmup.override", "homes", success -> {
+            if (success) {
                 new BukkitPluginChannel(plugin, player, "HomeCommand", player.getName(), home).send();
             }
         });
