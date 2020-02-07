@@ -1,5 +1,6 @@
 package dev.masa.masuitehomes.bukkit;
 
+import dev.masa.masuitecore.core.api.MaSuiteCoreBukkitAPI;
 import dev.masa.masuitehomes.bukkit.events.JoinEvent;
 import dev.masa.masuitehomes.bukkit.events.LeaveEvent;
 import dev.masa.masuitecore.acf.PaperCommandManager;
@@ -20,12 +21,12 @@ public class MaSuiteHomes extends JavaPlugin {
     public HashMap<UUID, List<Home>> homes = new HashMap<>();
 
     public BukkitConfiguration config = new BukkitConfiguration();
+    public MaSuiteCoreBukkitAPI api = new MaSuiteCoreBukkitAPI();
 
     @Override
     public void onEnable() {
         // Create configs
         config.create(this, "homes", "config.yml");
-        config.create(this, "homes", "syntax.yml");
         config.addDefault("homes/config.yml", "warmup", 3);
 
         // Register channels
@@ -52,7 +53,7 @@ public class MaSuiteHomes extends JavaPlugin {
 
         new Updator(getDescription().getVersion(), getDescription().getName(), "60632").checkUpdates();
 
-        MaSuiteCore.cooldownService.addCooldownLength("homes", config.load("homes", "config.yml").getInt("cooldown"));
-        MaSuiteCore.warmupService.warmupTimes.put("homes", config.load("homes", "config.yml").getInt("warmup"));
+        api.getCooldownService().addCooldownLength("homes", config.load("homes", "config.yml").getInt("cooldown"));
+        api.getWarmupService().warmupTimes.put("homes", config.load("homes", "config.yml").getInt("warmup"));
     }
 }
