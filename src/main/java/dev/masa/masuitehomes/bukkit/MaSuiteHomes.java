@@ -4,7 +4,6 @@ import dev.masa.masuitecore.core.api.MaSuiteCoreBukkitAPI;
 import dev.masa.masuitehomes.bukkit.events.JoinEvent;
 import dev.masa.masuitehomes.bukkit.events.LeaveEvent;
 import dev.masa.masuitecore.acf.PaperCommandManager;
-import dev.masa.masuitecore.bukkit.MaSuiteCore;
 import dev.masa.masuitecore.core.Updator;
 import dev.masa.masuitecore.core.configuration.BukkitConfiguration;
 import dev.masa.masuitecore.core.utils.CommandManagerUtil;
