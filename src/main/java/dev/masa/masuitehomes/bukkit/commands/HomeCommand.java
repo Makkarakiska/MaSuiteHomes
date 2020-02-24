@@ -29,6 +29,7 @@ public class HomeCommand extends BaseCommand {
 
         plugin.api.getWarmupService().applyWarmup(player, "masuitehomes.warmup.override", "homes", success -> {
             if (success) {
+                new BukkitPluginChannel(plugin, player, "MaSuiteTeleports", "GetLocation", player.getName(), BukkitAdapter.adapt(player.getLocation()).serialize()).send();
                 new BukkitPluginChannel(plugin, player, "HomeCommand", player.getName(), home).send();
             }
         });
