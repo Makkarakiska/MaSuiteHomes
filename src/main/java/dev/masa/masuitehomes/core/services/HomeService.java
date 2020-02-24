@@ -68,12 +68,12 @@ public class HomeService {
             return;
         }
 
-        new BungeePluginChannel(plugin,
+        /*new BungeePluginChannel(plugin,
                 player.getServer().getInfo(),
                 "MaSuiteTeleports",
                 "GetLocation",
                 player.getName(),
-                player.getServer().getInfo().getName()).send();
+                player.getServer().getInfo().getName()).send();*/
 
         BungeePluginChannel bpc = new BungeePluginChannel(plugin, ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()),
                 "HomePlayer",
