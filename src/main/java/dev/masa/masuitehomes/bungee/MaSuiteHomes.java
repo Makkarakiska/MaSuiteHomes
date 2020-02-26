@@ -1,9 +1,12 @@
 package dev.masa.masuitehomes.bungee;
 
+import com.djrapitops.plan.extension.DataExtension;
+import com.djrapitops.plan.extension.ExtensionService;
 import dev.masa.masuitehomes.bungee.controllers.DeleteController;
 import dev.masa.masuitehomes.bungee.controllers.ListController;
 import dev.masa.masuitehomes.bungee.controllers.SetController;
 import dev.masa.masuitehomes.bungee.controllers.TeleportController;
+import dev.masa.masuitehomes.core.dataextensions.HomeDataExtension;
 import dev.masa.masuitehomes.core.services.HomeService;
 import dev.masa.masuitecore.bungee.Utils;
 import dev.masa.masuitecore.bungee.chat.Formator;
@@ -47,6 +50,16 @@ public class MaSuiteHomes extends Plugin implements Listener {
         config.addDefault("homes/messages.yml", "homes.server-name", "&9%server%&7: ");
 
         homeService = new HomeService(this);
+
+        try {
+
+            DataExtension yourExtension = new HomeDataExtension(this);
+            ExtensionService.getInstance().register(yourExtension);
+
+        } catch (NoClassDefFoundError | IllegalStateException ignored) {
+        } catch (IllegalArgumentException dataExtensionImplementationIsInvalid) {
+            dataExtensionImplementationIsInvalid.printStackTrace();
+        }
     }
 
     @EventHandler
