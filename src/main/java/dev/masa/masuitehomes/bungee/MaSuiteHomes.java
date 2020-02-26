@@ -1,13 +1,5 @@
 package dev.masa.masuitehomes.bungee;
 
-import com.djrapitops.plan.extension.DataExtension;
-import com.djrapitops.plan.extension.ExtensionService;
-import dev.masa.masuitehomes.bungee.controllers.DeleteController;
-import dev.masa.masuitehomes.bungee.controllers.ListController;
-import dev.masa.masuitehomes.bungee.controllers.SetController;
-import dev.masa.masuitehomes.bungee.controllers.TeleportController;
-import dev.masa.masuitehomes.core.dataextensions.HomeDataExtension;
-import dev.masa.masuitehomes.core.services.HomeService;
 import dev.masa.masuitecore.bungee.Utils;
 import dev.masa.masuitecore.bungee.chat.Formator;
 import dev.masa.masuitecore.core.Updator;
@@ -15,7 +7,13 @@ import dev.masa.masuitecore.core.api.MaSuiteCoreAPI;
 import dev.masa.masuitecore.core.channels.BungeePluginChannel;
 import dev.masa.masuitecore.core.configuration.BungeeConfiguration;
 import dev.masa.masuitecore.core.objects.Location;
+import dev.masa.masuitehomes.bungee.controllers.DeleteController;
+import dev.masa.masuitehomes.bungee.controllers.ListController;
+import dev.masa.masuitehomes.bungee.controllers.SetController;
+import dev.masa.masuitehomes.bungee.controllers.TeleportController;
+import dev.masa.masuitehomes.core.dataextensions.DataExtensionRegister;
 import dev.masa.masuitehomes.core.models.Home;
+import dev.masa.masuitehomes.core.services.HomeService;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -52,13 +50,8 @@ public class MaSuiteHomes extends Plugin implements Listener {
         homeService = new HomeService(this);
 
         try {
-
-            DataExtension yourExtension = new HomeDataExtension(this);
-            ExtensionService.getInstance().register(yourExtension);
-
-        } catch (NoClassDefFoundError | IllegalStateException ignored) {
-        } catch (IllegalArgumentException dataExtensionImplementationIsInvalid) {
-            dataExtensionImplementationIsInvalid.printStackTrace();
+            DataExtensionRegister.registerHomeExtension(this);
+        } catch (NoClassDefFoundError | IllegalStateException | IllegalArgumentException ignored) {
         }
     }
 
