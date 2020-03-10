@@ -2,6 +2,6 @@ name: MaSuiteHomes
 main: dev.masa.masuitehomes.bukkit.MaSuiteHomes
 version: ${project.version}
 author: Masagameplay
-api-version: 1.14
 depend: [MaSuiteCore]
 softdepend: [Multiverse, Multiworld]
+loadbefore: [Essentials]
