@@ -6,8 +6,6 @@ import com.j256.ormlite.field.DatabaseField;
 import dev.masa.masuitecore.core.objects.Location;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.util.UUID;
 
@@ -15,21 +13,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Data
-@Entity
 @Table(name = "masuite_homes")
-
-@NamedQuery(
-        name = "findHomeByOwnerAndLikeName",
-        query = "SELECT h FROM Home h WHERE h.owner = :owner AND h.name LIKE :name ORDER BY h.name"
-)
-
-@NamedQuery(
-        name = "findHomeByOwnerAndName",
-        query = "SELECT h FROM Home h WHERE h.owner = :owner AND h.name = :name ORDER BY h.name"
-)
 public class Home {
 
-    @DatabaseField(id = true)
+    @DatabaseField(generatedId = true)
     private int id;
     /**
      * Name of the home
@@ -42,15 +29,12 @@ public class Home {
      * Owner of the Home
      */
     @NonNull
-    @DatabaseField(dataType = DataType.UUID, readOnly = true)
+    @DatabaseField(dataType = DataType.UUID)
     private UUID owner;
 
     /**
      * Location
      */
-    @NonNull
-    private Location location;
-
     @DatabaseField
     private String server;
     @DatabaseField
@@ -66,12 +50,17 @@ public class Home {
     @DatabaseField
     private Float pitch = 0.0F;
 
+    public Home(String name, UUID owner, Location location) {
+        this.name = name;
+        this.owner = owner;
+        this.setLocation(location);
+    }
+
     public Location getLocation() {
         return new Location(server, world, x, y, z, yaw, pitch);
     }
 
     public void setLocation(Location loc) {
-        this.location = loc;
         this.server = loc.getServer();
         this.world = loc.getWorld();
         this.x = loc.getX();
