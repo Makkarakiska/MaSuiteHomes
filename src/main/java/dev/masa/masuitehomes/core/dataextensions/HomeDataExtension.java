@@ -39,7 +39,7 @@ public class HomeDataExtension implements DataExtension {
                 .columnTwo("Location", new Icon(Family.SOLID, "map-marked-alt", Color.BLUE))
                 .columnThree("Server", new Icon(Family.SOLID, "server", Color.BLUE));
 
-        for (Home home : plugin.homeService.getHomes(uuid)) {
+        for (Home home : plugin.getHomeService().getHomes(uuid)) {
             Location loc = home.getLocation();
             StringJoiner stringLocation = new StringJoiner(", ");
             stringLocation.add("X: " + loc.getX());

@@ -21,7 +21,7 @@ public class ListController {
 
     private HashMap<String, List<Home>> loadHomes(UUID uuid) {
         HashMap<String, List<Home>> homeList = new HashMap<>();
-        for (Home home : plugin.homeService.getHomes(uuid)) {
+        for (Home home : plugin.getHomeService().getHomes(uuid)) {
             if (!homeList.containsKey(home.getLocation().getServer())) {
                 homeList.put(home.getLocation().getServer(), new ArrayList<>());
             }
@@ -67,7 +67,7 @@ public class ListController {
     }
 
     public void list(ProxiedPlayer p, String name) {
-        MaSuitePlayer msp = plugin.api.getPlayerService().getPlayer(name);
+        MaSuitePlayer msp = plugin.getApi().getPlayerService().getPlayer(name);
         if (msp == null) {
             plugin.formator.sendMessage(p, plugin.config.load("homes", "messages.yml").getString("player-not-found"));
             return;

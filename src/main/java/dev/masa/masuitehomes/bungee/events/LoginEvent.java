@@ -17,9 +17,9 @@ public class LoginEvent implements Listener {
 
     @EventHandler
     public void onJoin(PostLoginEvent event) {
-        if (!plugin.homeService.homes.containsKey(event.getPlayer().getUniqueId())) {
-            plugin.homeService.homes.put(event.getPlayer().getUniqueId(), new ArrayList<>());
+        if (!plugin.getHomeService().homes.containsKey(event.getPlayer().getUniqueId())) {
+            plugin.getHomeService().homes.put(event.getPlayer().getUniqueId(), new ArrayList<>());
         }
-        plugin.getProxy().getScheduler().runAsync(plugin, () -> plugin.homeService.initializeHomes(event.getPlayer().getUniqueId()));
+        plugin.getProxy().getScheduler().runAsync(plugin, () -> plugin.getHomeService().initializeHomes(event.getPlayer().getUniqueId()));
     }
 }
