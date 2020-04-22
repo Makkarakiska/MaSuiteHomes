@@ -221,7 +221,11 @@ public class HomeService {
         }
 
         // Search home from database
-        Home home = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().in("name", name).query().get(0);
+        List<Home> homeQueryResult = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().in("name", name).query();
+        Home home = null;
+        if (homeQueryResult.size() != 0) {
+            home = homeQueryResult.get(0);
+        }
 
         // Add home into cache if not null
         if (home != null) {
