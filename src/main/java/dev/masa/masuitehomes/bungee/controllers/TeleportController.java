@@ -18,18 +18,18 @@ public class TeleportController {
     }
 
     public void teleport(ProxiedPlayer player, String name) {
-        Home home = plugin.homeService.getHome(player.getUniqueId(), name);
-        plugin.homeService.teleportToHome(player, home);
+        Home home = plugin.getHomeService().getHome(player.getUniqueId(), name);
+        plugin.getHomeService().teleportToHome(player, home);
     }
 
     public void teleport(ProxiedPlayer player, String homeName, String name) {
-        MaSuitePlayer msp = plugin.api.getPlayerService().getPlayer(name);
+        MaSuitePlayer msp = plugin.getApi().getPlayerService().getPlayer(name);
         if (msp == null) {
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
         }
-        Home home = plugin.homeService.getHome(msp.getUniqueId(), homeName);
-        plugin.homeService.teleportToHome(player, home);
+        Home home = plugin.getHomeService().getHome(msp.getUniqueId(), homeName);
+        plugin.getHomeService().teleportToHome(player, home);
     }
 
 }

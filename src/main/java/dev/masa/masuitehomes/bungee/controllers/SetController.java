@@ -27,7 +27,7 @@ public class SetController {
     }
 
     public void set(ProxiedPlayer player, String name, String home, Location loc, int maxGlobalHomes, int maxServerHomes) {
-        MaSuitePlayer msp = plugin.api.getPlayerService().getPlayer(name);
+        MaSuitePlayer msp = plugin.getApi().getPlayerService().getPlayer(name);
         if (msp == null) {
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
@@ -36,12 +36,12 @@ public class SetController {
     }
 
     private void setHome(ProxiedPlayer player, String homeName, Location loc, UUID uniqueId, int maxGlobalHomes, int maxServerHomes) {
-        Home home = plugin.homeService.getHomeExact(uniqueId, homeName);
-        List<Home> homes = plugin.homeService.getHomes(uniqueId);
+        Home home = plugin.getHomeService().getHomeExact(uniqueId, homeName);
+        List<Home> homes = plugin.getHomeService().getHomes(uniqueId);
         loc.setServer(player.getServer().getInfo().getName());
         if (home != null) {
             home.setLocation(loc);
-            plugin.homeService.updateHome(home);
+            plugin.getHomeService().updateHome(home);
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("home.updated").replace("%home%", home.getName()));
             plugin.listHomes(player);
             return;
@@ -50,7 +50,7 @@ public class SetController {
         long serverHomeCount = homes.stream().filter(filteredHome -> filteredHome.getLocation().getServer().equalsIgnoreCase(player.getServer().getInfo().getName())).count();
 
         if ((homes.size() < maxGlobalHomes || maxGlobalHomes == -1) && (serverHomeCount < maxServerHomes || maxServerHomes == -1)) {
-            Home h = plugin.homeService.createHome(new Home(homeName, uniqueId, loc));
+            Home h = plugin.getHomeService().createHome(new Home(homeName, uniqueId, loc));
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("home.set").replace("%home%", h.getName()));
         } else {
             formator.sendMessage(player, config.load("homes", "messages.yml").getString("home-limit-reached"));

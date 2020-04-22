@@ -25,7 +25,7 @@ public class DeleteController {
     }
 
     public void delete(ProxiedPlayer p, String name, String homeName) {
-        MaSuitePlayer msp = plugin.api.getPlayerService().getPlayer(name);
+        MaSuitePlayer msp = plugin.getApi().getPlayerService().getPlayer(name);
         if (msp == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("player-not-found"));
             return;
@@ -35,13 +35,13 @@ public class DeleteController {
     }
 
     private void deleteHome(ProxiedPlayer p, String homeName, UUID uniqueId) {
-        Home home = plugin.homeService.getHomeExact(uniqueId, homeName);
+        Home home = plugin.getHomeService().getHomeExact(uniqueId, homeName);
         if (home == null) {
             formator.sendMessage(p, config.load("homes", "messages.yml").getString("home-not-found"));
             return;
         }
 
-        plugin.homeService.removeHome(home);
+        plugin.getHomeService().removeHome(home);
         formator.sendMessage(p, config.load("homes", "messages.yml").getString("home.deleted").replace("%home%", home.getName()));
         plugin.listHomes(p);
     }

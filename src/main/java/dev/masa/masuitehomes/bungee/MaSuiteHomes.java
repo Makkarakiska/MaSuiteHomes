@@ -14,6 +14,7 @@ import dev.masa.masuitehomes.bungee.controllers.TeleportController;
 import dev.masa.masuitehomes.core.dataextensions.DataExtensionRegister;
 import dev.masa.masuitehomes.core.models.Home;
 import dev.masa.masuitehomes.core.services.HomeService;
+import lombok.Getter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -28,12 +29,14 @@ public class MaSuiteHomes extends Plugin implements Listener {
 
     public Utils utils = new Utils();
 
-    public HomeService homeService;
+    @Getter
+    private HomeService homeService;
 
     public BungeeConfiguration config = new BungeeConfiguration();
     public Formator formator = new Formator();
 
-    public MaSuiteCoreAPI api = new MaSuiteCoreAPI();
+    @Getter
+    private MaSuiteCoreAPI api = new MaSuiteCoreAPI();
 
     @Override
     public void onEnable() {
