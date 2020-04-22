@@ -1,11 +1,14 @@
 package dev.masa.masuitehomes.core.models;
 
 import com.google.gson.Gson;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
 import dev.masa.masuitecore.core.objects.Location;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -26,38 +29,57 @@ import java.util.UUID;
 )
 public class Home {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @DatabaseField(id = true)
     private int id;
     /**
      * Name of the home
      */
     @NonNull
-    @Column(name = "name")
+    @DatabaseField
     private String name;
 
     /**
      * Owner of the Home
      */
     @NonNull
-    @Column(name = "owner")
-    @Type(type = "uuid-char")
+    @DatabaseField(dataType = DataType.UUID, readOnly = true)
     private UUID owner;
 
     /**
      * Location
      */
-    @Embedded
-    @AttributeOverrides(value = {
-            @AttributeOverride(name = "x", column = @Column(name = "x")),
-            @AttributeOverride(name = "y", column = @Column(name = "y")),
-            @AttributeOverride(name = "z", column = @Column(name = "z")),
-            @AttributeOverride(name = "yaw", column = @Column(name = "yaw")),
-            @AttributeOverride(name = "pitch", column = @Column(name = "pitch")),
-            @AttributeOverride(name = "server", column = @Column(name = "server"))
-    })
     @NonNull
     private Location location;
+
+    @DatabaseField
+    private String server;
+    @DatabaseField
+    private String world;
+    @DatabaseField
+    private Double x;
+    @DatabaseField
+    private Double y;
+    @DatabaseField
+    private Double z;
+    @DatabaseField
+    private Float yaw = 0.0F;
+    @DatabaseField
+    private Float pitch = 0.0F;
+
+    public Location getLocation() {
+        return new Location(server, world, x, y, z, yaw, pitch);
+    }
+
+    public void setLocation(Location loc) {
+        this.location = loc;
+        this.server = loc.getServer();
+        this.world = loc.getWorld();
+        this.x = loc.getX();
+        this.y = loc.getY();
+        this.z = loc.getZ();
+        this.yaw = loc.getYaw();
+        this.pitch = loc.getPitch();
+    }
 
     public String serialize() {
         return new Gson().toJson(this);

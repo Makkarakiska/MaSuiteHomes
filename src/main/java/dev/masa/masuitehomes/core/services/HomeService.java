@@ -1,27 +1,32 @@
 package dev.masa.masuitehomes.core.services;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.table.TableUtils;
 import dev.masa.masuitecore.core.channels.BungeePluginChannel;
 import dev.masa.masuitecore.core.models.MaSuitePlayer;
-import dev.masa.masuitecore.core.utils.HibernateUtil;
 import dev.masa.masuitehomes.bungee.MaSuiteHomes;
 import dev.masa.masuitehomes.core.models.Home;
+import lombok.SneakyThrows;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class HomeService {
 
-    private EntityManager entityManager = HibernateUtil.addClasses(Home.class).getEntityManager();
+    private Dao<Home, Integer> homeDao;
     public HashMap<UUID, List<Home>> homes = new HashMap<>();
 
     private MaSuiteHomes plugin;
 
+    @SneakyThrows
     public HomeService(MaSuiteHomes plugin) {
         this.plugin = plugin;
+        this.homeDao = DaoManager.createDao(plugin.getApi().getDatabaseService().getConnection(), Home.class);
+        TableUtils.createTableIfNotExists(plugin.getApi().getDatabaseService().getConnection(), Home.class);
     }
 
     /**
@@ -68,13 +73,6 @@ public class HomeService {
             return;
         }
 
-        /*new BungeePluginChannel(plugin,
-                player.getServer().getInfo(),
-                "MaSuiteTeleports",
-                "GetLocation",
-                player.getName(),
-                player.getServer().getInfo().getName()).send();*/
-
         BungeePluginChannel bpc = new BungeePluginChannel(plugin, ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()),
                 "HomePlayer",
                 player.getUniqueId().toString(),
@@ -98,10 +96,9 @@ public class HomeService {
      *
      * @param home home to create
      */
+    @SneakyThrows
     public Home createHome(Home home) {
-        entityManager.getTransaction().begin();
-        entityManager.persist(home);
-        entityManager.getTransaction().commit();
+        homeDao.create(home);
         homes.get(home.getOwner()).add(home);
 
         return home;
@@ -110,10 +107,9 @@ public class HomeService {
     /**
      * Update specific {@link Home}
      */
+    @SneakyThrows
     public Home updateHome(Home home) {
-        entityManager.getTransaction().begin();
-        entityManager.merge(home);
-        entityManager.getTransaction().commit();
+        homeDao.update(home);
 
         // Remove home from list and add new back
         List<Home> homeList = homes.get(home.getOwner()).stream().filter(cacheHome -> !cacheHome.getName().equalsIgnoreCase(home.getName())).collect(Collectors.toList());
@@ -127,11 +123,9 @@ public class HomeService {
      *
      * @param home home to remove
      */
+    @SneakyThrows
     public void removeHome(Home home) {
-        entityManager.getTransaction().begin();
-        entityManager.remove(home);
-        entityManager.getTransaction().commit();
-
+        homeDao.delete(home);
         // Update cache
         homes.put(home.getOwner(), homes.get(home.getOwner()).stream().filter(homeItem -> !homeItem.getName().equalsIgnoreCase(home.getName())).collect(Collectors.toList()));
     }
@@ -142,23 +136,21 @@ public class HomeService {
      * @param uuid owner of homes
      * @return returns a list of homes
      */
+    @SneakyThrows
     public List<Home> getHomes(UUID uuid) {
         if (homes.containsKey(uuid)) {
             return homes.get(uuid);
         }
 
-        List<Home> homesList = entityManager.createQuery(
-                "SELECT h FROM Home h WHERE h.owner = :owner ORDER BY h.name", Home.class)
-                .setParameter("owner", uuid).getResultList();
+        List<Home> homesList = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).query();
         homes.put(uuid, homesList);
 
         return homesList;
     }
 
+    @SneakyThrows
     public void initializeHomes(UUID uuid) {
-        List<Home> homesList = entityManager.createQuery(
-                "SELECT h FROM Home h WHERE h.owner = :owner ORDER BY h.name", Home.class)
-                .setParameter("owner", uuid).getResultList();
+        List<Home> homesList = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).query();
         homes.put(uuid, homesList);
     }
 
@@ -181,7 +173,7 @@ public class HomeService {
      * @return returns home or null
      */
     public Home getHome(String username, String home) {
-        MaSuitePlayer player = plugin.api.getPlayerService().getPlayer(username);
+        MaSuitePlayer player = plugin.getApi().getPlayerService().getPlayer(username);
         if (player == null) {
             return null;
         }
@@ -218,6 +210,7 @@ public class HomeService {
      * @param name name of the home
      * @return return home or null from cache or database
      */
+    @SneakyThrows
     private Home loadHome(UUID uuid, String name, String type) {
         // Load the home from cache
         if (homes.containsKey(uuid)) {
@@ -228,10 +221,7 @@ public class HomeService {
         }
 
         // Search home from database
-        Home home = entityManager.createNamedQuery(type, Home.class)
-                .setParameter("owner", uuid)
-                .setParameter("name", name)
-                .getResultList().stream().findFirst().orElse(null);
+        Home home = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().in("name", name).query().get(0);
 
         // Add home into cache if not null
         if (home != null) {
