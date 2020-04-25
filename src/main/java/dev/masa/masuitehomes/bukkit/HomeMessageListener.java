@@ -1,7 +1,8 @@
-package fi.matiaspaavilainen.masuitehomes.bukkit;
+package dev.masa.masuitehomes.bukkit;
 
-import fi.matiaspaavilainen.masuitecore.core.objects.Location;
-import fi.matiaspaavilainen.masuitehomes.core.Home;
+import dev.masa.masuitecore.core.adapters.BukkitAdapter;
+import dev.masa.masuitecore.core.objects.Location;
+import dev.masa.masuitehomes.core.models.Home;
 import org.bukkit.Bukkit;
 
 import org.bukkit.entity.Player;
@@ -32,15 +33,18 @@ public class HomeMessageListener implements PluginMessageListener {
             subchannel = in.readUTF();
             if (subchannel.equals("HomePlayer")) {
                 Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
-                if (p != null) {
-                    p.teleport(new org.bukkit.Location(Bukkit.getWorld(in.readUTF()), in.readDouble(), in.readDouble(), in.readDouble(), in.readFloat(), in.readFloat()));
+
+                if (p == null) return;
+
+                Location loc = new Location().deserialize(in.readUTF());
+
+                org.bukkit.Location bukkitLocation = BukkitAdapter.adapt(loc);
+                if (bukkitLocation.getWorld() == null) {
+                    System.out.println("[MaSuite] [Homes] [World=" + loc.getWorld() + "] World could not be found!");
+                    return;
                 }
-            }
-            if (subchannel.equals("HomeCooldown")) {
-                Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
-                if (p != null) {
-                    plugin.cooldowns.put(p.getUniqueId(), in.readLong());
-                }
+
+                p.teleport(bukkitLocation);
             }
             if (subchannel.equals("AddHome")) {
                 Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
@@ -48,15 +52,12 @@ public class HomeMessageListener implements PluginMessageListener {
                     if (!plugin.homes.containsKey(p.getUniqueId())) {
                         plugin.homes.put(p.getUniqueId(), new ArrayList<>());
                     }
-                    String[] info = in.readUTF().split(":");
-                    Home home = new Home(info[0], info[1], p.getUniqueId(),
-                            new Location(info[2], Double.parseDouble(info[3]), Double.parseDouble(info[4]), Double.parseDouble(info[5])));
+                    Home home = new Home().deserialize(in.readUTF());
                     plugin.homes.get(p.getUniqueId()).add(home);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

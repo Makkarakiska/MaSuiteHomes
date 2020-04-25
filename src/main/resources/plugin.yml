@@ -1,22 +1,8 @@
 name: MaSuiteHomes
-main: fi.matiaspaavilainen.masuitehomes.bukkit.MaSuiteHomes
+main: dev.masa.masuitehomes.bukkit.MaSuiteHomes
 version: ${project.version}
 author: Masagameplay
-api-version: 1.13
 depend: [MaSuiteCore]
-commands:
-  sethome:
-    description: Sets home point
-    aliases: [createhome, homeset]
-    permission: masuitehomes.home.set
-  delhome:
-    description: Deletes home point
-    aliases: [deletehome, homedel]
-    permission: masuitehomes.home.delete
-  home:
-    description: Teleports to home point
-    permission: masuitehomes.home.teleport
-  homes:
-    description: Lists all available homes
-    aliases: [homelist, listhomes]
-    permission: masuitehomes.home.list
+softdepend: [Multiverse, Multiworld]
+loadbefore: [Essentials]
+api-version: 1.13
