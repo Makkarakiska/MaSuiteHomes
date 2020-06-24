@@ -2,6 +2,7 @@ package dev.masa.masuitehomes.core.services;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.table.TableUtils;
 import dev.masa.masuitecore.core.channels.BungeePluginChannel;
 import dev.masa.masuitecore.core.models.MaSuitePlayer;
@@ -220,13 +221,15 @@ public class HomeService {
             }
         }
 
+
+        SelectArg preparedName = new SelectArg(name);
         // Search home from database
         Home home = null;
         if(type.equals("findHomeByOwnerAndName")) {
-            home = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().in("name", name).query().stream().findFirst().orElse(null);
+            home = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().in("name", preparedName).query().stream().findFirst().orElse(null);
         }
         if(type.equals("findHomeByOwnerAndLikeName")) {
-            home = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().like("name", name).query().stream().findFirst().orElse(null);
+            home = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().like("name", preparedName).query().stream().findFirst().orElse(null);
         }
 
         // Add home into cache if not null
