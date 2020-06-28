@@ -84,7 +84,7 @@ public class HomeCommand extends BaseCommand {
             if (perm.startsWith("masuitehomes.home.limit." + type)) {
                 String amount = perm.replace("masuitehomes.home.limit." + type + ".", "");
                 if (amount.equalsIgnoreCase("*")) {
-                    max = -1;
+                    max = Integer.MAX_VALUE;
                     break;
                 }
                 try {
