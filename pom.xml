@@ -49,6 +49,10 @@
             <id>plan-bintray</id>
             <url>https://dl.bintray.com/rsl1122/Plan-repository/</url>
         </repository>
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
