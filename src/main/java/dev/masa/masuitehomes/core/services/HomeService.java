@@ -229,7 +229,7 @@ public class HomeService {
             home = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().in("name", preparedName).query().stream().findFirst().orElse(null);
         }
         if(type.equals("findHomeByOwnerAndLikeName")) {
-            home = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().like("name", preparedName).query().stream().findFirst().orElse(null);
+            home = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().like("name", preparedName + "%").query().stream().findFirst().orElse(null);
         }
 
         // Add home into cache if not null
