@@ -81,11 +81,14 @@ public class HomeService {
         );
 
         if (!player.getServer().getInfo().getName().equals(home.getLocation().getServer())) {
-            player.connect(ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()));
-            plugin.getProxy().getScheduler().schedule(plugin, () -> {
-                bpc.send();
-                plugin.utils.applyCooldown(plugin, player.getUniqueId(), "homes");
-            }, plugin.config.load(null, "config.yml").getInt("teleportation-delay"), TimeUnit.MILLISECONDS);
+            plugin.getProxy().getScheduler().runAsync(plugin, () -> player.connect(ProxyServer.getInstance().getServerInfo(home.getLocation().getServer()), (connected, throwable) -> {
+                if (connected) {
+                    plugin.getProxy().getScheduler().schedule(plugin, () -> {
+                        bpc.send();
+                        plugin.utils.applyCooldown(plugin, player.getUniqueId(), "homes");
+                    }, plugin.config.load(null, "config.yml").getInt("teleportation-delay"), TimeUnit.MILLISECONDS);
+                }
+            }));
         } else {
             bpc.send();
         }
@@ -223,10 +226,10 @@ public class HomeService {
 
         // Search home from database
         Home home = null;
-        if(type.equals("findHomeByOwnerAndName")) {
+        if (type.equals("findHomeByOwnerAndName")) {
             home = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().in("name", new SelectArg(name)).query().stream().findFirst().orElse(null);
         }
-        if(type.equals("findHomeByOwnerAndLikeName")) {
+        if (type.equals("findHomeByOwnerAndLikeName")) {
             home = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).and().like("name", new SelectArg(name + "%")).query().stream().findFirst().orElse(null);
         }
 
