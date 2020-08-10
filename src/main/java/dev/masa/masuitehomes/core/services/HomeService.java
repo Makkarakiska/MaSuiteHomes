@@ -18,17 +18,16 @@ import java.util.stream.Collectors;
 
 public class HomeService {
 
-    private Dao<Home, Integer> homeDao;
-    public HashMap<UUID, List<Home>> homes = new HashMap<>();
+private Dao<Home, Integer> homeDao;
+private MaSuiteHomes plugin;
 
-    private MaSuiteHomes plugin;
-
-    @SneakyThrows
-    public HomeService(MaSuiteHomes plugin) {
-        this.plugin = plugin;
-        this.homeDao = DaoManager.createDao(plugin.getApi().getDatabaseService().getConnection(), Home.class);
-        TableUtils.createTableIfNotExists(plugin.getApi().getDatabaseService().getConnection(), Home.class);
-    }
+@SneakyThrows
+public HomeService(MaSuiteHomes plugin) {
+    this.plugin = plugin;
+    this.homeDao = DaoManager.createDao(plugin.getApi().getDatabaseService().getConnection(), Home.class);
+    this.homeDao.setObjectCache(true);
+    TableUtils.createTableIfNotExists(plugin.getApi().getDatabaseService().getConnection(), Home.class);
+}
 
     /**
      * Teleport player to home
@@ -103,8 +102,6 @@ public class HomeService {
     @SneakyThrows
     public Home createHome(Home home) {
         homeDao.create(home);
-        homes.get(home.getOwner()).add(home);
-
         return home;
     }
 
@@ -114,11 +111,6 @@ public class HomeService {
     @SneakyThrows
     public Home updateHome(Home home) {
         homeDao.update(home);
-
-        // Remove home from list and add new back
-        List<Home> homeList = homes.get(home.getOwner()).stream().filter(cacheHome -> !cacheHome.getName().equalsIgnoreCase(home.getName())).collect(Collectors.toList());
-        homeList.add(home);
-        homes.put(home.getOwner(), homeList);
         return home;
     }
 
@@ -130,8 +122,6 @@ public class HomeService {
     @SneakyThrows
     public void removeHome(Home home) {
         homeDao.delete(home);
-        // Update cache
-        homes.put(home.getOwner(), homes.get(home.getOwner()).stream().filter(homeItem -> !homeItem.getName().equalsIgnoreCase(home.getName())).collect(Collectors.toList()));
     }
 
     /**
@@ -142,20 +132,12 @@ public class HomeService {
      */
     @SneakyThrows
     public List<Home> getHomes(UUID uuid) {
-        if (homes.containsKey(uuid)) {
-            return homes.get(uuid);
-        }
-
-        List<Home> homesList = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).query();
-        homes.put(uuid, homesList);
-
-        return homesList;
+        return homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).query();
     }
 
     @SneakyThrows
     public void initializeHomes(UUID uuid) {
         List<Home> homesList = homeDao.queryBuilder().orderBy("name", true).where().in("owner", uuid).query();
-        homes.put(uuid, homesList);
     }
 
     /**
@@ -216,14 +198,6 @@ public class HomeService {
      */
     @SneakyThrows
     private Home loadHome(UUID uuid, String name, String type) {
-        // Load the home from cache
-        if (homes.containsKey(uuid)) {
-            Optional<Home> cachedHome = homes.get(uuid).stream().filter(home -> home.getName().equalsIgnoreCase(name)).findFirst();
-            if (cachedHome.isPresent()) {
-                return cachedHome.get();
-            }
-        }
-
         // Search home from database
         Home home = null;
         if (type.equals("findHomeByOwnerAndName")) {
@@ -236,14 +210,6 @@ public class HomeService {
                     .or().like("name", new SelectArg(name + "%"))
                     .and().in("owner", uuid)
                     .query().stream().findFirst().orElse(null);
-        }
-
-        // Add home into cache if not null
-        if (home != null) {
-            if (!homes.containsKey(uuid)) {
-                homes.put(uuid, new ArrayList<>());
-            }
-            homes.get(uuid).add(home);
         }
         return home;
     }
