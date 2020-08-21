@@ -2,7 +2,7 @@ package dev.masa.masuitehomes.bukkit;
 
 import dev.masa.masuitecore.core.adapters.BukkitAdapter;
 import dev.masa.masuitecore.core.objects.Location;
-import dev.masa.masuitehomes.core.models.Home;
+import dev.masa.masuitehomes.common.models.Home;
 import org.bukkit.Bukkit;
 
 import org.bukkit.entity.Player;

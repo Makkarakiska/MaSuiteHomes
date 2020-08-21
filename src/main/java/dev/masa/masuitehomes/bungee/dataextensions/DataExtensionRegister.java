@@ -1,4 +1,4 @@
-package dev.masa.masuitehomes.core.dataextensions;
+package dev.masa.masuitehomes.bungee.dataextensions;
 
 import com.djrapitops.plan.extension.DataExtension;
 import com.djrapitops.plan.extension.ExtensionService;

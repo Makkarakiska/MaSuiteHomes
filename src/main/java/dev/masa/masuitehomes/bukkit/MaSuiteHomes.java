@@ -4,11 +4,11 @@ import dev.masa.masuitecore.core.api.MaSuiteCoreBukkitAPI;
 import dev.masa.masuitehomes.bukkit.events.JoinEvent;
 import dev.masa.masuitehomes.bukkit.events.LeaveEvent;
 import dev.masa.masuitecore.acf.PaperCommandManager;
-import dev.masa.masuitecore.core.Updator;
+import dev.masa.masuitecore.common.utils.Updator;
 import dev.masa.masuitecore.core.configuration.BukkitConfiguration;
 import dev.masa.masuitecore.core.utils.CommandManagerUtil;
 import dev.masa.masuitehomes.bukkit.commands.HomeCommand;
-import dev.masa.masuitehomes.core.models.Home;
+import dev.masa.masuitehomes.common.models.Home;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;

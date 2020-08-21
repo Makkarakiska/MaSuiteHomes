@@ -2,9 +2,7 @@ package dev.masa.masuitehomes.bungee.controllers;
 
 import dev.masa.masuitecore.bungee.chat.Formator;
 import dev.masa.masuitecore.core.configuration.BungeeConfiguration;
-import dev.masa.masuitecore.core.models.MaSuitePlayer;
 import dev.masa.masuitehomes.bungee.MaSuiteHomes;
-import dev.masa.masuitehomes.core.models.Home;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class TeleportController {
@@ -18,18 +16,34 @@ public class TeleportController {
     }
 
     public void teleport(ProxiedPlayer player, String name) {
-        Home home = plugin.getHomeService().getHome(player.getUniqueId(), name);
-        plugin.getHomeService().teleportToHome(player, home);
+        plugin.getHomeService().getHome(player.getUniqueId(), name, home -> {
+            if (!home.isPresent()) {
+                plugin.formator.sendMessage(player, plugin.config.load("homes", "messages.yml").getString("home-not-found"));
+                return;
+            }
+            this.teleportToHome(player, name);
+        });
     }
 
-    public void teleport(ProxiedPlayer player, String homeName, String name) {
-        MaSuitePlayer msp = plugin.getApi().getPlayerService().getPlayer(name);
-        if (msp == null) {
-            formator.sendMessage(player, config.load("homes", "messages.yml").getString("player-not-found"));
-            return;
-        }
-        Home home = plugin.getHomeService().getHome(msp.getUniqueId(), homeName);
-        plugin.getHomeService().teleportToHome(player, home);
+    public void teleport(ProxiedPlayer player, String name, String username) {
+        plugin.getApi().getPlayerService().getPlayer(username, maSuitePlayer -> {
+            if (!maSuitePlayer.isPresent()) {
+                formator.sendMessage(player, config.load("homes", "messages.yml").getString("player-not-found"));
+            }
+            this.teleportToHome(player, name);
+        });
+    }
+
+    private void teleportToHome(ProxiedPlayer player, String name) {
+        plugin.getHomeService().getHome(player.getUniqueId(), name, home -> {
+            if (!home.isPresent()) {
+                plugin.formator.sendMessage(player, plugin.config.load("homes", "messages.yml").getString("home-not-found"));
+                return;
+            }
+            plugin.getHomeService().teleportToHome(player, home.get(), success -> {
+                plugin.formator.sendMessage(player, plugin.config.load("homes", "messages.yml").getString("home.teleported").replace("%home%", home.get().getName()));
+            });
+        });
     }
 
 }

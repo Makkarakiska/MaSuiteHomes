@@ -2,18 +2,19 @@ package dev.masa.masuitehomes.bungee;
 
 import dev.masa.masuitecore.bungee.Utils;
 import dev.masa.masuitecore.bungee.chat.Formator;
-import dev.masa.masuitecore.core.Updator;
+import dev.masa.masuitecore.common.interfaces.IDatabaseServiceProvider;
+import dev.masa.masuitecore.common.services.DatabaseService;
+import dev.masa.masuitecore.common.utils.Updator;
 import dev.masa.masuitecore.core.api.MaSuiteCoreAPI;
 import dev.masa.masuitecore.core.channels.BungeePluginChannel;
 import dev.masa.masuitecore.core.configuration.BungeeConfiguration;
-import dev.masa.masuitecore.core.objects.Location;
+import dev.masa.masuitecore.common.objects.Location;
 import dev.masa.masuitehomes.bungee.controllers.DeleteController;
 import dev.masa.masuitehomes.bungee.controllers.ListController;
 import dev.masa.masuitehomes.bungee.controllers.SetController;
 import dev.masa.masuitehomes.bungee.controllers.TeleportController;
-import dev.masa.masuitehomes.core.dataextensions.DataExtensionRegister;
-import dev.masa.masuitehomes.core.models.Home;
-import dev.masa.masuitehomes.core.services.HomeService;
+import dev.masa.masuitehomes.common.services.HomeService;
+import dev.masa.masuitehomes.bungee.dataextensions.DataExtensionRegister;
 import lombok.Getter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -25,7 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class MaSuiteHomes extends Plugin implements Listener {
+public class MaSuiteHomes extends Plugin implements Listener, IDatabaseServiceProvider {
 
     public Utils utils = new Utils();
 
@@ -138,13 +139,18 @@ public class MaSuiteHomes extends Plugin implements Listener {
 
     public void listHomes(ProxiedPlayer p) {
         if (utils.isOnline(p)) {
-            for (Home home : homeService.getHomes(p.getUniqueId())) {
+            homeService.getHomes(p.getUniqueId(), homes -> homes.forEach(home -> {
                 new BungeePluginChannel(this, p.getServer().getInfo(),
                         "AddHome",
                         p.getUniqueId().toString(),
                         home.serialize()
                 ).send();
-            }
+            }));
         }
+    }
+
+    @Override
+    public DatabaseService getDatabaseService() {
+        return this.api.getDatabaseService();
     }
 }

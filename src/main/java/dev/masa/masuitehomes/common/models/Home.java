@@ -1,9 +1,9 @@
-package dev.masa.masuitehomes.core.models;
+package dev.masa.masuitehomes.common.models;
 
 import com.google.gson.Gson;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import dev.masa.masuitecore.core.objects.Location;
+import dev.masa.masuitecore.common.objects.Location;
 import lombok.*;
 
 import javax.persistence.Table;

@@ -1,8 +1,8 @@
 package dev.masa.masuitehomes.bungee.controllers;
 
-import dev.masa.masuitecore.core.models.MaSuitePlayer;
+import dev.masa.masuitecore.common.models.MaSuitePlayer;
 import dev.masa.masuitehomes.bungee.MaSuiteHomes;
-import dev.masa.masuitehomes.core.models.Home;
+import dev.masa.masuitehomes.common.models.Home;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class ListController {
-    
+
     private MaSuiteHomes plugin;
 
     public ListController(MaSuiteHomes plugin) {
@@ -21,12 +21,13 @@ public class ListController {
 
     private HashMap<String, List<Home>> loadHomes(UUID uuid) {
         HashMap<String, List<Home>> homeList = new HashMap<>();
-        for (Home home : plugin.getHomeService().getHomes(uuid)) {
+        plugin.getHomeService().getHomes(uuid, homes -> homes.forEach(home -> {
             if (!homeList.containsKey(home.getLocation().getServer())) {
                 homeList.put(home.getLocation().getServer(), new ArrayList<>());
             }
             homeList.get(home.getLocation().getServer()).add(home);
-        }
+        }));
+
         return homeList;
     }
 
@@ -66,45 +67,46 @@ public class ListController {
 
     }
 
-    public void list(ProxiedPlayer p, String name) {
-        MaSuitePlayer msp = plugin.getApi().getPlayerService().getPlayer(name);
-        if (msp == null) {
-            plugin.formator.sendMessage(p, plugin.config.load("homes", "messages.yml").getString("player-not-found"));
-            return;
-        }
-
-        BaseComponent baseHome = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.title-others").replace("%player%", msp.getUsername())));
-        p.sendMessage(baseHome);
-
-        loadHomes(msp.getUniqueId()).forEach((server, homes) -> {
-
-            TextComponent message = new TextComponent();
-            TextComponent serverTitle = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", server)));
-
-            message.addExtra(serverTitle);
-
-            int i = 0;
-            int counter = 0;
-            for (Home home : homes) {
-                if (i++ == homes.size() - 1) {
-                    message.addExtra(addToList(home, p.getName(), msp.getUsername(), false));
-                } else {
-                    message.addExtra(addToList(home, p.getName(), msp.getUsername(), true));
-                }
-                counter++;
-                if (counter == 20) {
-                    p.sendMessage(message);
-                    message = new TextComponent();
-                    counter = 0;
-                }
-
-            }
-            if (homes.size() - 1 < 20) {
-                p.sendMessage(message);
+    public void list(ProxiedPlayer proxiedPlayer, String name) {
+        plugin.getApi().getPlayerService().getPlayer(name, playerQuery -> {
+            if (!playerQuery.isPresent()) {
+                plugin.formator.sendMessage(proxiedPlayer, plugin.config.load("homes", "messages.yml").getString("player-not-found"));
+                return;
             }
 
+            MaSuitePlayer player = playerQuery.get();
+
+            BaseComponent baseHome = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.title-others").replace("%player%", player.getUsername())));
+            proxiedPlayer.sendMessage(baseHome);
+
+            loadHomes(player.getUniqueId()).forEach((server, homes) -> {
+
+                TextComponent message = new TextComponent();
+                TextComponent serverTitle = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", server)));
+
+                message.addExtra(serverTitle);
+
+                int i = 0;
+                int counter = 0;
+                for (Home home : homes) {
+                    if (i++ == homes.size() - 1) {
+                        message.addExtra(addToList(home, proxiedPlayer.getName(), player.getUsername(), false));
+                    } else {
+                        message.addExtra(addToList(home, proxiedPlayer.getName(), player.getUsername(), true));
+                    }
+                    counter++;
+                    if (counter == 20) {
+                        proxiedPlayer.sendMessage(message);
+                        message = new TextComponent();
+                        counter = 0;
+                    }
+
+                }
+                if (homes.size() - 1 < 20) {
+                    proxiedPlayer.sendMessage(message);
+                }
+            });
         });
-
     }
 
     private TextComponent addToList(Home home, String requester, String owner, boolean splitter) {

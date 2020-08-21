@@ -6,7 +6,7 @@
 
     <groupId>dev.masa</groupId>
     <artifactId>MaSuiteHomes</artifactId>
-    <version>2.0.3</version>
+    <version>3.0.0</version>
     <distributionManagement>
         <snapshotRepository>
             <id>codemc-snapshots</id>
@@ -62,7 +62,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.10</version>
+            <version>1.18.12</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -75,13 +75,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.1-R0.1-SNAPSHOT</version>
+            <version>1.16.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>dev.masa</groupId>
             <artifactId>MaSuiteCore</artifactId>
-            <version>2.0.1-20200624.171041-1</version>
+            <version>3.0.0-20200821.171557-4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -89,6 +89,11 @@
             <artifactId>Plan-api</artifactId>
             <version>5.1-R0.2</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <version>2.2</version>
         </dependency>
     </dependencies>
 </project>
