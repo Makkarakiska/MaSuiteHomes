@@ -10,35 +10,36 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ListController {
 
-    private MaSuiteHomes plugin;
+    private final MaSuiteHomes plugin;
 
     public ListController(MaSuiteHomes plugin) {
         this.plugin = plugin;
     }
 
-    private HashMap<String, List<Home>> loadHomes(UUID uuid) {
+    private void loadHomes(UUID uuid, Consumer<HashMap<String, List<Home>>> callback) {
         HashMap<String, List<Home>> homeList = new HashMap<>();
-        plugin.getHomeService().getHomes(uuid, homes -> homes.forEach(home -> {
-            if (!homeList.containsKey(home.getLocation().getServer())) {
-                homeList.put(home.getLocation().getServer(), new ArrayList<>());
+        plugin.getHomeService().getHomes(uuid, homes -> {
+            for (Home home : homes) {
+                if (!homeList.containsKey(home.getLocation().getServer())) {
+                    homeList.put(home.getLocation().getServer(), new ArrayList<>());
+                }
+                homeList.get(home.getLocation().getServer()).add(home);
             }
-            homeList.get(home.getLocation().getServer()).add(home);
-        }));
-
-        return homeList;
+            callback.accept(homeList);
+        });
     }
 
     public void list(ProxiedPlayer p) {
-        BaseComponent baseHome = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.title")));
+        BaseComponent baseHome = new TextComponent(plugin.formator.colorize(this.plugin.getMessages().getHomes().getTitle()));
         p.sendMessage(baseHome);
 
-        loadHomes(p.getUniqueId()).forEach((server, homes) -> {
-
+        loadHomes(p.getUniqueId(), homeList -> homeList.forEach((server, homes) -> {
             TextComponent message = new TextComponent();
-            TextComponent serverTitle = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", server)));
+            TextComponent serverTitle = new TextComponent(plugin.formator.colorize(this.plugin.getMessages().getHomes().getServerName().replace("%server%", server)));
 
             message.addExtra(serverTitle);
 
@@ -62,7 +63,7 @@ public class ListController {
                 p.sendMessage(message);
             }
 
-        });
+        }));
 
 
     }
@@ -70,19 +71,19 @@ public class ListController {
     public void list(ProxiedPlayer proxiedPlayer, String name) {
         plugin.getApi().getPlayerService().getPlayer(name, playerQuery -> {
             if (!playerQuery.isPresent()) {
-                plugin.formator.sendMessage(proxiedPlayer, plugin.config.load("homes", "messages.yml").getString("player-not-found"));
+                plugin.formator.sendMessage(proxiedPlayer, this.plugin.getApi().getCore().getMessages().getPlayerNotOnline());
                 return;
             }
 
             MaSuitePlayer player = playerQuery.get();
 
-            BaseComponent baseHome = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.title-others").replace("%player%", player.getUsername())));
+            BaseComponent baseHome = new TextComponent(plugin.formator.colorize(this.plugin.getMessages().getHomes().getTitleOthers().replace("%player%", player.getUsername())));
             proxiedPlayer.sendMessage(baseHome);
 
-            loadHomes(player.getUniqueId()).forEach((server, homes) -> {
+            loadHomes(player.getUniqueId(), homeList -> homeList.forEach((server, homes) -> {
 
                 TextComponent message = new TextComponent();
-                TextComponent serverTitle = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.server-name").replace("%server%", server)));
+                TextComponent serverTitle = new TextComponent(plugin.formator.colorize(this.plugin.getMessages().getHomes().getName().replace("%server%", server)));
 
                 message.addExtra(serverTitle);
 
@@ -105,20 +106,20 @@ public class ListController {
                 if (homes.size() - 1 < 20) {
                     proxiedPlayer.sendMessage(message);
                 }
-            });
+            }));
         });
     }
 
     private TextComponent addToList(Home home, String requester, String owner, boolean splitter) {
-        TextComponent hc = new TextComponent(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.name").replace("%home%", home.getName())));
+        TextComponent hc = new TextComponent(plugin.formator.colorize(this.plugin.getMessages().getHomes().getName().replace("%home%", home.getName())));
         if (requester.equalsIgnoreCase(owner)) {
             hc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + home.getName()));
         } else {
             hc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + home.getName() + " " + owner));
         }
-        hc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("home-hover-text").replace("%home%", home.getName()))).create()));
+        hc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(plugin.formator.colorize(this.plugin.getMessages().getHomeHoverText().replace("%home%", home.getName()))).create()));
         if (splitter) {
-            hc.addExtra(plugin.formator.colorize(plugin.config.load("homes", "messages.yml").getString("homes.split")));
+            hc.addExtra(plugin.formator.colorize(this.plugin.getMessages().getHomes().getSplit()));
         }
 
         return hc;

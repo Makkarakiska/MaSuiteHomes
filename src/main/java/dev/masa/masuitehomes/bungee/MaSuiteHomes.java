@@ -1,21 +1,23 @@
 package dev.masa.masuitehomes.bungee;
 
 import dev.masa.masuitecore.bungee.Utils;
+import dev.masa.masuitecore.bungee.api.MaSuiteCoreProxyAPI;
 import dev.masa.masuitecore.bungee.chat.Formator;
+import dev.masa.masuitecore.common.channels.BungeePluginChannel;
+import dev.masa.masuitecore.common.config.ConfigLoader;
 import dev.masa.masuitecore.common.interfaces.IDatabaseServiceProvider;
+import dev.masa.masuitecore.common.objects.Location;
 import dev.masa.masuitecore.common.services.DatabaseService;
 import dev.masa.masuitecore.common.utils.Updator;
-import dev.masa.masuitecore.core.api.MaSuiteCoreAPI;
-import dev.masa.masuitecore.core.channels.BungeePluginChannel;
-import dev.masa.masuitecore.core.configuration.BungeeConfiguration;
-import dev.masa.masuitecore.common.objects.Location;
 import dev.masa.masuitehomes.bungee.controllers.DeleteController;
 import dev.masa.masuitehomes.bungee.controllers.ListController;
 import dev.masa.masuitehomes.bungee.controllers.SetController;
 import dev.masa.masuitehomes.bungee.controllers.TeleportController;
-import dev.masa.masuitehomes.common.services.HomeService;
 import dev.masa.masuitehomes.bungee.dataextensions.DataExtensionRegister;
+import dev.masa.masuitehomes.common.config.proxy.HomeProxyMessageConfig;
+import dev.masa.masuitehomes.common.services.HomeService;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -33,23 +35,22 @@ public class MaSuiteHomes extends Plugin implements Listener, IDatabaseServicePr
     @Getter
     private HomeService homeService;
 
-    public BungeeConfiguration config = new BungeeConfiguration();
+    @Getter
+    public HomeProxyMessageConfig messages;
     public Formator formator = new Formator();
 
     @Getter
-    private MaSuiteCoreAPI api = new MaSuiteCoreAPI();
+    private final MaSuiteCoreProxyAPI api = new MaSuiteCoreProxyAPI();
 
+    @SneakyThrows
     @Override
     public void onEnable() {
-        //Configs
-        config.create(this, "homes", "messages.yml");
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerListener(this, this);
         // Check updates
         new Updator(getDescription().getVersion(), getDescription().getName(), "60632").checkUpdates();
 
-        config.addDefault("homes/messages.yml", "homes.title-others", "&9%player%''s &7homes: ");
-        config.addDefault("homes/messages.yml", "homes.server-name", "&9%server%&7: ");
+        this.messages = HomeProxyMessageConfig.loadFrom(ConfigLoader.loadConfig("homes/messages.yml"));
 
         homeService = new HomeService(this);
 
@@ -151,6 +152,6 @@ public class MaSuiteHomes extends Plugin implements Listener, IDatabaseServicePr
 
     @Override
     public DatabaseService getDatabaseService() {
-        return this.api.getDatabaseService();
+        return MaSuiteCoreProxyAPI.getDatabaseService();
     }
 }

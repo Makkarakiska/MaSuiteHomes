@@ -1,14 +1,17 @@
 package dev.masa.masuitehomes.bukkit;
 
-import dev.masa.masuitecore.core.api.MaSuiteCoreBukkitAPI;
+import dev.masa.masuitecore.acf.PaperCommandManager;
+import dev.masa.masuitecore.bukkit.api.MaSuiteCoreServerAPI;
+import dev.masa.masuitecore.bukkit.utils.CommandManagerUtil;
+import dev.masa.masuitecore.common.config.ConfigLoader;
+import dev.masa.masuitecore.common.utils.Updator;
+import dev.masa.masuitehomes.bukkit.commands.HomeCommand;
 import dev.masa.masuitehomes.bukkit.events.JoinEvent;
 import dev.masa.masuitehomes.bukkit.events.LeaveEvent;
-import dev.masa.masuitecore.acf.PaperCommandManager;
-import dev.masa.masuitecore.common.utils.Updator;
-import dev.masa.masuitecore.core.configuration.BukkitConfiguration;
-import dev.masa.masuitecore.core.utils.CommandManagerUtil;
-import dev.masa.masuitehomes.bukkit.commands.HomeCommand;
+import dev.masa.masuitehomes.common.config.server.HomeServerConfig;
 import dev.masa.masuitehomes.common.models.Home;
+import lombok.Getter;
+import lombok.SneakyThrows;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -19,15 +22,15 @@ import java.util.UUID;
 public class MaSuiteHomes extends JavaPlugin {
     public HashMap<UUID, List<Home>> homes = new HashMap<>();
 
-    public BukkitConfiguration config = new BukkitConfiguration();
-    public MaSuiteCoreBukkitAPI api = new MaSuiteCoreBukkitAPI();
+    public MaSuiteCoreServerAPI api = new MaSuiteCoreServerAPI();
 
+    @Getter
+    private HomeServerConfig homeConfig;
+
+    @SneakyThrows
     @Override
     public void onEnable() {
-        // Create configs
-        config.create(this, "homes", "config.yml");
-        config.addDefault("homes/config.yml", "warmup", 3);
-
+        this.homeConfig = HomeServerConfig.loadFrom(ConfigLoader.loadConfig("homes/config.yml"));
         // Register channels
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new HomeMessageListener(this));
@@ -52,7 +55,7 @@ public class MaSuiteHomes extends JavaPlugin {
 
         new Updator(getDescription().getVersion(), getDescription().getName(), "60632").checkUpdates();
 
-        api.getCooldownService().addCooldownLength("homes", config.load("homes", "config.yml").getInt("cooldown"));
-        api.getWarmupService().warmupTimes.put("homes", config.load("homes", "config.yml").getInt("warmup"));
+        api.getCooldownService().addCooldownLength("homes", this.homeConfig.getCooldown());
+        api.getWarmupService().warmupTimes.put("homes", this.homeConfig.getWarmup());
     }
 }

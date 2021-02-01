@@ -81,7 +81,7 @@
         <dependency>
             <groupId>dev.masa</groupId>
             <artifactId>MaSuiteCore</artifactId>
-            <version>3.0.0-20200821.171557-4</version>
+            <version>3.0.0-20201221.170833-6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

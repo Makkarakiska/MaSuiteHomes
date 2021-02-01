@@ -2,8 +2,8 @@ package dev.masa.masuitehomes.bukkit.commands;
 
 import dev.masa.masuitecore.acf.BaseCommand;
 import dev.masa.masuitecore.acf.annotation.*;
-import dev.masa.masuitecore.core.adapters.BukkitAdapter;
-import dev.masa.masuitecore.core.channels.BukkitPluginChannel;
+import dev.masa.masuitecore.common.channels.BukkitPluginChannel;
+import dev.masa.masuitecore.common.utils.BukkitAdapter;
 import dev.masa.masuitehomes.bukkit.MaSuiteHomes;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
